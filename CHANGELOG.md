@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/adobe/helix-pingdom-status/compare/v1.0.0...v1.1.0) (2019-06-16)
+
+
+### Features
+
+* **index:** allow passing a series of checks to the function ([4aadefe](https://github.com/adobe/helix-pingdom-status/commit/4aadefe))
+
 # 1.0.0 (2019-06-16)
 
 
