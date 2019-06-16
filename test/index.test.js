@@ -15,16 +15,24 @@
 'use strict';
 
 const assert = require('assert');
+const { AssertionError } = require('assert');
 const index = require('../src/index.js').main;
 
 describe('Index Tests', () => {
   it('index function is present', async () => {
     const result = await index({});
-    assert.deepEqual(result, { body: 'Hello, world.' });
+    assert.deepEqual(result.statusCode, 200);
   });
 
   it('index function returns an object', async () => {
-    const result = await index();
-    assert.equal(typeof result, 'object');
+    try {
+      await index();
+      assert.fail('this should never happen');
+    } catch (e) {
+      if (e instanceof AssertionError) {
+        throw e;
+      }
+      assert.equal(e.message, 'Invalid Arguments: expected function or object');
+    }
   });
 });
