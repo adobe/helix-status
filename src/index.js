@@ -12,6 +12,7 @@
 
 /* eslint-disable no-underscore-dangle */
 const request = require('request-promise-native');
+const { version } = require('../package.json');
 
 async function report(checks) {
   const start = Date.now();
@@ -27,6 +28,7 @@ async function report(checks) {
 
     let body = `<pingdom_http_custom_check>
   <status>OK</status>
+  <version>${version}</version>
   <response_time>${Math.abs(Date.now() - start)}</response_time>
 `;
 
@@ -52,6 +54,7 @@ async function report(checks) {
       },
       body: `<pingdom_http_custom_check>
   <status>failed</status>
+  <version>${version}</version>
   <response_time>${Math.abs(Date.now() - start)}</response_time>
   <error>
     <url>${e.options.uri}</url>

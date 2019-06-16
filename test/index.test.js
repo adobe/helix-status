@@ -46,12 +46,14 @@ describe('Index Tests', () => {
   it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.deepEqual(result.statusCode, 200);
+    assert.ok(result.body.match(/<version>1./));
   });
 
   it('index function makes HTTP requests', async () => {
     const result = await index({ example: 'http://www.example.com', __ow_method: 'get' });
     const { body } = result;
     assert.ok(body.match(/<example>/));
+    assert.ok(result.body.match(/<version>1./));
     assert.deepEqual(result.statusCode, 200);
   });
 
@@ -68,6 +70,7 @@ describe('Index Tests', () => {
 
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
+    assert.ok(result.body.match(/<version>1./));
     assert.deepEqual(result.statusCode, 503);
   });
 
