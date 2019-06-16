@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/adobe/helix-pingdom-status/compare/v1.1.0...v1.2.0) (2019-06-16)
+
+
+### Features
+
+* **index:** respond with a useful error message when one of the checks fails ([70fae6d](https://github.com/adobe/helix-pingdom-status/commit/70fae6d))
+
 # [1.1.0](https://github.com/adobe/helix-pingdom-status/compare/v1.0.0...v1.1.0) (2019-06-16)
 
 
