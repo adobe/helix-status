@@ -10,6 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable no-underscore-dangle */
 const request = require('request-promise-native');
 
 async function report(checks) {
@@ -62,8 +63,8 @@ ${e.response.body}
   <process>
     <activation>${process.env.__OW_ACTIVATION_ID}</activation>
   </process>
-</pingdom_http_custom_check>`
-    }
+</pingdom_http_custom_check>`,
+    };
   }
 }
 
