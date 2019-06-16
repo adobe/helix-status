@@ -1,3 +1,10 @@
+# [1.3.0](https://github.com/adobe/helix-pingdom-status/compare/v1.2.0...v1.3.0) (2019-06-16)
+
+
+### Features
+
+* **index:** include version in pingdom response ([84fee5b](https://github.com/adobe/helix-pingdom-status/commit/84fee5b)), closes [#1](https://github.com/adobe/helix-pingdom-status/issues/1)
+
 # [1.2.0](https://github.com/adobe/helix-pingdom-status/compare/v1.1.0...v1.2.0) (2019-06-16)
 
 
