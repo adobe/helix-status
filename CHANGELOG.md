@@ -1,3 +1,15 @@
+# 1.0.0 (2019-06-16)
+
+
+### Bug Fixes
+
+* **index:** fix OW Method name and handling of empty parameters ([79f1c00](https://github.com/adobe/helix-pingdom-status/commit/79f1c00))
+
+
+### Features
+
+* **index:** support returning a pingdom status report on GET requests ([559d373](https://github.com/adobe/helix-pingdom-status/commit/559d373))
+
 # [1.1.0](https://github.com/adobe/helix-service/compare/v1.0.1...v1.1.0) (2019-06-12)
 
 
