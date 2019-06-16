@@ -15,10 +15,26 @@
 'use strict';
 
 const assert = require('assert');
+const path = require('path');
 const { AssertionError } = require('assert');
+const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
+const { setupMocha: setupPolly } = require('@pollyjs/core');
+const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
 
 describe('Index Tests', () => {
+  setupPolly({
+    recordIfMissing: false,
+    logging: false,
+    adapters: [NodeHttpAdapter],
+    persister: FSPersister,
+    persisterOptions: {
+      fs: {
+        recordingsDir: path.resolve(__dirname, 'fixtures/recordings'),
+      },
+    },
+  });
+
   it('index function returns function for function', async () => {
     const wrapped = await index(() => 'foo');
     assert.deepEqual(typeof wrapped, 'function');
@@ -29,6 +45,13 @@ describe('Index Tests', () => {
 
   it('index function returns status code for objects', async () => {
     const result = await index({});
+    assert.deepEqual(result.statusCode, 200);
+  });
+
+  it('index function makes HTTP requests', async () => {
+    const result = await index({ example: 'http://www.example.com', __ow_method: 'get' });
+    const { body } = result;
+    assert.ok(body.match(/<example>/));
     assert.deepEqual(result.statusCode, 200);
   });
 

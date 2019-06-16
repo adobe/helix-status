@@ -26,9 +26,14 @@
     "url": "https://github.com/adobe/helix-pingdom-status/issues"
   },
   "homepage": "https://github.com/adobe/helix-pingdom-status#readme",
-  "dependencies": {},
+  "dependencies": {
+    "request-promise-native": "^1.0.7"
+  },
   "devDependencies": {
     "@adobe/openwhisk-action-builder": "^1.0.2",
+    "@pollyjs/adapter-node-http": "^2.5.0",
+    "@pollyjs/core": "^2.5.0",
+    "@pollyjs/persister-fs": "^2.1.0",
     "@semantic-release/changelog": "^3.0.2",
     "@semantic-release/commit-analyzer": "^6.1.0",
     "@semantic-release/exec": "^3.3.2",

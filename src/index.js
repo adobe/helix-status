@@ -10,18 +10,37 @@
  * governing permissions and limitations under the License.
  */
 
-async function report() {
+const request = require('request-promise-native');
+
+async function report(checks) {
   const start = Date.now();
+
+  const runchecks = Object.keys(checks)
+    .filter(key => key.match('^[a-z0-9]+$'))
+    .map(key => [key, checks[key]])
+    .map(([key, url]) => request.get(url, { resolveWithFullResponse: true, time: true })
+      .then(response => ({ key, response })));
+
+  const checkresults = await Promise.all(runchecks);
+
+  let body = `<pingdom_http_custom_check>
+  <status>OK</status>
+  <response_time>${Math.abs(Date.now() - start)}</response_time>
+`;
+
+  body += checkresults
+    .map(({ key, response }) => `  <${key}>${Math.floor(response.timings.end)}</${key}>`)
+    .join('\n');
+
+  body += `
+</pingdom_http_custom_check>`;
 
   return {
     statusCode: 200,
     headers: {
       'Content-Type': 'application/xml',
     },
-    body: `<pingdom_http_custom_check>
-    <status>OK</status>
-    <response_time>${Math.abs(Date.now() - start)}</response_time>
-</pingdom_http_custom_check>`,
+    body,
   };
 }
 
