@@ -28,7 +28,7 @@ async function report() {
 function wrap(func, checks) {
   return (params) => {
     // eslint-disable-next-line no-underscore-dangle
-    if (params.__ow_methd === 'get') {
+    if (params && params.__ow_method === 'get') {
       return report(checks);
     }
     return func(params);

@@ -19,12 +19,20 @@ const { AssertionError } = require('assert');
 const index = require('../src/index.js').main;
 
 describe('Index Tests', () => {
-  it('index function is present', async () => {
+  it('index function returns function for function', async () => {
+    const wrapped = await index(() => 'foo');
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo');
+    const result = await wrapped({ __ow_method: 'get' });
+    assert.equal(result.statusCode, 200);
+  });
+
+  it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.deepEqual(result.statusCode, 200);
   });
 
-  it('index function returns an object', async () => {
+  it('index function throws if passed invalid arguments', async () => {
     try {
       await index();
       assert.fail('this should never happen');
