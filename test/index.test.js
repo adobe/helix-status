@@ -55,6 +55,22 @@ describe('Index Tests', () => {
     assert.deepEqual(result.statusCode, 200);
   });
 
+  it('index function fails with useful error message', async function test() {
+    const { server } = this.polly;
+
+    server.get('http://www.fail.com/').intercept((_, res) => res.sendStatus(500).json({}));
+
+    const result = await index({
+      example: 'http://www.example.com',
+      fail: 'http://www.fail.com/',
+      __ow_method: 'get',
+    });
+
+    assert.ok(result.body.match(/<statuscode>500/));
+    assert.ok(result.body.match(/<status>failed/));
+    assert.deepEqual(result.statusCode, 503);
+  });
+
   it('index function throws if passed invalid arguments', async () => {
     try {
       await index();
