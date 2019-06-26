@@ -21,6 +21,7 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
+const { wrap } = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
@@ -41,6 +42,18 @@ describe('Index Tests', () => {
     assert.deepEqual(wrapped(), 'foo');
     const result = await wrapped({ __ow_method: 'get' });
     assert.equal(result.statusCode, 200);
+  });
+
+  it('wrap function takes over when no other params are given', async () => {
+    const wrapped = wrap(({name} = {}) => name || 'foo');
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without params passes through');
+    
+    const result = await wrapped({ __ow_method: 'get' });
+    assert.equal(result.statusCode, 200, 'calling with method get reports');
+
+    const result2 = await wrapped({ __ow_method: 'get', name: 'boo' });
+    assert.equal(result2, 'boo');
   });
 
   it('index function returns status code for objects', async () => {

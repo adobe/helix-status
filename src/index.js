@@ -14,7 +14,7 @@
 const request = require('request-promise-native');
 const { version } = require('../package.json');
 
-async function report(checks) {
+async function report(checks = {}) {
   const start = Date.now();
 
   try {
@@ -73,8 +73,10 @@ ${e.response.body}
 
 function wrap(func, checks) {
   return (params) => {
-    // eslint-disable-next-line no-underscore-dangle
-    if (params && params.__ow_method === 'get') {
+    if (params 
+      // eslint-disable-next-line no-underscore-dangle
+      && params.__ow_method === 'get' 
+      && Object.keys(params).filter(key => !key.match(/^__/)).length === 0) {
       return report(checks);
     }
     return func(params);
