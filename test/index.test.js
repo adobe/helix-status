@@ -52,6 +52,9 @@ describe('Index Tests', () => {
     const result = await wrapped({ __ow_method: 'get' });
     assert.equal(result.statusCode, 200, 'calling with method get reports');
 
+    const result1 = await wrapped({ __ow_method: 'get', FOO_BAR: 'baz' });
+    assert.equal(result1.statusCode, 200, 'calling with method get reports');
+
     const result2 = await wrapped({ __ow_method: 'get', name: 'boo' });
     assert.equal(result2, 'boo');
   });

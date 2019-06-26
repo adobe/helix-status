@@ -76,7 +76,8 @@ function wrap(func, checks) {
     if (params
       // eslint-disable-next-line no-underscore-dangle
       && params.__ow_method === 'get'
-      && Object.keys(params).filter(key => !key.match(/^__/)).length === 0) {
+      && Object.keys(params)
+        .filter(key => !(key.match(/^__/) || key.match(/^[A-Z0-9_]+$/))).length === 0) {
       return report(checks);
     }
     return func(params);
