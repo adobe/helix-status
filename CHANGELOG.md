@@ -1,3 +1,10 @@
+## [1.3.2](https://github.com/adobe/helix-pingdom-status/compare/v1.3.1...v1.3.2) (2019-06-26)
+
+
+### Bug Fixes
+
+* **wrap:** exclude parameters in ALL_CAPS from qualifying for pass-through ([c418dad](https://github.com/adobe/helix-pingdom-status/commit/c418dad))
+
 ## [1.3.1](https://github.com/adobe/helix-pingdom-status/compare/v1.3.0...v1.3.1) (2019-06-26)
 
 
