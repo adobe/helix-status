@@ -1,3 +1,10 @@
+## [1.3.1](https://github.com/adobe/helix-pingdom-status/compare/v1.3.0...v1.3.1) (2019-06-26)
+
+
+### Bug Fixes
+
+* **index:** do not report status for get requests with URL parameters when wrapping ([207cb3a](https://github.com/adobe/helix-pingdom-status/commit/207cb3a))
+
 # [1.3.0](https://github.com/adobe/helix-pingdom-status/compare/v1.2.0...v1.3.0) (2019-06-16)
 
 
