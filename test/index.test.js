@@ -45,10 +45,10 @@ describe('Index Tests', () => {
   });
 
   it('wrap function takes over when no other params are given', async () => {
-    const wrapped = wrap(({name} = {}) => name || 'foo');
+    const wrapped = wrap(({ name } = {}) => name || 'foo');
     assert.deepEqual(typeof wrapped, 'function');
     assert.deepEqual(wrapped(), 'foo', 'calling without params passes through');
-    
+
     const result = await wrapped({ __ow_method: 'get' });
     assert.equal(result.statusCode, 200, 'calling with method get reports');
 
