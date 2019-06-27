@@ -57,6 +57,12 @@ describe('Index Tests', () => {
 
     const result2 = await wrapped({ __ow_method: 'get', name: 'boo' });
     assert.equal(result2, 'boo');
+
+    const result3 = await wrapped({ __ow_method: 'get', __ow_path: '/glue' });
+    assert.equal(result3, 'foo');
+
+    const result4 = await wrapped({ __ow_method: 'get', __ow_path: '' });
+    assert.equal(result4.statusCode, 200);
   });
 
   it('index function returns status code for objects', async () => {
