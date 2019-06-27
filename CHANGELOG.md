@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/adobe/helix-pingdom-status/compare/v1.3.2...v1.4.0) (2019-06-27)
+
+
+### Features
+
+* **index:** only report status when __ow_path is undefined or empty ([c13f273](https://github.com/adobe/helix-pingdom-status/commit/c13f273))
+
 ## [1.3.2](https://github.com/adobe/helix-pingdom-status/compare/v1.3.1...v1.3.2) (2019-06-26)
 
 
