@@ -27,7 +27,8 @@
   },
   "homepage": "https://github.com/adobe/helix-pingdom-status#readme",
   "dependencies": {
-    "request-promise-native": "^1.0.7"
+    "request-promise-native": "^1.0.7",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "@adobe/openwhisk-action-builder": "^1.0.2",
@@ -57,8 +58,7 @@
     "lint-staged": "^9.0.0",
     "mocha": "^6.1.4",
     "nyc": "^14.0.0",
-    "semantic-release": "^15.13.3",
-    "snyk": "^1.171.1"
+    "semantic-release": "^15.13.3"
   },
   "snyk": true,
   "lint-staged": {
