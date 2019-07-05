@@ -71,6 +71,66 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<version>1./));
   });
 
+  it('index function returns n/a for missing package.json', async () => {
+    delete require.cache[require.resolve('../src/index.js')];
+    // eslint-disable-next-line global-require
+    const { main } = require('../src/index.js');
+    const pwd = process.cwd();
+    try {
+      process.chdir(path.resolve(__dirname, 'fixtures', 'no_package'));
+      const result = await main({});
+      assert.deepEqual(result.statusCode, 200);
+      assert.ok(result.body.match(/<version>n\/a<\/version>/));
+    } finally {
+      process.chdir(pwd);
+    }
+  });
+
+  it('index function returns correct package version', async () => {
+    delete require.cache[require.resolve('../src/index.js')];
+    // eslint-disable-next-line global-require
+    const { main } = require('../src/index.js');
+    const pwd = process.cwd();
+    try {
+      process.chdir(path.resolve(__dirname, 'fixtures', 'custom_package'));
+      const result = await main({});
+      assert.deepEqual(result.statusCode, 200);
+      assert.ok(result.body.match(/<version>10.42-beta<\/version>/));
+    } finally {
+      process.chdir(pwd);
+    }
+  });
+
+  it('index function returns n/a for corrupt package.json', async () => {
+    delete require.cache[require.resolve('../src/index.js')];
+    // eslint-disable-next-line global-require
+    const { main } = require('../src/index.js');
+    const pwd = process.cwd();
+    try {
+      process.chdir(path.resolve(__dirname, 'fixtures', 'no_valid_package_json'));
+      const result = await main({});
+      assert.deepEqual(result.statusCode, 200);
+      assert.ok(result.body.match(/<version>n\/a<\/version>/));
+    } finally {
+      process.chdir(pwd);
+    }
+  });
+
+  it('index function returns n/a for missing package version', async () => {
+    delete require.cache[require.resolve('../src/index.js')];
+    // eslint-disable-next-line global-require
+    const { main } = require('../src/index.js');
+    const pwd = process.cwd();
+    try {
+      process.chdir(path.resolve(__dirname, 'fixtures', 'no_package_version'));
+      const result = await main({});
+      assert.deepEqual(result.statusCode, 200);
+      assert.ok(result.body.match(/<version>n\/a<\/version>/));
+    } finally {
+      process.chdir(pwd);
+    }
+  });
+
   it('index function makes HTTP requests', async () => {
     const result = await index({ example: 'http://www.example.com', __ow_method: 'get' });
     const { body } = result;

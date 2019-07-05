@@ -12,10 +12,36 @@
 
 /* eslint-disable no-underscore-dangle */
 const request = require('request-promise-native');
-const { version } = require('../package.json');
+const fs = require('fs');
+
+let _version;
+
+async function getVersion() {
+  if (!_version) {
+    _version = await new Promise((resolve) => {
+      fs.readFile('package.json', 'utf-8', (err, data) => {
+        if (err) {
+          // eslint-disable-next-line no-console
+          console.error('error while reading package.json:', err);
+          resolve('n/a');
+        } else {
+          try {
+            resolve(JSON.parse(data).version || 'n/a');
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.error('error while parsing package.json:', e);
+            resolve('n/a');
+          }
+        }
+      });
+    });
+  }
+  return _version;
+}
 
 async function report(checks = {}) {
   const start = Date.now();
+  const version = await getVersion();
 
   try {
     const runchecks = Object.keys(checks)
