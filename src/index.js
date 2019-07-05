@@ -61,7 +61,7 @@ async function report(checks = {}) {
     <statuscode>${e.response.statusCode}</statuscode>
     <body><![CDATA[
 ${e.response.body}
-    ]></body>
+    ]]></body>
   </error>
   <process>
     <activation>${process.env.__OW_ACTIVATION_ID}</activation>
