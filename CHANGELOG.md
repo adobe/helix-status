@@ -1,3 +1,11 @@
+## [1.4.1](https://github.com/adobe/helix-pingdom-status/compare/v1.4.0...v1.4.1) (2019-07-05)
+
+
+### Bug Fixes
+
+* **error:** add missing ] in CDATA section ([9ac26a5](https://github.com/adobe/helix-pingdom-status/commit/9ac26a5)), closes [#9](https://github.com/adobe/helix-pingdom-status/issues/9)
+* **report:** use version from correct package.json ([0b467df](https://github.com/adobe/helix-pingdom-status/commit/0b467df)), closes [#7](https://github.com/adobe/helix-pingdom-status/issues/7)
+
 # [1.4.0](https://github.com/adobe/helix-pingdom-status/compare/v1.3.2...v1.4.0) (2019-06-27)
 
 
