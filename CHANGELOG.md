@@ -1,3 +1,10 @@
+## [1.4.3](https://github.com/adobe/helix-pingdom-status/compare/v1.4.2...v1.4.3) (2019-07-11)
+
+
+### Bug Fixes
+
+* **status:** include x-version header ([#14](https://github.com/adobe/helix-pingdom-status/issues/14)) ([7d71fa2](https://github.com/adobe/helix-pingdom-status/commit/7d71fa2)), closes [#7](https://github.com/adobe/helix-pingdom-status/issues/7)
+
 ## [1.4.2](https://github.com/adobe/helix-pingdom-status/compare/v1.4.1...v1.4.2) (2019-07-11)
 
 
