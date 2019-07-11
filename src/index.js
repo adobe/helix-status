@@ -56,6 +56,7 @@ async function report(checks = {}) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/xml',
+        'X-Version': version,
       },
       body: [
         '<pingdom_http_custom_check>',
@@ -74,6 +75,7 @@ async function report(checks = {}) {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/xml',
+        'X-Version': version,
       },
       body: [
         '<pingdom_http_custom_check>',
