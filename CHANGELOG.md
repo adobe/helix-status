@@ -1,3 +1,10 @@
+## [1.4.2](https://github.com/adobe/helix-pingdom-status/compare/v1.4.1...v1.4.2) (2019-07-11)
+
+
+### Bug Fixes
+
+* **status:** always send 200 ([9a5400a](https://github.com/adobe/helix-pingdom-status/commit/9a5400a)), closes [#12](https://github.com/adobe/helix-pingdom-status/issues/12)
+
 ## [1.4.1](https://github.com/adobe/helix-pingdom-status/compare/v1.4.0...v1.4.1) (2019-07-05)
 
 
