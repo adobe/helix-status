@@ -153,7 +153,7 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
     assert.ok(result.body.match(/<version>1./));
-    assert.deepEqual(result.statusCode, 503);
+    assert.deepEqual(result.statusCode, 200);
   });
 
   it('index function throws if passed invalid arguments', async () => {

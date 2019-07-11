@@ -52,47 +52,44 @@ async function report(checks = {}) {
 
     const checkresults = await Promise.all(runchecks);
 
-    let body = `<pingdom_http_custom_check>
-  <status>OK</status>
-  <version>${version}</version>
-  <response_time>${Math.abs(Date.now() - start)}</response_time>
-`;
-
-    body += checkresults
-      .map(({ key, response }) => `  <${key}>${Math.floor(response.timings.end)}</${key}>`)
-      .join('\n');
-
-    body += `
-</pingdom_http_custom_check>`;
-
     return {
       statusCode: 200,
       headers: {
         'Content-Type': 'application/xml',
       },
-      body,
+      body: [
+        '<pingdom_http_custom_check>',
+        '  <status>OK</status>',
+        `  <version>${version}</version>`,
+        `  <response_time>${Math.abs(Date.now() - start)}</response_time>`,
+        ...checkresults.map(({ key, response }) => `  <${key}>${Math.floor(response.timings.end)}</${key}>`),
+        '  <process>',
+        `    <activation>${process.env.__OW_ACTIVATION_ID}</activation>`,
+        '  </process>',
+        '</pingdom_http_custom_check>',
+      ].join('\n'),
     };
   } catch (e) {
     return {
-      statusCode: 503,
+      statusCode: 200,
       headers: {
         'Content-Type': 'application/xml',
       },
-      body: `<pingdom_http_custom_check>
-  <status>failed</status>
-  <version>${version}</version>
-  <response_time>${Math.abs(Date.now() - start)}</response_time>
-  <error>
-    <url>${e.options.uri}</url>
-    <statuscode>${e.response.statusCode}</statuscode>
-    <body><![CDATA[
-${e.response.body}
-    ]]></body>
-  </error>
-  <process>
-    <activation>${process.env.__OW_ACTIVATION_ID}</activation>
-  </process>
-</pingdom_http_custom_check>`,
+      body: [
+        '<pingdom_http_custom_check>',
+        '  <status>failed</status>',
+        `  <version>${version}</version>`,
+        `  <response_time>${Math.abs(Date.now() - start)}</response_time>`,
+        '  <error>',
+        `    <url>${e.options.uri}</url>`,
+        `    <statuscode>${e.response.statusCode}</statuscode>`,
+        `    <body><![CDATA[${e.response.body}]]></body>`,
+        '  </error>',
+        '  <process>',
+        `    <activation>${process.env.__OW_ACTIVATION_ID}</activation>`,
+        '  </process>',
+        '</pingdom_http_custom_check>',
+      ].join('\n'),
     };
   }
 }
