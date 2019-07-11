@@ -21,11 +21,12 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
-const { wrap } = require('../src/index.js');
+const { wrap, report } = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
     recordIfMissing: false,
+    recordFailedRequests: false,
     logging: false,
     adapters: [NodeHttpAdapter],
     persister: FSPersister,
@@ -67,7 +68,7 @@ describe('Index Tests', () => {
 
   it('index function returns status code for objects', async () => {
     const result = await index({});
-    assert.deepEqual(result.statusCode, 200);
+    assert.equal(result.statusCode, 200);
     assert.ok(result.body.match(/<version>1./));
   });
 
@@ -79,7 +80,7 @@ describe('Index Tests', () => {
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_package'));
       const result = await main({});
-      assert.deepEqual(result.statusCode, 200);
+      assert.equal(result.statusCode, 200);
       assert.ok(result.body.match(/<version>n\/a<\/version>/));
     } finally {
       process.chdir(pwd);
@@ -94,7 +95,7 @@ describe('Index Tests', () => {
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'custom_package'));
       const result = await main({});
-      assert.deepEqual(result.statusCode, 200);
+      assert.equal(result.statusCode, 200);
       assert.ok(result.body.match(/<version>10.42-beta<\/version>/));
       assert.equal(result.headers['X-Version'], '10.42-beta');
     } finally {
@@ -110,7 +111,7 @@ describe('Index Tests', () => {
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_valid_package_json'));
       const result = await main({});
-      assert.deepEqual(result.statusCode, 200);
+      assert.equal(result.statusCode, 200);
       assert.ok(result.body.match(/<version>n\/a<\/version>/));
     } finally {
       process.chdir(pwd);
@@ -125,7 +126,7 @@ describe('Index Tests', () => {
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_package_version'));
       const result = await main({});
-      assert.deepEqual(result.statusCode, 200);
+      assert.equal(result.statusCode, 200);
       assert.ok(result.body.match(/<version>n\/a<\/version>/));
     } finally {
       process.chdir(pwd);
@@ -133,11 +134,12 @@ describe('Index Tests', () => {
   });
 
   it('index function makes HTTP requests', async () => {
-    const result = await index({ example: 'http://www.example.com', __ow_method: 'get' });
+    const result = await index({ example: 'http://www.example.com' });
     const { body } = result;
+
     assert.ok(body.match(/<example>/));
     assert.ok(result.body.match(/<version>1./));
-    assert.deepEqual(result.statusCode, 200);
+    assert.equal(result.statusCode, 200);
   });
 
   it('index function fails with useful error message', async function test() {
@@ -148,13 +150,28 @@ describe('Index Tests', () => {
     const result = await index({
       example: 'http://www.example.com',
       fail: 'http://www.fail.com/',
-      __ow_method: 'get',
     });
 
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
     assert.ok(result.body.match(/<version>1./));
-    assert.deepEqual(result.statusCode, 200);
+    assert.equal(result.statusCode, 200);
+  });
+
+  it('index function fails after timeout', async function test() {
+    // polly seems to somehow interfere with the timeout handling in request.
+    // so we disable it here.
+    this.polly.disconnectFrom('node-http');
+    const result = await report({
+      snail: 'https://raw.githubusercontent.com/adobe/helix-pingdom-status/master/README.md',
+    }, 10);
+
+    assert.ok(result.body.match(/<status>failed/));
+    assert.ok(result.body.match(/<version>1./));
+
+    // error can be ESOCKETTIMEDOUT or ETIMEDOUT
+    assert.ok(result.body.match(/<body><!\[CDATA\[Error: E(SOCKET)?TIMEDOUT]]><\/body>/));
+    assert.equal(result.statusCode, 200);
   });
 
   it('index function throws if passed invalid arguments', async () => {
