@@ -96,6 +96,7 @@ describe('Index Tests', () => {
       const result = await main({});
       assert.deepEqual(result.statusCode, 200);
       assert.ok(result.body.match(/<version>10.42-beta<\/version>/));
+      assert.equal(result.headers['X-Version'], '10.42-beta');
     } finally {
       process.chdir(pwd);
     }
