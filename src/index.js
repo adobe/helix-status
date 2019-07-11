@@ -39,16 +39,28 @@ async function getVersion() {
   return _version;
 }
 
-async function report(checks = {}) {
+async function report(checks = {}, timeout = 10000) {
   const start = Date.now();
   const version = await getVersion();
 
   try {
+    const checker = async ([key, uri]) => {
+      const response = await request({
+        uri,
+        resolveWithFullResponse: true,
+        time: true,
+        timeout,
+      });
+      return {
+        key,
+        response,
+      };
+    };
+
     const runchecks = Object.keys(checks)
       .filter(key => key.match('^[a-z0-9]+$'))
       .map(key => [key, checks[key]])
-      .map(([key, url]) => request.get(url, { resolveWithFullResponse: true, time: true })
-        .then(response => ({ key, response })));
+      .map(checker);
 
     const checkresults = await Promise.all(runchecks);
 
@@ -71,6 +83,8 @@ async function report(checks = {}) {
       ].join('\n'),
     };
   } catch (e) {
+    const statusCode = (e.response ? e.response.statusCode : '') || 500;
+    const body = (e.response ? e.response.body : '') || e.message;
     return {
       statusCode: 200,
       headers: {
@@ -84,8 +98,8 @@ async function report(checks = {}) {
         `  <response_time>${Math.abs(Date.now() - start)}</response_time>`,
         '  <error>',
         `    <url>${e.options.uri}</url>`,
-        `    <statuscode>${e.response.statusCode}</statuscode>`,
-        `    <body><![CDATA[${e.response.body}]]></body>`,
+        `    <statuscode>${statusCode}</statuscode>`,
+        `    <body><![CDATA[${body}]]></body>`,
         '  </error>',
         '  <process>',
         `    <activation>${process.env.__OW_ACTIVATION_ID}</activation>`,
@@ -128,4 +142,4 @@ function main(paramsorfunction, checks = {}) {
   throw new Error('Invalid Arguments: expected function or object');
 }
 
-module.exports = { main, wrap };
+module.exports = { main, wrap, report };
