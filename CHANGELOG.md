@@ -1,3 +1,10 @@
+## [1.4.4](https://github.com/adobe/helix-pingdom-status/compare/v1.4.3...v1.4.4) (2019-07-12)
+
+
+### Bug Fixes
+
+* **status:** add timeout for backend checks ([d90e6ff](https://github.com/adobe/helix-pingdom-status/commit/d90e6ff)), closes [#11](https://github.com/adobe/helix-pingdom-status/issues/11)
+
 ## [1.4.3](https://github.com/adobe/helix-pingdom-status/compare/v1.4.2...v1.4.3) (2019-07-11)
 
 
