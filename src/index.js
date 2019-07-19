@@ -116,7 +116,7 @@ function wrap(func, checks) {
     if (params
       && params.__ow_headers
       // eslint-disable-next-line no-underscore-dangle
-      && /^Pingdom\.com_bot.*/.test(params.__ow_headers.user_agent)) {
+      && /^Pingdom\.com_bot.*/.test(params.__ow_headers['user-agent'])) {
       return report(checks);
     }
     return func(params);
