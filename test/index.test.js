@@ -23,6 +23,8 @@ const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
 const { wrap, report } = require('../src/index.js');
 
+const PINGDOM_USER_AGENT = 'Pingdom.com_bot_version_1.4_(http://www.pingdom.com/)';
+
 describe('Index Tests', () => {
   setupPolly({
     recordIfMissing: false,
@@ -41,29 +43,21 @@ describe('Index Tests', () => {
     const wrapped = await index(() => 'foo');
     assert.deepEqual(typeof wrapped, 'function');
     assert.deepEqual(wrapped(), 'foo');
-    const result = await wrapped({ __ow_method: 'get' });
-    assert.equal(result.statusCode, 200);
   });
 
-  it('wrap function takes over when no other params are given', async () => {
+  it('wrap function takes over when Pingdom User-Agent is present', async () => {
     const wrapped = wrap(({ name } = {}) => name || 'foo');
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without params passes through');
+    assert.deepEqual(wrapped(), 'foo', 'calling without Pingdom User-Agent passes through');
 
-    const result = await wrapped({ __ow_method: 'get' });
-    assert.equal(result.statusCode, 200, 'calling with method get reports');
+    const result = await wrapped({ __ow_headers: { user_agent: `${PINGDOM_USER_AGENT}` } });
+    assert.equal(result.statusCode, 200, 'calling with Pingdom User-Agent get reports');
 
-    const result1 = await wrapped({ __ow_method: 'get', FOO_BAR: 'baz' });
-    assert.equal(result1.statusCode, 200, 'calling with method get reports');
+    const result1 = await wrapped({ __ow_headers: { user_agent: `${PINGDOM_USER_AGENT}` }, FOO_BAR: 'baz' });
+    assert.equal(result1.statusCode, 200, 'calling with Pingdom User-Agent get reports');
 
-    const result2 = await wrapped({ __ow_method: 'get', name: 'boo' });
+    const result2 = await wrapped({ name: 'boo' });
     assert.equal(result2, 'boo');
-
-    const result3 = await wrapped({ __ow_method: 'get', __ow_path: '/glue' });
-    assert.equal(result3, 'foo');
-
-    const result4 = await wrapped({ __ow_method: 'get', __ow_path: '' });
-    assert.equal(result4.statusCode, 200);
   });
 
   it('index function returns status code for objects', async () => {

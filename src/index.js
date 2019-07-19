@@ -112,13 +112,11 @@ async function report(checks = {}, timeout = 10000) {
 
 function wrap(func, checks) {
   return (params) => {
+    // Pingdom status check?
     if (params
+      && params.__ow_headers
       // eslint-disable-next-line no-underscore-dangle
-      && params.__ow_method === 'get'
-      // eslint-disable-next-line no-underscore-dangle
-      && !params.__ow_path
-      && Object.keys(params)
-        .filter(key => !(key.match(/^__/) || key.match(/^[A-Z0-9_]+$/))).length === 0) {
+      && /^Pingdom\.com_bot.*/.test(params.__ow_headers.user_agent)) {
       return report(checks);
     }
     return func(params);
