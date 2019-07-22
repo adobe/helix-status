@@ -21,9 +21,7 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
-const { wrap, report } = require('../src/index.js');
-
-const PINGDOM_USER_AGENT = 'Pingdom.com_bot_version_1.4_(http://www.pingdom.com/)';
+const { wrap, report, PINGDOM_XML_PATH } = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
@@ -45,16 +43,16 @@ describe('Index Tests', () => {
     assert.deepEqual(wrapped(), 'foo');
   });
 
-  it('wrap function takes over when Pingdom User-Agent is present', async () => {
+  it('wrap function takes over when called with pingdom status path', async () => {
     const wrapped = wrap(({ name } = {}) => name || 'foo');
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without Pingdom User-Agent passes through');
+    assert.deepEqual(wrapped(), 'foo', 'calling without Pingdom status path passes through');
 
-    const result = await wrapped({ __ow_headers: { user_agent: `${PINGDOM_USER_AGENT}` } });
-    assert.equal(result.statusCode, 200, 'calling with Pingdom User-Agent get reports');
+    const result = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with Pingdom status path get reports');
 
-    const result1 = await wrapped({ __ow_headers: { user_agent: `${PINGDOM_USER_AGENT}` }, FOO_BAR: 'baz' });
-    assert.equal(result1.statusCode, 200, 'calling with Pingdom User-Agent get reports');
+    const result1 = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}`, FOO_BAR: 'baz' });
+    assert.equal(result1.statusCode, 200, 'calling with Pingdom status path get reports');
 
     const result2 = await wrapped({ name: 'boo' });
     assert.equal(result2, 'boo');
