@@ -61,7 +61,7 @@ describe('Index Tests', () => {
   it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.equal(result.statusCode, 200);
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
   });
 
   it('index function returns n/a for missing package.json', async () => {
@@ -130,8 +130,18 @@ describe('Index Tests', () => {
     const { body } = result;
 
     assert.ok(body.match(/<example>/));
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
     assert.equal(result.statusCode, 200);
+  });
+
+  it('index function returns error status code', async () => {
+    const ERROR_STATUS = 503;
+    const result = await index({ example: `http://httpstat.us/${ERROR_STATUS}` });
+
+    assert.ok(result.body.match(/<version>2./));
+    assert.ok(result.body.match(/<status>failed/));
+    assert.ok(result.body.match(new RegExp(`<statuscode>${ERROR_STATUS}`)));
+    assert.equal(result.statusCode, ERROR_STATUS);
   });
 
   it('index function fails with useful error message', async function test() {
@@ -146,8 +156,8 @@ describe('Index Tests', () => {
 
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>1./));
-    assert.equal(result.statusCode, 200);
+    assert.ok(result.body.match(/<version>2./));
+    assert.equal(result.statusCode, 500);
   });
 
   it('index function fails after timeout', async function test() {
@@ -155,15 +165,15 @@ describe('Index Tests', () => {
     // so we disable it here.
     this.polly.disconnectFrom('node-http');
     const result = await report({
-      snail: 'https://raw.githubusercontent.com/adobe/helix-pingdom-status/master/README.md',
+      snail: 'https://httpstat.us/200?sleep=1000',
     }, 10);
 
     assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
 
     // error can be ESOCKETTIMEDOUT or ETIMEDOUT
     assert.ok(result.body.match(/<body><!\[CDATA\[Error: E(SOCKET)?TIMEDOUT]]><\/body>/));
-    assert.equal(result.statusCode, 200);
+    assert.equal(result.statusCode, 500);
   });
 
   it('index function throws if passed invalid arguments', async () => {

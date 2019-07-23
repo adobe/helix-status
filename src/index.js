@@ -88,7 +88,7 @@ async function report(checks = {}, timeout = 10000) {
     const statusCode = (e.response ? e.response.statusCode : '') || 500;
     const body = (e.response ? e.response.body : '') || e.message;
     return {
-      statusCode: 200,
+      statusCode,
       headers: {
         'Content-Type': 'application/xml',
         'X-Version': version,
