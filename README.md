@@ -39,7 +39,7 @@ The service is installed and available for Adobe I/O Runtime at `https://adobeio
 curl https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v1/_status_check/pingdom.xml
 ```
 
-If you want to monitor the availability of Adobe I/O Runtime, just add a new [HTTP Custom Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) in Pingdom, using the `https://` protocol, and `adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v1/_status_check/pingdom.xmls` as the URL.
+If you want to monitor the availability of Adobe I/O Runtime, just add a new [HTTP Custom Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) in Pingdom, using the `https://` protocol, and `adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v1/_status_check/pingdom.xml` as the URL.
 
 ## Deployment in your own Namespace
 
