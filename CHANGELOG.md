@@ -1,3 +1,19 @@
+# [2.0.0](https://github.com/adobe/helix-pingdom-status/compare/v1.4.4...v2.0.0) (2019-07-23)
+
+
+### Features
+
+* **index:** base Pingdom check detection on user agent ([67d6aaa](https://github.com/adobe/helix-pingdom-status/commit/67d6aaa)), closes [#17](https://github.com/adobe/helix-pingdom-status/issues/17)
+* **index:** determine if it's a pingdom check based on dedicated path rather than user agent ([f7e35c3](https://github.com/adobe/helix-pingdom-status/commit/f7e35c3)), closes [#17](https://github.com/adobe/helix-pingdom-status/issues/17)
+
+
+### BREAKING CHANGES
+
+* **index:** The behaviour of the wrapper changed. Pingdom status response generation depends on
+a dedicated path instead of Http method and absence of parameters
+* **index:** The behaviour of the wrapper changed. Pingdom status response generation depends on
+user agent instead of Http method and absence of parameters.
+
 ## [1.4.4](https://github.com/adobe/helix-pingdom-status/compare/v1.4.3...v1.4.4) (2019-07-12)
 
 
