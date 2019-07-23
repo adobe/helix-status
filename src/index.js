@@ -14,6 +14,8 @@
 const request = require('request-promise-native');
 const fs = require('fs');
 
+const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
+
 let _version;
 
 async function getVersion() {
@@ -112,13 +114,9 @@ async function report(checks = {}, timeout = 10000) {
 
 function wrap(func, checks) {
   return (params) => {
+    // Pingdom status check?
     if (params
-      // eslint-disable-next-line no-underscore-dangle
-      && params.__ow_method === 'get'
-      // eslint-disable-next-line no-underscore-dangle
-      && !params.__ow_path
-      && Object.keys(params)
-        .filter(key => !(key.match(/^__/) || key.match(/^[A-Z0-9_]+$/))).length === 0) {
+      && params.__ow_path === PINGDOM_XML_PATH) {
       return report(checks);
     }
     return func(params);
@@ -142,4 +140,6 @@ function main(paramsorfunction, checks = {}) {
   throw new Error('Invalid Arguments: expected function or object');
 }
 
-module.exports = { main, wrap, report };
+module.exports = {
+  main, wrap, report, PINGDOM_XML_PATH,
+};
