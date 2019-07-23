@@ -75,7 +75,7 @@ to the top of your file and override the `module.exports.main` with:
 module.exports.main = wrap(main);
 ```
 
-All `GET ` requests to your service will now respond with a Pingdom Custom Check XML like this:
+All `GET /_status_check/pingdom.xml` requests to your service will now respond with a XML response similar to below:
 
 ```xml
 <pingdom_http_custom_check>
@@ -84,6 +84,8 @@ All `GET ` requests to your service will now respond with a Pingdom Custom Check
 
 </pingdom_http_custom_check
 ```
+
+> **Note**: While the XML response format is similar to the one described in [Pingdom Custom HTTP Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) the `/_status_check/pingdom.xml` request is intented to be used for standard Pingdom UPTIME Checks only. It's _not_ suitable for Custom HTTP Checks which  expect an HTTP Status 200 XML response whereas UPTIME Checks determine the status of a service (UP/DOWN) based on the HTTP Status code of the response. For more information see [#21](https://github.com/adobe/helix-pingdom-status/issues/21) and [here](https://help.pingdom.com/hc/en-us/articles/203749792-What-is-a-check-).
 
 You can also specify a list of checks to run by passing second argument to `wrap`:
 
