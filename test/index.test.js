@@ -61,7 +61,7 @@ describe('Index Tests', () => {
   it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.equal(result.statusCode, 200);
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
   });
 
   it('index function returns n/a for missing package.json', async () => {
@@ -130,7 +130,7 @@ describe('Index Tests', () => {
     const { body } = result;
 
     assert.ok(body.match(/<example>/));
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
     assert.equal(result.statusCode, 200);
   });
 
@@ -146,7 +146,7 @@ describe('Index Tests', () => {
 
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
     assert.equal(result.statusCode, 200);
   });
 
@@ -159,7 +159,7 @@ describe('Index Tests', () => {
     }, 10);
 
     assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>1./));
+    assert.ok(result.body.match(/<version>2./));
 
     // error can be ESOCKETTIMEDOUT or ETIMEDOUT
     assert.ok(result.body.match(/<body><!\[CDATA\[Error: E(SOCKET)?TIMEDOUT]]><\/body>/));
