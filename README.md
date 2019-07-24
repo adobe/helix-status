@@ -1,6 +1,6 @@
 # Helix Pingdom Status
 
-> Report status for OpenWhisk Microservices in a Pingdom-custom-check-friendly format
+> Report status for OpenWhisk Microservices for Pingdom Uptime (HTTP) checks
 
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-pingdom-status.svg)](https://codecov.io/gh/adobe/helix-pingdom-status)
@@ -20,26 +20,26 @@ In case the service is down, you want to quickly understand if it is a problem w
 - one of your backend API providers which might be unreachable
 - your own service which could be broken (for instance due to a deployment change)
 
-Finally, you know that there are [HTTP Custom Checks](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) in Pingdom, but you do not want to keep repeating the same code for returning a status check in each of your micro services.
+Finally, you know that there are [Uptime (HTTP) Checks](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, but you do not want to keep repeating the same code for returning a status check in each of your micro services.
 
 ## Solution
 
 `helix-pingdom-status` is:
 
-1. a micro service (running as an OpenWhisk HTTP action) that provides an HTTP Custom Check for Pingdom
+1. a micro service (running as an OpenWhisk HTTP action) that responds to Pingdom Uptime (HTTP) Checks
 2. a library that allows you to wrap your own actions to get a standardized monitoring response
 
 # Helix Pingdom Status (as a Service)
 
 ## Usage
 
-The service is installed and available for Adobe I/O Runtime at `https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v1`. 
+The service is installed and available for Adobe I/O Runtime at `https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@latest`.
 
 ```bash
-curl https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v1/_status_check/pingdom.xml
+curl https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@latest/_status_check/pingdom.xml
 ```
 
-If you want to monitor the availability of Adobe I/O Runtime, just add a new [HTTP Custom Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) in Pingdom, using the `https://` protocol, and `adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v1/_status_check/pingdom.xml` as the URL.
+If you want to monitor the availability of Adobe I/O Runtime, just add a new [Uptime (HTTP) Check](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, using the `https://` protocol, and `adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@latest/_status_check/pingdom.xml` as the URL.
 
 ## Deployment in your own Namespace
 
@@ -50,8 +50,6 @@ $ npm install
 $ npm run build
 $ npm run deploy
 ```
-
-This will 
 
 # Helix Pingdom Status (as a Library)
 
@@ -75,7 +73,7 @@ to the top of your file and override the `module.exports.main` with:
 module.exports.main = wrap(main);
 ```
 
-All `GET /_status_check/pingdom.xml` requests to your service will now respond with a XML response similar to below:
+All `GET /_status_check/pingdom.xml` requests to your service will now respond with an XML response similar to below:
 
 ```xml
 <pingdom_http_custom_check>
@@ -107,8 +105,8 @@ It is a good idea to use URLs that are representative of the API endpoints your 
 
 # Development
 
-## Deploying Helix Static
+## Deploying Helix Pingdom Status
 
-Deploying Helix Service requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
+Deploying Helix Pingdom Status requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
-All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/service@ci<num>` and tagged with the CI build number.
+All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/pingdom-status@ci<num>` and tagged with the CI build number.

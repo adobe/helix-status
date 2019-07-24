@@ -1,7 +1,7 @@
 {
   "name": "@adobe/helix-pingdom-status",
   "version": "2.0.0",
-  "description": "Example Package",
+  "description": "Report status for OpenWhisk Microservices for Pingdom Uptime (HTTP) checks",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 mocha",
