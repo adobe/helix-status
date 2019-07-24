@@ -61,7 +61,7 @@ describe('Index Tests', () => {
   it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.equal(result.statusCode, 200);
-    assert.ok(result.body.match(/<version>2./));
+    assert.ok(result.body.match(/<version>\d+\./));
   });
 
   it('index function returns n/a for missing package.json', async () => {
@@ -130,7 +130,7 @@ describe('Index Tests', () => {
     const { body } = result;
 
     assert.ok(body.match(/<example>/));
-    assert.ok(result.body.match(/<version>2./));
+    assert.ok(result.body.match(/<version>\d+\./));
     assert.equal(result.statusCode, 200);
   });
 
@@ -138,7 +138,7 @@ describe('Index Tests', () => {
     const ERROR_STATUS = 503;
     const result = await index({ example: `http://httpstat.us/${ERROR_STATUS}` });
 
-    assert.ok(result.body.match(/<version>2./));
+    assert.ok(result.body.match(/<version>\d+\./));
     assert.ok(result.body.match(/<status>failed/));
     assert.ok(result.body.match(new RegExp(`<statuscode>${ERROR_STATUS}`)));
     assert.equal(result.statusCode, ERROR_STATUS);
@@ -156,7 +156,7 @@ describe('Index Tests', () => {
 
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>2./));
+    assert.ok(result.body.match(/<version>\d+\./));
     assert.equal(result.statusCode, 500);
   });
 
@@ -169,7 +169,7 @@ describe('Index Tests', () => {
     }, 10);
 
     assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>2./));
+    assert.ok(result.body.match(/<version>\d+\./));
 
     // error can be ESOCKETTIMEDOUT or ETIMEDOUT
     assert.ok(result.body.match(/<body><!\[CDATA\[Error: E(SOCKET)?TIMEDOUT]]><\/body>/));
