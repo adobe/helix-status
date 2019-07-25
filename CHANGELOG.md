@@ -1,3 +1,10 @@
+## [2.0.2](https://github.com/adobe/helix-pingdom-status/compare/v2.0.1...v2.0.2) (2019-07-25)
+
+
+### Bug Fixes
+
+* **package:** downgrade snyk to 1.199.0 ([622814c](https://github.com/adobe/helix-pingdom-status/commit/622814c)), closes [#26](https://github.com/adobe/helix-pingdom-status/issues/26)
+
 ## [2.0.1](https://github.com/adobe/helix-pingdom-status/compare/v2.0.0...v2.0.1) (2019-07-24)
 
 
