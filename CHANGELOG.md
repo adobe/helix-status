@@ -1,3 +1,16 @@
+# [3.0.0](https://github.com/adobe/helix-pingdom-status/compare/v2.0.2...v3.0.0) (2019-07-26)
+
+
+### Features
+
+* **index:** Return error status code on error (standard Http check) ([1468c04](https://github.com/adobe/helix-pingdom-status/commit/1468c04)), closes [#21](https://github.com/adobe/helix-pingdom-status/issues/21)
+
+
+### BREAKING CHANGES
+
+* **index:** Returns error Http status on error (Standard Http check) instead of always 200
+(Custom Http check)
+
 ## [2.0.2](https://github.com/adobe/helix-pingdom-status/compare/v2.0.1...v2.0.2) (2019-07-25)
 
 
