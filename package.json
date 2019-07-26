@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-pingdom-status",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Example Package",
   "main": "src/index.js",
   "scripts": {
@@ -29,10 +29,10 @@
   "dependencies": {
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "snyk": "^2.0.0"
+    "snyk": "^1.199.2"
   },
   "devDependencies": {
-    "@adobe/openwhisk-action-builder": "^1.2.1",
+    "@adobe/openwhisk-action-builder": "^1.2.2",
     "@pollyjs/adapter-node-http": "^2.6.0",
     "@pollyjs/core": "^2.6.0",
     "@pollyjs/persister-fs": "^2.6.0",
@@ -75,7 +75,7 @@
     }
   },
   "wsk": {
-    "name": "helix-services/pingdom-status@2.0.1",
+    "name": "helix-services/pingdom-status@2.0.2",
     "static": []
   }
 }
