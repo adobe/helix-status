@@ -15,6 +15,7 @@ const request = require('request-promise-native');
 const fs = require('fs');
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
+const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
 
 let _version;
 
@@ -127,6 +128,14 @@ function wrap(func, checks) {
       && params.__ow_path === PINGDOM_XML_PATH) {
       return report(checks);
     }
+    // New Relic status check?
+    if (params
+      && params.__ow_path === HEALTHCHECK_PATH) {
+      return report(checks, 10000, {
+        body: j => j,
+        mime: 'application/json'
+      });
+    }
     return func(params);
   };
 }
@@ -149,5 +158,5 @@ function main(paramsorfunction, checks = {}) {
 }
 
 module.exports = {
-  main, wrap, report, PINGDOM_XML_PATH, xml,
+  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH
 };

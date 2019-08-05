@@ -22,7 +22,7 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
 const {
-  wrap, report, PINGDOM_XML_PATH, xml,
+  wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH
 } = require('../src/index.js');
 
 describe('Index Tests', () => {
@@ -52,9 +52,28 @@ describe('Index Tests', () => {
 
     const result = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}` });
     assert.equal(result.statusCode, 200, 'calling with Pingdom status path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/xml');
+    assert.equal(typeof result.body, 'string');
 
     const result1 = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}`, FOO_BAR: 'baz' });
     assert.equal(result1.statusCode, 200, 'calling with Pingdom status path get reports');
+
+    const result2 = await wrapped({ name: 'boo' });
+    assert.equal(result2, 'boo');
+  });
+
+  it('wrap function takes over when called with health check path', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo');
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+
+    const result1 = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}`, FOO_BAR: 'baz' });
+    assert.equal(result1.statusCode, 200, 'calling with health check path get reports');
 
     const result2 = await wrapped({ name: 'boo' });
     assert.equal(result2, 'boo');
