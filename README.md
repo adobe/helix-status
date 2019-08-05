@@ -1,6 +1,6 @@
 # Helix Pingdom Status
 
-> Report status for OpenWhisk Microservices for Pingdom Uptime (HTTP) checks
+> Report status for OpenWhisk Microservices for Pingdom (and others) Uptime (HTTP) checks
 
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-pingdom-status.svg)](https://codecov.io/gh/adobe/helix-pingdom-status)
@@ -20,13 +20,13 @@ In case the service is down, you want to quickly understand if it is a problem w
 - one of your backend API providers which might be unreachable
 - your own service which could be broken (for instance due to a deployment change)
 
-Finally, you know that there are [Uptime (HTTP) Checks](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, but you do not want to keep repeating the same code for returning a status check in each of your micro services.
+Finally, you know that there are [Uptime (HTTP) Checks](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, and similar services such as [New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) but you do not want to keep repeating the same code for returning a status check in each of your micro services.
 
 ## Solution
 
 `helix-pingdom-status` is:
 
-1. a micro service (running as an OpenWhisk HTTP action) that responds to Pingdom Uptime (HTTP) Checks
+1. a micro service (running as an OpenWhisk HTTP action) that responds to Pingdom Uptime (HTTP) Checks (and similar)
 2. a library that allows you to wrap your own actions to get a standardized monitoring response
 
 # Helix Pingdom Status (as a Service)
@@ -37,6 +37,7 @@ The service is installed and available for Adobe I/O Runtime at `https://adobeio
 
 ```bash
 curl https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@latest/_status_check/pingdom.xml
+curl https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@latest/_status_check/healthcheck.json
 ```
 
 If you want to monitor the availability of Adobe I/O Runtime, just add a new [Uptime (HTTP) Check](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, using the `https://` protocol, and `adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@latest/_status_check/pingdom.xml` as the URL.
@@ -102,6 +103,32 @@ you will then see results like this:
 ```
 
 It is a good idea to use URLs that are representative of the API endpoints your service is calling in normal operation as checks.
+
+# Usage with New Relics Synthetics
+
+[New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) is a service that is similar to Pingdom, but more capable. It can be used with `helix-pingdom-status` by creating an API Check script like this:
+
+```javascript
+const assert = require('assert');
+
+// replace the URL with your check URL
+$http.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v3/_status_check/heathcheck.json',
+  // Callback
+  function (err, response, body) {
+    assert.equal(response.statusCode, 200, 'Expected a 200 OK response');
+    const health = JSON.parse(body);
+    assert.equal(health.status, 'OK', 'Expected an OK health check status');
+    for (const v in health) {
+      if (['status', 'process', 'version'].indexOf(v)===-1) {
+        $util.insights.set(v, parseInt(health[v]));
+      }
+    }
+    for (const h in ['x-openwhisk-activation-id', 'x-request-id', 'x-version']) {
+      $util.insights.set(h, response.headers[h]);
+    }
+  }
+);
+```
 
 # Development
 
