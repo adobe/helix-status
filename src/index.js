@@ -133,7 +133,7 @@ function wrap(func, checks) {
       && params.__ow_path === HEALTHCHECK_PATH) {
       return report(checks, 10000, {
         body: j => j,
-        mime: 'application/json'
+        mime: 'application/json',
       });
     }
     return func(params);
@@ -158,5 +158,5 @@ function main(paramsorfunction, checks = {}) {
 }
 
 module.exports = {
-  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH
+  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
 };

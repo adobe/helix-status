@@ -22,7 +22,7 @@ const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
 const {
-  wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH
+  wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
 } = require('../src/index.js');
 
 describe('Index Tests', () => {
