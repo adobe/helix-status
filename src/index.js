@@ -18,6 +18,14 @@ const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 
 let _version;
 
+function xml(o, name) {
+  let value = o;
+  if (typeof o === 'object') {
+    value = Object.keys(o).map(k => xml(o[k], k)).join('\n');
+  }
+  return `<${name}>${value}</${name}>`;
+}
+
 async function getVersion() {
   if (!_version) {
     _version = await new Promise((resolve) => {
@@ -41,7 +49,7 @@ async function getVersion() {
   return _version;
 }
 
-async function report(checks = {}, timeout = 10000) {
+async function report(checks = {}, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
   const start = Date.now();
   const version = await getVersion();
 
@@ -69,20 +77,22 @@ async function report(checks = {}, timeout = 10000) {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/xml',
+        'Content-Type': decorator.mime,
         'X-Version': version,
       },
-      body: [
-        '<pingdom_http_custom_check>',
-        '  <status>OK</status>',
-        `  <version>${version}</version>`,
-        `  <response_time>${Math.abs(Date.now() - start)}</response_time>`,
-        ...checkresults.map(({ key, response }) => `  <${key}>${Math.floor(response.timings.end)}</${key}>`),
-        '  <process>',
-        `    <activation>${process.env.__OW_ACTIVATION_ID}</activation>`,
-        '  </process>',
-        '</pingdom_http_custom_check>',
-      ].join('\n'),
+      body: decorator.body({
+        status: 'OK',
+        version,
+        response_time: Math.abs(Date.now() - start),
+        process: {
+          activation: process.env.__OW_ACTIVATION_ID,
+        },
+        ...checkresults.reduce((p, { key, response }) => {
+          // eslint-disable-next-line no-param-reassign
+          p[key] = Math.floor(response.timings.end);
+          return p;
+        }, {}),
+      }, decorator.name),
     };
   } catch (e) {
     const statusCode = (e.response ? e.response.statusCode : '') || 500;
@@ -90,24 +100,22 @@ async function report(checks = {}, timeout = 10000) {
     return {
       statusCode,
       headers: {
-        'Content-Type': 'application/xml',
+        'Content-Type': decorator.mime,
         'X-Version': version,
       },
-      body: [
-        '<pingdom_http_custom_check>',
-        '  <status>failed</status>',
-        `  <version>${version}</version>`,
-        `  <response_time>${Math.abs(Date.now() - start)}</response_time>`,
-        '  <error>',
-        `    <url>${e.options.uri}</url>`,
-        `    <statuscode>${statusCode}</statuscode>`,
-        `    <body><![CDATA[${body}]]></body>`,
-        '  </error>',
-        '  <process>',
-        `    <activation>${process.env.__OW_ACTIVATION_ID}</activation>`,
-        '  </process>',
-        '</pingdom_http_custom_check>',
-      ].join('\n'),
+      body: decorator.body({
+        status: 'failed',
+        version,
+        response_time: Math.abs(Date.now() - start),
+        error: {
+          url: e.options.uri,
+          statuscode: statusCode,
+          body: `<![CDATA[${body}]]>`,
+        },
+        process: {
+          activation: process.env.__OW_ACTIVATION_ID,
+        },
+      }, decorator.name),
     };
   }
 }
@@ -141,5 +149,5 @@ function main(paramsorfunction, checks = {}) {
 }
 
 module.exports = {
-  main, wrap, report, PINGDOM_XML_PATH,
+  main, wrap, report, PINGDOM_XML_PATH, xml,
 };

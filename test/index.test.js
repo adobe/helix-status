@@ -21,7 +21,9 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
-const { wrap, report, PINGDOM_XML_PATH } = require('../src/index.js');
+const {
+  wrap, report, PINGDOM_XML_PATH, xml,
+} = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
@@ -186,5 +188,21 @@ describe('Index Tests', () => {
       }
       assert.equal(e.message, 'Invalid Arguments: expected function or object');
     }
+  });
+});
+
+describe('Test mini-XML generator', () => {
+  it('Generates XML from String', () => {
+    assert.equal(xml('Hello World', 'foo'), '<foo>Hello World</foo>');
+  });
+
+  it('Generates XML from Number', () => {
+    assert.equal(xml(12, 'foo'), '<foo>12</foo>');
+  });
+
+  it('Generates XML from Object', () => {
+    assert.equal(xml({ hey: 'ho', bar: 'baz', zip: { zap: 'zup' } }, 'foo'), `<foo><hey>ho</hey>
+<bar>baz</bar>
+<zip><zap>zup</zap></zip></foo>`);
   });
 });
