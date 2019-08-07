@@ -21,7 +21,9 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
-const { wrap, report, PINGDOM_XML_PATH } = require('../src/index.js');
+const {
+  wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
+} = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
@@ -50,9 +52,28 @@ describe('Index Tests', () => {
 
     const result = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}` });
     assert.equal(result.statusCode, 200, 'calling with Pingdom status path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/xml');
+    assert.equal(typeof result.body, 'string');
 
     const result1 = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}`, FOO_BAR: 'baz' });
     assert.equal(result1.statusCode, 200, 'calling with Pingdom status path get reports');
+
+    const result2 = await wrapped({ name: 'boo' });
+    assert.equal(result2, 'boo');
+  });
+
+  it('wrap function takes over when called with health check path', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo');
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+
+    const result1 = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}`, FOO_BAR: 'baz' });
+    assert.equal(result1.statusCode, 200, 'calling with health check path get reports');
 
     const result2 = await wrapped({ name: 'boo' });
     assert.equal(result2, 'boo');
@@ -172,7 +193,7 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<version>\d+\./));
 
     // error can be ESOCKETTIMEDOUT or ETIMEDOUT
-    assert.ok(result.body.match(/<body><!\[CDATA\[Error: E(SOCKET)?TIMEDOUT]]><\/body>/));
+    assert.ok(result.body.match(/<body>Error: E(SOCKET)?TIMEDOUT<\/body>/));
     assert.equal(result.statusCode, 500);
   });
 
@@ -186,5 +207,21 @@ describe('Index Tests', () => {
       }
       assert.equal(e.message, 'Invalid Arguments: expected function or object');
     }
+  });
+});
+
+describe('Test mini-XML generator', () => {
+  it('Generates XML from String', () => {
+    assert.equal(xml('Hello World', 'foo'), '<foo>Hello World</foo>');
+  });
+
+  it('Generates XML from Number', () => {
+    assert.equal(xml(12, 'foo'), '<foo>12</foo>');
+  });
+
+  it('Generates XML from Object', () => {
+    assert.equal(xml({ hey: 'ho', bar: 'baz', zip: { zap: 'zup' } }, 'foo'), `<foo><hey>ho</hey>
+<bar>baz</bar>
+<zip><zap>zup</zap></zip></foo>`);
   });
 });

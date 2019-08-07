@@ -29,7 +29,8 @@
   "dependencies": {
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "snyk": "^1.199.2"
+    "snyk": "^1.199.2",
+    "xml-escape": "^1.1.0"
   },
   "devDependencies": {
     "@adobe/openwhisk-action-builder": "^1.2.2",
