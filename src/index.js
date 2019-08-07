@@ -12,6 +12,7 @@
 
 /* eslint-disable no-underscore-dangle */
 const request = require('request-promise-native');
+const escape = require('xml-escape');
 const fs = require('fs');
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
@@ -23,6 +24,8 @@ function xml(o, name) {
   let value = o;
   if (typeof o === 'object') {
     value = Object.keys(o).map(k => xml(o[k], k)).join('\n');
+  } else if (typeof o === 'string') {
+    value = escape(o);
   }
   return `<${name}>${value}</${name}>`;
 }
@@ -111,7 +114,7 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         error: {
           url: e.options.uri,
           statuscode: statusCode,
-          body: `<![CDATA[${body}]]>`,
+          body,
         },
         process: {
           activation: process.env.__OW_ACTIVATION_ID,

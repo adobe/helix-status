@@ -193,7 +193,7 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<version>\d+\./));
 
     // error can be ESOCKETTIMEDOUT or ETIMEDOUT
-    assert.ok(result.body.match(/<body><!\[CDATA\[Error: E(SOCKET)?TIMEDOUT]]><\/body>/));
+    assert.ok(result.body.match(/<body>Error: E(SOCKET)?TIMEDOUT<\/body>/));
     assert.equal(result.statusCode, 500);
   });
 
