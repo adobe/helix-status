@@ -1,3 +1,15 @@
+# [3.1.0](https://github.com/adobe/helix-pingdom-status/compare/v3.0.0...v3.1.0) (2019-08-07)
+
+
+### Bug Fixes
+
+* **xml:** don't use CDATA, but escape XML strings ([fe432b4](https://github.com/adobe/helix-pingdom-status/commit/fe432b4))
+
+
+### Features
+
+* **status:** support getting status in JSON format ([9818461](https://github.com/adobe/helix-pingdom-status/commit/9818461))
+
 # [3.0.0](https://github.com/adobe/helix-pingdom-status/compare/v2.0.2...v3.0.0) (2019-07-26)
 
 
