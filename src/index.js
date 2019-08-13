@@ -23,7 +23,7 @@ let _version;
 function xml(o, name) {
   let value = o;
   if (typeof o === 'object') {
-    value = Object.keys(o).map(k => xml(o[k], k)).join('\n');
+    value = Object.keys(o).map((k) => xml(o[k], k)).join('\n');
   } else if (typeof o === 'string') {
     value = escape(o);
   }
@@ -72,8 +72,8 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
     };
 
     const runchecks = Object.keys(checks)
-      .filter(key => key.match('^[a-z0-9]+$'))
-      .map(key => [key, checks[key]])
+      .filter((key) => key.match('^[a-z0-9]+$'))
+      .map((key) => [key, checks[key]])
       .map(checker);
 
     const checkresults = await Promise.all(runchecks);
@@ -135,7 +135,7 @@ function wrap(func, checks) {
     if (params
       && params.__ow_path === HEALTHCHECK_PATH) {
       return report(checks, 10000, {
-        body: j => j,
+        body: (j) => j,
         mime: 'application/json',
       });
     }
