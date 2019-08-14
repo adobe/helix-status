@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/adobe/helix-pingdom-status/compare/v3.1.0...v3.1.1) (2019-08-14)
+
+
+### Bug Fixes
+
+* **action:** check for JSON path in pure runtime function, too ([2865c38](https://github.com/adobe/helix-pingdom-status/commit/2865c38)), closes [#34](https://github.com/adobe/helix-pingdom-status/issues/34)
+
 # [3.1.0](https://github.com/adobe/helix-pingdom-status/compare/v3.0.0...v3.1.0) (2019-08-07)
 
 
