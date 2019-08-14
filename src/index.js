@@ -155,6 +155,14 @@ function main(paramsorfunction, checks = {}) {
   if (typeof paramsorfunction === 'function') {
     return wrap(paramsorfunction, checks);
   } else if (typeof paramsorfunction === 'object') {
+    // New Relic status check?
+    if (paramsorfunction
+      && paramsorfunction.__ow_path === HEALTHCHECK_PATH) {
+      return report(paramsorfunction, 10000, {
+        body: (j) => j,
+        mime: 'application/json',
+      });
+    }
     return report(paramsorfunction);
   }
   throw new Error('Invalid Arguments: expected function or object');

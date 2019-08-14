@@ -85,6 +85,12 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<version>\d+\./));
   });
 
+  it('index function returns status code for objects as JSON', async () => {
+    const result = await index({ __ow_path: HEALTHCHECK_PATH });
+    assert.equal(result.statusCode, 200);
+    assert.equal(typeof result.body, 'object');
+  });
+
   it('index function returns n/a for missing package.json', async () => {
     delete require.cache[require.resolve('../src/index.js')];
     // eslint-disable-next-line global-require
