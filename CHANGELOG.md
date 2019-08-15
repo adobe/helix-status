@@ -1,3 +1,15 @@
+# [4.1.0](https://github.com/adobe/helix-status/compare/v4.0.0...v4.1.0) (2019-08-15)
+
+
+### Bug Fixes
+
+* **synthetics:** fix the environment variable name ([b903386](https://github.com/adobe/helix-status/commit/b903386))
+
+
+### Features
+
+* **newrelics:** provide installer script that creates a new monitor ([df9145a](https://github.com/adobe/helix-status/commit/df9145a)), closes [#36](https://github.com/adobe/helix-status/issues/36)
+
 # [4.0.0](https://github.com/adobe/helix-status/compare/v3.1.1...v4.0.0) (2019-08-15)
 
 
