@@ -162,7 +162,7 @@ function run() {
     .help()
     .strict()
     .demandCommand(1)
-    .env('NEWRELICS')
+    .env('NEWRELIC')
     .argv;
 }
 
