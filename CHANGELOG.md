@@ -1,3 +1,15 @@
+# [4.0.0](https://github.com/adobe/helix-status/compare/v3.1.1...v4.0.0) (2019-08-15)
+
+
+### Styles
+
+* **package:** rename to helix-status ([5f741a2](https://github.com/adobe/helix-status/commit/5f741a2)), closes [#29](https://github.com/adobe/helix-status/issues/29)
+
+
+### BREAKING CHANGES
+
+* **package:** Adjusts the package name to `helix-status`, as the library and service is no longer exclusive to Pingdom. The service will be available under a new name and the old package will be marked as deprecated on NPM with instructions to update to the new status library.
+
 ## [3.1.1](https://github.com/adobe/helix-pingdom-status/compare/v3.1.0...v3.1.1) (2019-08-14)
 
 
