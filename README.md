@@ -130,6 +130,34 @@ $http.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/
 );
 ```
 
+## Automated Update of Synthetics Checks
+
+`helix-status` provides a small command line tool called `synthetics-check` that enables the automated update or creation of checks in New Relics Synthetics. It is intended to be run as part of your deployment pipeline and allows you to keep the health check format and the extracted custom fields in sync.
+
+Usage:
+
+```bash
+$ npx synthetics-check
+synthetics-check <cmd> url
+
+Commands:
+  synthetics-check create url  Create a new check
+  synthetics-check update url  Create or update an existing check
+
+Options:
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+
+$ npx synthetics-check update https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v3/_status_check/healthcheck.json
+Creating a new monitor @adobe/helix-status
+Updating the script for monitor @adobe/helix-status
+done.
+```
+
+By default, the check will use the `name` from your `package.json`, but you can override it using the `--name` parameter.
+
+`synthetics-check` requires a New Relic [Admin's API Key](https://docs.newrelic.com/docs/apis/get-started/intro-apis/understand-new-relic-api-keys#admin) (read the docs, it's different from your API key, even when you are an Admin) that should be passed using either the `--auth` parameter or the `NEWRELIC_AUTH` environment variable.
+
 # Development
 
 ## Deploying Helix Pingdom Status

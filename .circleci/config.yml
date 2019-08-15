@@ -79,6 +79,9 @@ jobs:
         name: Link Sequence (Minor)
         command: wsk action update --sequence /helix/helix-services/`node -e "console.log(require('./package.json').name.replace('@adobe/helix-', ''))"`@v`node -e "console.log(require('./package.json').version.match(/^[0-9]+.[0-9]+/)[0])"` helix-services/`node -e "console.log(require('./package.json').name.replace('@adobe/helix-', ''))"`@`node -e "console.log(require('./package.json').version)"` --web=true --web-secure=false
 
+    - run:
+        name: Set Up Monitoring
+        command: node src/bin.js update https://adobeioruntime.net/api/v1/web/helix/helix-services/`node -e "console.log(require('./package.json').name.replace('@adobe/helix-', ''))"`@v`node -e "console.log(require('./package.json').version.match(/^[0-9]+.[0-9]+/)[0])"`/_status_check/healthcheck.json
   branch-deploy:
     executor: node10
 
