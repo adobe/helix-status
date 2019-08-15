@@ -1,7 +1,7 @@
 {
-  "name": "@adobe/helix-pingdom-status",
+  "name": "@adobe/helix-status",
   "version": "3.1.1",
-  "description": "Report status for OpenWhisk Microservices for Pingdom Uptime (HTTP) checks",
+  "description": "Report status for OpenWhisk Microservices for Uptime checks with Pingdom or New Relic",
   "main": "src/index.js",
   "scripts": {
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 mocha",
@@ -18,14 +18,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/helix-pingdom-status"
+    "url": "https://github.com/adobe/helix-status"
   },
   "author": "",
   "license": "Apache-2.0",
   "bugs": {
-    "url": "https://github.com/adobe/helix-pingdom-status/issues"
+    "url": "https://github.com/adobe/helix-status/issues"
   },
-  "homepage": "https://github.com/adobe/helix-pingdom-status#readme",
+  "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
@@ -74,7 +74,7 @@
     }
   },
   "wsk": {
-    "name": "helix-services/pingdom-status@3.1.1",
+    "name": "helix-services/status@3.1.1",
     "static": []
   }
 }
