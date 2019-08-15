@@ -10,6 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
+/* eslint-disable no-console */
+
 const yargs = require('yargs');
 const fs = require('fs');
 const path = require('path');
@@ -37,14 +39,16 @@ const locations = ['AWS_AP_NORTHEAST_1',
   'LINODE_US_EAST_1',
   'LINODE_US_WEST_1'];
 
-let name;
+let packageName;
 
 try {
-  name = JSON.parse(fs.readFileSync('package.json')).name;
-} catch (e) {}
+  packageName = JSON.parse(fs.readFileSync('package.json')).name;
+} catch (e) {
+  packageName = undefined;
+}
 
 
-async function getmonitors(auth, id, name) {
+async function getmonitors(auth, monitorid, monitorname) {
   try {
     const response = await request.get('https://synthetics.newrelic.com/synthetics/api/v3/monitors', {
       headers: {
@@ -53,16 +57,17 @@ async function getmonitors(auth, id, name) {
       json: true,
     });
     const monitors = response.monitors.map(({ id, name }) => ({ id, name }));
-    if (id) {
-      return monitors.filter((monitor) => monitor.id === id);
+    if (monitorid) {
+      return monitors.filter((monitor) => monitor.id === monitorid);
     }
-    if (name) {
-      return monitors.filter((monitor) => monitor.name === name);
+    if (monitorname) {
+      return monitors.filter((monitor) => monitor.name === monitorname);
     } else {
       return [];
     }
   } catch (e) {
     console.error('Unable to retrieve monitors');
+    return [];
   }
 }
 
@@ -134,15 +139,15 @@ function baseargs(y) {
 }
 
 function run() {
-  yargs
+  return yargs
     .scriptName('synthetics-check')
     .usage('$0 <cmd> url')
     .command('create url', 'Create a new check', (y) => baseargs(y)
       .option('name', {
         type: 'string',
         describe: 'the name of the check',
-        required: name === undefined,
-        default: name,
+        required: packageName === undefined,
+        default: packageName,
       }), createorupdate)
     .command('update url', 'Create or update an existing check', (y) => baseargs(y)
       .option('id', {
@@ -152,7 +157,7 @@ function run() {
       .option('name', {
         type: 'string',
         describe: 'the name of the check',
-        default: name,
+        default: packageName,
       }), createorupdate)
     .help()
     .strict()
