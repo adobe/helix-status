@@ -99,7 +99,12 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
       }, decorator.name),
     };
   } catch (e) {
-    const statusCode = (e.response ? e.response.statusCode : '') || 500;
+    const istimeout = () => e.cause
+        && (e.cause.code === 'ESOCKETTIMEDOUT'
+         || e.cause.code === 'ETIMEDOUT');
+
+    const statusCode = istimeout() ? 504 // gateway timeout
+      : 502; // gateway error
     const body = (e.response ? e.response.body : '') || e.message;
     return {
       statusCode,
