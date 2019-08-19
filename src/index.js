@@ -113,7 +113,7 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         response_time: Math.abs(Date.now() - start),
         error: {
           url: e.options.uri,
-          statuscode: statusCode,
+          statuscode: e.response ? e.response.statusCode : undefined,
           body,
         },
         process: {
