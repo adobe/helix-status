@@ -34,7 +34,7 @@
     "request-promise-native": "^1.0.7",
     "snyk": "^1.199.2",
     "xml-escape": "^1.1.0",
-    "yargs": "^13.3.0"
+    "yargs": "^14.0.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "^1.0.0",
