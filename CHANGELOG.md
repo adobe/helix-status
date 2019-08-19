@@ -1,3 +1,15 @@
+# [4.2.0](https://github.com/adobe/helix-status/compare/v4.1.0...v4.2.0) (2019-08-19)
+
+
+### Bug Fixes
+
+* **status:** report timeouts with 504, all other backend errors with 502 ([a9b99c3](https://github.com/adobe/helix-status/commit/a9b99c3)), closes [#38](https://github.com/adobe/helix-status/issues/38)
+
+
+### Features
+
+* **status:** separate backend status from reported status ([5f6058e](https://github.com/adobe/helix-status/commit/5f6058e))
+
 # [4.1.0](https://github.com/adobe/helix-status/compare/v4.0.0...v4.1.0) (2019-08-15)
 
 
