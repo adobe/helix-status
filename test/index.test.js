@@ -39,6 +39,7 @@ describe('Index Tests', () => {
     },
   });
 
+
   it('index function returns function for function', async () => {
     const wrapped = await index(() => 'foo');
     assert.deepEqual(typeof wrapped, 'function');
@@ -168,7 +169,7 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<version>\d+\./));
     assert.ok(result.body.match(/<status>failed/));
     assert.ok(result.body.match(new RegExp(`<statuscode>${ERROR_STATUS}`)));
-    assert.equal(result.statusCode, ERROR_STATUS);
+    assert.equal(result.statusCode, 502);
   });
 
   it('index function fails with useful error message', async function test() {
@@ -184,23 +185,7 @@ describe('Index Tests', () => {
     assert.ok(result.body.match(/<statuscode>500/));
     assert.ok(result.body.match(/<status>failed/));
     assert.ok(result.body.match(/<version>\d+\./));
-    assert.equal(result.statusCode, 500);
-  });
-
-  it('index function fails after timeout', async function test() {
-    // polly seems to somehow interfere with the timeout handling in request.
-    // so we disable it here.
-    this.polly.disconnectFrom('node-http');
-    const result = await report({
-      snail: 'https://httpstat.us/200?sleep=1000',
-    }, 10);
-
-    assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>\d+\./));
-
-    // error can be ESOCKETTIMEDOUT or ETIMEDOUT
-    assert.ok(result.body.match(/<body>Error: E(SOCKET)?TIMEDOUT<\/body>/));
-    assert.equal(result.statusCode, 500);
+    assert.equal(result.statusCode, 502);
   });
 
   it('index function throws if passed invalid arguments', async () => {
@@ -229,5 +214,28 @@ describe('Test mini-XML generator', () => {
     assert.equal(xml({ hey: 'ho', bar: 'baz', zip: { zap: 'zup' } }, 'foo'), `<foo><hey>ho</hey>
 <bar>baz</bar>
 <zip><zap>zup</zap></zip></foo>`);
+  });
+});
+
+describe('Timeout Tests', () => {
+  it('index function reports timeouts with status 504', async () => {
+    const result = await index({ example: 'http://httpstat.us/200?sleep=15000' });
+
+    assert.ok(result.body.match(/<version>\d+\./));
+    assert.ok(result.body.match(/<status>failed/));
+    assert.equal(result.statusCode, 504);
+  }).timeout(20000);
+
+  it('index function fails after timeout', async () => {
+    const result = await report({
+      snail: 'https://httpstat.us/200?sleep=1000',
+    }, 10);
+
+    assert.ok(result.body.match(/<status>failed/));
+    assert.ok(result.body.match(/<version>\d+\./));
+
+    // error can be ESOCKETTIMEDOUT or ETIMEDOUT
+    assert.ok(result.body.match(/<body>Error: E(SOCKET)?TIMEDOUT<\/body>/));
+    assert.equal(result.statusCode, 504);
   });
 });
