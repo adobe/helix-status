@@ -19,6 +19,7 @@ const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
 
 let _version;
+let _name;
 
 function xml(o, name) {
   let value = o;
@@ -30,32 +31,45 @@ function xml(o, name) {
   return `<${name}>${value}</${name}>`;
 }
 
+function getPackage() {
+  return new Promise((resolve) => {
+    fs.readFile('package.json', 'utf-8', (err, data) => {
+      if (err) {
+        // eslint-disable-next-line no-console
+        console.error('error while reading package.json:', err);
+        resolve({});
+      } else {
+        try {
+          resolve(JSON.parse(data));
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          console.error('error while parsing package.json:', e);
+          resolve({});
+        }
+      }
+    });
+  });
+}
+
 async function getVersion() {
   if (!_version) {
-    _version = await new Promise((resolve) => {
-      fs.readFile('package.json', 'utf-8', (err, data) => {
-        if (err) {
-          // eslint-disable-next-line no-console
-          console.error('error while reading package.json:', err);
-          resolve('n/a');
-        } else {
-          try {
-            resolve(JSON.parse(data).version || 'n/a');
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('error while parsing package.json:', e);
-            resolve('n/a');
-          }
-        }
-      });
-    });
+    _version = (await getPackage()).version || 'n/a';
   }
   return _version;
 }
 
+async function getName() {
+  if (!_name) {
+    _name = (await getPackage()).name || 'n/a';
+  }
+  return _name;
+}
+
+
 async function report(checks = {}, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
   const start = Date.now();
   const version = await getVersion();
+  const name = await getName();
 
   try {
     const checker = async ([key, uri]) => {
@@ -64,6 +78,9 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         resolveWithFullResponse: true,
         time: true,
         timeout,
+        headers: {
+          'user-agent': `Helix Status on behalf of ${name} v${version}`,
+        },
       });
       return {
         key,

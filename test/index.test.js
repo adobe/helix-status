@@ -37,6 +37,11 @@ describe('Index Tests', () => {
         recordingsDir: path.resolve(__dirname, 'fixtures/recordings'),
       },
     },
+    matchRequestsBy: {
+      headers: {
+        exclude: ['user-agent'],
+      },
+    },
   });
 
 
