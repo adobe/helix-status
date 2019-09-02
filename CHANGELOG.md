@@ -1,3 +1,10 @@
+## [4.2.1](https://github.com/adobe/helix-status/compare/v4.2.0...v4.2.1) (2019-09-02)
+
+
+### Bug Fixes
+
+* **dependencies:** npm audit fix ([64540f2](https://github.com/adobe/helix-status/commit/64540f2))
+
 # [4.2.0](https://github.com/adobe/helix-status/compare/v4.1.0...v4.2.0) (2019-08-19)
 
 
