@@ -166,6 +166,40 @@ function wrap(func, checks) {
 }
 
 /**
+ * Status Checks as a Probot "app": call with a map of checks
+ * and get a function that can be passed into Probot's `withApp`
+ * function.
+ * @param {object} a map of checks to perfom. Each key is a name of the check,
+ * each value a URL to ping
+ * @returns {function} a probot app function that can be added to any given bot
+ */
+function probotStatus(checks = {}) {
+  return (probot) => {
+    const [, baseroute, pingroute] = PINGDOM_XML_PATH.split('/');
+    const healthroute = HEALTHCHECK_PATH.split('/')[2];
+
+    const router = probot.route(`/${baseroute}`);
+
+    router.get(`/${pingroute}`, async (_, res) => {
+      const r = await report(checks);
+
+      res.set(r.headers);
+      res.send(r.body);
+    });
+
+    router.get(`/${healthroute}`, async (_, res) => {
+      const r = await report(checks, 10000, {
+        body: (j) => j,
+        mime: 'application/json',
+      });
+
+      res.set(r.headers);
+      res.send(r.body);
+    });
+  };
+}
+
+/**
  * This is the main function
  * @param {object|function} paramsorfunction a params object (if called as an OpenWhisk action)
  * or a function to wrap.
@@ -191,5 +225,5 @@ function main(paramsorfunction, checks = {}) {
 }
 
 module.exports = {
-  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
+  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH, probotStatus,
 };
