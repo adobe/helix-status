@@ -1,3 +1,16 @@
+# [4.3.0](https://github.com/adobe/helix-status/compare/v4.2.1...v4.3.0) (2019-09-03)
+
+
+### Bug Fixes
+
+* **check:** use standard format for user agent string ([f4ebfb4](https://github.com/adobe/helix-status/commit/f4ebfb4)), closes [/github.com/adobe/helix-status/pull/43#discussion_r320057819](https://github.com//github.com/adobe/helix-status/pull/43/issues/discussion_r320057819)
+
+
+### Features
+
+* **http:** include a user agent for all requests ([75049cf](https://github.com/adobe/helix-status/commit/75049cf))
+* **index:** add support for probot applications ([9002686](https://github.com/adobe/helix-status/commit/9002686))
+
 ## [4.2.1](https://github.com/adobe/helix-status/compare/v4.2.0...v4.2.1) (2019-09-02)
 
 
