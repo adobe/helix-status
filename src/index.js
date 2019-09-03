@@ -15,6 +15,7 @@ const request = require('request-promise-native');
 const escape = require('xml-escape');
 const fs = require('fs');
 const memoize = require('mem');
+const pkgversion = require('../package.json').version;
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
@@ -65,7 +66,7 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         time: true,
         timeout,
         headers: {
-          'user-agent': `Helix Status on behalf of ${name} v${version}`,
+          'user-agent': `helix-status/${version} (${name}@${pkgversion})`,
         },
       });
       return {
