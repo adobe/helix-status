@@ -66,7 +66,7 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         time: true,
         timeout,
         headers: {
-          'user-agent': `helix-status/${version} (${name}@${pkgversion})`,
+          'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
         },
       });
       return {
