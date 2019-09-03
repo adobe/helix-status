@@ -1,3 +1,10 @@
+## [4.3.1](https://github.com/adobe/helix-status/compare/v4.3.0...v4.3.1) (2019-09-03)
+
+
+### Bug Fixes
+
+* **user-agent:** fix user agent version strings ([994a6c6](https://github.com/adobe/helix-status/commit/994a6c6))
+
 # [4.3.0](https://github.com/adobe/helix-status/compare/v4.2.1...v4.3.0) (2019-09-03)
 
 
