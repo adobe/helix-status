@@ -14,11 +14,11 @@
 const request = require('request-promise-native');
 const escape = require('xml-escape');
 const fs = require('fs');
+const memoize = require('mem');
+const pkgversion = require('../package.json').version;
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
-
-let _version;
 
 function xml(o, name) {
   let value = o;
@@ -30,32 +30,33 @@ function xml(o, name) {
   return `<${name}>${value}</${name}>`;
 }
 
-async function getVersion() {
-  if (!_version) {
-    _version = await new Promise((resolve) => {
-      fs.readFile('package.json', 'utf-8', (err, data) => {
-        if (err) {
-          // eslint-disable-next-line no-console
-          console.error('error while reading package.json:', err);
-          resolve('n/a');
-        } else {
-          try {
-            resolve(JSON.parse(data).version || 'n/a');
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            console.error('error while parsing package.json:', e);
-            resolve('n/a');
-          }
-        }
-      });
-    });
-  }
-  return _version;
-}
+const getPackage = memoize(() => new Promise((resolve) => {
+  fs.readFile('package.json', 'utf-8', (err, data) => {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error('error while reading package.json:', err);
+      resolve({});
+    } else {
+      try {
+        resolve(JSON.parse(data));
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error('error while parsing package.json:', e);
+        resolve({});
+      }
+    }
+  });
+}));
+
+const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
+
+const getName = memoize(async () => (await getPackage()).name || 'n/a');
+
 
 async function report(checks = {}, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
   const start = Date.now();
   const version = await getVersion();
+  const name = await getName();
 
   try {
     const checker = async ([key, uri]) => {
@@ -64,6 +65,9 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         resolveWithFullResponse: true,
         time: true,
         timeout,
+        headers: {
+          'user-agent': `helix-status/${version} (${name}@${pkgversion})`,
+        },
       });
       return {
         key,
@@ -149,6 +153,40 @@ function wrap(func, checks) {
 }
 
 /**
+ * Status Checks as a Probot "app": call with a map of checks
+ * and get a function that can be passed into Probot's `withApp`
+ * function.
+ * @param {object} a map of checks to perfom. Each key is a name of the check,
+ * each value a URL to ping
+ * @returns {function} a probot app function that can be added to any given bot
+ */
+function probotStatus(checks = {}) {
+  return (probot) => {
+    const [, baseroute, pingroute] = PINGDOM_XML_PATH.split('/');
+    const healthroute = HEALTHCHECK_PATH.split('/')[2];
+
+    const router = probot.route(`/${baseroute}`);
+
+    router.get(`/${pingroute}`, async (_, res) => {
+      const r = await report(checks);
+
+      res.set(r.headers);
+      res.send(r.body);
+    });
+
+    router.get(`/${healthroute}`, async (_, res) => {
+      const r = await report(checks, 10000, {
+        body: (j) => j,
+        mime: 'application/json',
+      });
+
+      res.set(r.headers);
+      res.send(r.body);
+    });
+  };
+}
+
+/**
  * This is the main function
  * @param {object|function} paramsorfunction a params object (if called as an OpenWhisk action)
  * or a function to wrap.
@@ -174,5 +212,5 @@ function main(paramsorfunction, checks = {}) {
 }
 
 module.exports = {
-  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
+  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH, probotStatus,
 };

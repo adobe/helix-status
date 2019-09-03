@@ -104,6 +104,21 @@ you will then see results like this:
 
 It is a good idea to use URLs that are representative of the API endpoints your service is calling in normal operation as checks.
 
+## Usage with Probot
+
+If you are using [Probot](https://probot.github.io) for instance through [Serverless Probot on OpenWhisk](https://github.com/adobe/probot-serverless-openwhisk), the usage is slighly different:
+
+```javascript
+// import the probot status app
+const { probotStatus } = require('@adobe/helix-status');
+
+probot
+  .withApp(yourApp)
+  .withApp(probotStatus()) //add a status check app 
+```
+
+`probotStatus()` accepts the same `checks` object that has been described above, so you can pass an array of URL checks.
+
 # Usage with New Relics Synthetics
 
 [New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) is a service that is similar to Pingdom, but more capable. It can be used with `helix-status` by creating an API Check script like this:
