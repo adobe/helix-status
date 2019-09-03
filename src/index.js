@@ -14,12 +14,10 @@
 const request = require('request-promise-native');
 const escape = require('xml-escape');
 const fs = require('fs');
+const memoize = require('mem');
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
-
-let _version;
-let _name;
 
 function xml(o, name) {
   let value = o;
@@ -31,39 +29,27 @@ function xml(o, name) {
   return `<${name}>${value}</${name}>`;
 }
 
-function getPackage() {
-  return new Promise((resolve) => {
-    fs.readFile('package.json', 'utf-8', (err, data) => {
-      if (err) {
+const getPackage = memoize(() => new Promise((resolve) => {
+  fs.readFile('package.json', 'utf-8', (err, data) => {
+    if (err) {
+      // eslint-disable-next-line no-console
+      console.error('error while reading package.json:', err);
+      resolve({});
+    } else {
+      try {
+        resolve(JSON.parse(data));
+      } catch (e) {
         // eslint-disable-next-line no-console
-        console.error('error while reading package.json:', err);
+        console.error('error while parsing package.json:', e);
         resolve({});
-      } else {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          console.error('error while parsing package.json:', e);
-          resolve({});
-        }
       }
-    });
+    }
   });
-}
+}));
 
-async function getVersion() {
-  if (!_version) {
-    _version = (await getPackage()).version || 'n/a';
-  }
-  return _version;
-}
+const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
-async function getName() {
-  if (!_name) {
-    _name = (await getPackage()).name || 'n/a';
-  }
-  return _name;
-}
+const getName = memoize(async () => (await getPackage()).name || 'n/a');
 
 
 async function report(checks = {}, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
