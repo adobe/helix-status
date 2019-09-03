@@ -26,7 +26,7 @@ function memoize(fn) {
       val = fn();
     }
     return val;
-  }
+  };
 }
 
 function xml(o, name) {
