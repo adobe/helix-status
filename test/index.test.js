@@ -204,6 +204,22 @@ describe('Index Tests', () => {
       assert.equal(e.message, 'Invalid Arguments: expected function or object');
     }
   });
+
+  it('User agent string contains helix-status/', async function test() {
+    const { server } = this.polly;
+
+    let ua;
+    server.get('http://localhost/test').intercept((req) => {
+      ua = req.headers['user-agent'];
+    });
+
+    await index({
+      localhost: 'http://localhost/test',
+    });
+
+    assert.ok(ua);
+    assert.ok(ua.match(/helix-status\//));
+  });
 });
 
 describe('Test mini-XML generator', () => {
