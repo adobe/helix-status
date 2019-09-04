@@ -1,3 +1,10 @@
+## [4.3.2](https://github.com/adobe/helix-status/compare/v4.3.1...v4.3.2) (2019-09-04)
+
+
+### Bug Fixes
+
+* **bin:** do not print complete error message on failure ([33db323](https://github.com/adobe/helix-status/commit/33db323))
+
 ## [4.3.1](https://github.com/adobe/helix-status/compare/v4.3.0...v4.3.1) (2019-09-03)
 
 
