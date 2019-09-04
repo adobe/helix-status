@@ -1,3 +1,10 @@
+## [4.3.3](https://github.com/adobe/helix-status/compare/v4.3.2...v4.3.3) (2019-09-04)
+
+
+### Bug Fixes
+
+* **bin:** guard against having more than 20 monitors ([71189fb](https://github.com/adobe/helix-status/commit/71189fb))
+
 ## [4.3.2](https://github.com/adobe/helix-status/compare/v4.3.1...v4.3.2) (2019-09-04)
 
 
