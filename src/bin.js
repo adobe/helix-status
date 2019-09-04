@@ -50,14 +50,23 @@ try {
 
 async function getmonitors(auth, monitorid, monitorname) {
   try {
-    const response = await request.get('https://synthetics.newrelic.com/synthetics/api/v3/monitors', {
-      headers: {
-        'X-Api-Key': auth,
-      },
-      json: true,
-    });
+    let more = true;
+    const loadedmonitors = [];
+    while (more) {
+      // eslint-disable-next-line no-await-in-loop
+      const response = await request.get(`https://synthetics.newrelic.com/synthetics/api/v3/monitors?limit=100&offset=${loadedmonitors.length}`, {
+        headers: {
+          'X-Api-Key': auth,
+        },
+        json: true,
+      });
+      if (response.count < 10) {
+        more = false;
+      }
+      loadedmonitors.push(...response.monitors);
+    }
 
-    const monitors = response.monitors.map(({ id, name }) => ({ id, name }));
+    const monitors = loadedmonitors.map(({ id, name }) => ({ id, name }));
     if (monitorid) {
       return monitors.filter((monitor) => monitor.id === monitorid);
     }
