@@ -56,6 +56,7 @@ async function getmonitors(auth, monitorid, monitorname) {
       },
       json: true,
     });
+
     const monitors = response.monitors.map(({ id, name }) => ({ id, name }));
     if (monitorid) {
       return monitors.filter((monitor) => monitor.id === monitorid);
@@ -104,23 +105,28 @@ async function createorupdate({
   } else {
     // create
     console.log('Creating a new monitor', name);
-    await request.post('https://synthetics.newrelic.com/synthetics/api/v3/monitors', {
-      json: true,
-      headers: {
-        'X-Api-Key': auth,
-      },
-      body: {
-        name,
-        type: 'SCRIPT_API',
-        frequency,
-        locations,
-        status,
-        slaThreshold,
-      },
-    });
-    await createorupdate({
-      auth, name, id, url,
-    });
+    try {
+      await request.post('https://synthetics.newrelic.com/synthetics/api/v3/monitors', {
+        json: true,
+        headers: {
+          'X-Api-Key': auth,
+        },
+        body: {
+          name,
+          type: 'SCRIPT_API',
+          frequency,
+          locations,
+          status,
+          slaThreshold,
+        },
+      });
+      await createorupdate({
+        auth, name, id, url,
+      });
+    } catch (e) {
+      console.error('Monitor creation failed', e.message);
+      process.exit(1);
+    }
   }
 }
 
