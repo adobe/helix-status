@@ -145,38 +145,86 @@ $http.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/
 );
 ```
 
-## Automated Update of Synthetics Checks
+## Automated Monitoring
 
-`helix-status` provides a small command line tool called `synthetics-check` that enables the automated update or creation of checks in New Relics Synthetics. It is intended to be run as part of your deployment pipeline and allows you to keep the health check format and the extracted custom fields in sync.
+`helix-status` provides the following command line tools intended to be run as part of your deployment pipeline to automate monitoring:
+
+### Statuspage: Automated Update of Components
+
+`statuspage` allows to automatically create components in Statuspage.
 
 Usage:
 
 ```bash
-$ npx synthetics-check
-synthetics-check <cmd> url
+$ npx statuspage
+statuspage <cmd>
 
 Commands:
-  synthetics-check create url  Create a new check
-  synthetics-check update url  Create or update an existing check
+  statuspage create  Create a new component
+
 
 Options:
-  --version  Show version number                                       [boolean]
-  --help     Show help                                                 [boolean]
+  --auth      The Statuspage API key (required)                        [string]
+  --page_id   The ID of the page to add the component to (required)    [string]
+  --group_id  The ID of the component group (optional)                 [string]
+  --version   Show version number                                      [boolean]
+  --help      Show help                                                [boolean]
 
-$ npx synthetics-check update https://adobeioruntime.net/api/v1/web/helix/helix-services/pingdom-status@v3/_status_check/healthcheck.json
-Creating a new monitor @adobe/helix-status
-Updating the script for monitor @adobe/helix-status
+$ npx statuspage create --page_id=zk3f17cq2qhw --group_id=qkf4y9ghhlgw
+Creating a new component @adobe/helix-status in group Foo Services
+Automation email: component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
 done.
 ```
 
 By default, the check will use the `name` from your `package.json`, but you can override it using the `--name` parameter.
 
-`synthetics-check` requires a New Relic [Admin's API Key](https://docs.newrelic.com/docs/apis/get-started/intro-apis/understand-new-relic-api-keys#admin) (read the docs, it's different from your API key, even when you are an Admin) that should be passed using either the `--auth` parameter or the `NEWRELIC_AUTH` environment variable.
+`statuspage` requires a Statuspage [API Key](https://developer.statuspage.io/#section/Authentication) that should be passed using either the `--auth` parameter or the `STATUSPAGE_AUTH` environment variable, as well as a Statuspage [Page ID] that should be passed using either the `--page_id` parameter or the `STATUSPAGE_PAGE_ID` environment variable. 
+
+
+### New Relic: Automated Update of Synthetics Checks, Alert Policies and Notification Channels
+
+`newrelic` automates the following New Relic features:
+1. creation or update of monitors in New Relics Synthetics
+1. creation of notification channels in New Relic Alerts
+1. creation or update of alert policies in New Relic Alerts
+1. linking of alert policies to monitors and notification channels
+
+Usage:
+
+```bash
+$ npx newrelic
+newrelic-synthetics <cmd> url
+
+Commands:
+  newrelic create url Create a new New Relic setup
+  newrelic update url Update an existing New Relic Setup
+
+Options:
+  --auth        The New Relic API key (required)                       [string]
+  --email       The email address to send alerts to (optional)         [string]
+  --monitor_id  The ID of the monitor to update (optional)             [string]
+  --policy_id   The ID of the policy to update (optional)              [string]
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+
+$ npx newrelic update \
+  https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/_status_check/healthcheck.json \
+  --email component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
+Creating a new monitor @adobe/helix-status
+Updating the script for monitor @adobe/helix-status
+Creating a new notification channel component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
+Creating a new alert policy @adobe/helix-status
+done.
+```
+
+By default, the check will use the `name` from your `package.json`, but you can override it using the `--name` parameter.
+
+`newrelic` requires a New Relic [Admin's API Key](https://docs.newrelic.com/docs/apis/get-started/intro-apis/understand-new-relic-api-keys#admin) (read the docs, it's different from your API key, even when you are an Admin) that should be passed using either the `--auth` parameter or the `NEWRELIC_AUTH` environment variable.
 
 # Development
 
-## Deploying Helix Pingdom Status
+## Deploying Helix Status
 
-Deploying Helix Pingdom Status requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
+Deploying Helix Status requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
 All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/status@ci<num>` and tagged with the CI build number.

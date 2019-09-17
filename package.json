@@ -4,6 +4,8 @@
   "description": "Report status for OpenWhisk Microservices for Uptime checks with Pingdom or New Relic",
   "main": "src/index.js",
   "bin": {
+    "newrelic": "src/newrelic.js",
+    "statuspage": "src/statuspage.js",
     "synthetics-check": "src/bin.js"
   },
   "scripts": {
