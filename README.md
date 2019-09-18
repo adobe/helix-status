@@ -162,21 +162,29 @@ statuspage <cmd>
 Commands:
   statuspage create  Create a new component
 
-
 Options:
-  --auth      The Statuspage API key (required)                        [string]
-  --page_id   The ID of the page to add the component to (required)    [string]
-  --group_id  The ID of the component group (optional)                 [string]
-  --version   Show version number                                      [boolean]
-  --help      Show help                                                [boolean]
+  --version  Show version number                                       [boolean]
+  --help     Show help                                                 [boolean]
+  --auth     Statuspage API Key (or env $STATUSPAGE_AUTH)    [string] [required]
+  --page_id  Statuspage Page ID (or env $STATUSPGAGE_PAGE_ID)[string] [required]
+  --name     The name of the component                                  [string]
+  --group    The name of an existing component group                    [string]
+  --silent   Reduce output to automation email only   [boolean] [default: false]
 
-$ npx statuspage create --page_id=zk3f17cq2qhw --group_id=qkf4y9ghhlgw
+$ npx statuspage create --group "Foo services"
 Creating a new component @adobe/helix-status in group Foo Services
 Automation email: component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
 done.
 ```
 
-By default, the check will use the `name` from your `package.json`, but you can override it using the `--name` parameter.
+You can configure the `name` and `group` arguments in `package.json`:
+```json
+"statuspage": {
+  "name": "Helix Status",
+  "group": "Delivery"
+}
+```
+By default, the check will use the package `name` from your `package.json`.
 
 `statuspage` requires a Statuspage [API Key](https://developer.statuspage.io/#section/Authentication) that should be passed using either the `--auth` parameter or the `STATUSPAGE_AUTH` environment variable, as well as a Statuspage [Page ID] that should be passed using either the `--page_id` parameter or the `STATUSPAGE_PAGE_ID` environment variable. 
 

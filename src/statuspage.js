@@ -10,8 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-console */
-/* eslint-disable camelcase */
+/* eslint-disable no-console, camelcase */
 
 const yargs = require('yargs');
 const fs = require('fs');
@@ -19,16 +18,50 @@ const request = require('request-promise-native');
 
 const status = 'operational';
 
-let packageName;
+let logger = console;
+let packageJSON = {};
+let defaultName;
+let defaultGroup;
 
 try {
-  packageName = JSON.parse(fs.readFileSync('package.json')).name;
+  packageJSON = JSON.parse(fs.readFileSync('package.json'));
+  if (packageJSON.statuspage) {
+    defaultName = packageJSON.statuspage.name || packageJSON.name || undefined;
+    defaultGroup = packageJSON.statuspage.group || undefined;
+  } else {
+    defaultName = packageJSON.name;
+    defaultGroup = undefined;
+  }
 } catch (e) {
-  packageName = undefined;
+  defaultName = undefined;
 }
 
-async function getComponents(auth, pageid, groupid, name) {
-  console.log(auth, pageid, groupid, name);
+function setLogger(silent) {
+  function log(...args) {
+    if (args.length < 2) {
+      return;
+    }
+    if (args[0] === 'Automation email:' && args[1].indexOf('@') > 0) {
+      // only log email in 2nd argument
+      console.log(args[1]);
+    }
+  }
+  function ignore() { }
+  if (silent) {
+    logger = {
+      log,
+      debug: ignore,
+      warn: ignore,
+      error: ignore,
+      trace: ignore,
+      info: ignore,
+    };
+  } else {
+    logger = console;
+  }
+}
+
+async function getComponents(auth, pageid, group, name) {
   try {
     const loadedcomponents = await request.get(`https://api.statuspage.io/v1/pages/${pageid}/components`, {
       headers: {
@@ -38,105 +71,98 @@ async function getComponents(auth, pageid, groupid, name) {
     });
 
     const result = {};
-    const cfilter = loadedcomponents.filter((comp) => {
-      if (comp.name === name) {
-        if (groupid && groupid !== comp.group_id) {
-          // wrong group, no match
-          return false;
-        }
-        return true;
-      } else {
-        return false;
-      }
-    });
-    result.component = cfilter.length > 0 ? cfilter[0] : undefined;
+    [result.component] = loadedcomponents.filter((comp) => comp.name === name);
 
-    if (groupid) {
+    if (group) {
       // look for the group component
-      const gfilter = loadedcomponents.filter((comp) => comp.group && comp.id === groupid);
-      result.group = gfilter.length > 0 ? gfilter[0] : undefined;
+      [result.compGroup] = loadedcomponents.filter((comp) => comp.group && comp.name === group);
     }
     return result;
   } catch (e) {
-    console.error('Unable to retrieve components', e.message);
+    logger.error('Unable to retrieve components:', e.message);
     return {};
   }
 }
 
 async function createComponent({
-  auth, page_id, group_id, name,
+  auth, page_id, group, name, silent,
 }) {
+  setLogger(silent);
+
   let comp;
-  const { component, group } = await getComponents(auth, page_id, group_id, name);
+  const { component, compGroup } = await getComponents(auth, page_id, group, name);
   if (component) {
-    console.warn(`Component "${name}" already exists`);
+    logger.warn(`Component "${name}" already exists`);
     comp = component;
   } else {
-    if (group_id && group === undefined) {
-      console.error(`Component group "${group_id}" not found`);
+    if (group && compGroup === undefined) {
+      logger.error(`Component group "${group}" not found`);
       process.exit(1);
     }
     // create component
+    const body = {
+      component: {
+        name,
+        status,
+        only_show_if_degraded: false,
+        showcase: true,
+        description: '',
+      },
+    };
     let msg = `Creating a new component ${name}`;
     if (group) {
-      msg += ` in group ${group.name}`;
+      msg += ` in group ${group}`;
+      body.component.group_id = compGroup.id;
     }
-    console.log(msg);
+    logger.log(msg);
     try {
       comp = await request.post(`https://api.statuspage.io/v1/pages/${page_id}/components`, {
         json: true,
         headers: {
           Authorization: auth,
         },
-        body: {
-          component: {
-            name,
-            group_id,
-            status,
-            only_show_if_degraded: false,
-            showcase: true,
-            description: '',
-          },
-        },
+        body,
       });
     } catch (e) {
-      console.error('Component creation failed', e.message);
+      logger.error('Component creation failed:', e.message);
       process.exit(1);
     }
   }
   if (comp) {
-    console.log('Automation email:', comp.automation_email);
+    logger.log('Automation email:', comp.automation_email);
   }
-  console.log('done.');
+  logger.log('done.');
 }
 
 function baseargs(y) {
   return y
-    .positional('page_id', {
-      type: 'string',
-      describe: 'The ID of the page to add the component to',
-      required: true,
-    })
     .option('auth', {
       type: 'string',
-      describe: 'your Statuspage API Key (alternatively use $STATUSPAGE_AUTH env var)',
+      describe: 'Statuspage API Key (or env $STATUSPAGE_AUTH)',
       required: true,
     })
     .option('page_id', {
       type: 'string',
-      describe: 'the ID of the page to add the component to',
+      describe: 'Statuspage Page ID (or env $STATUSPGAGE_PAGE_ID)',
       required: true,
     })
     .option('name', {
       type: 'string',
-      describe: 'the name of the component (defaults to package name)',
-      required: packageName === undefined,
-      default: packageName,
+      describe: 'The name of the component',
+      required: defaultName === undefined,
+      default: defaultName,
     })
-    .option('group_id', {
+    .option('group', {
       type: 'string',
-      describe: 'the ID of an existing component group',
+      describe: 'The name of an existing component group',
       required: false,
+      default: defaultGroup,
+    })
+    .option('silent', {
+      type: 'boolean',
+      describe: 'Reduce output to automation email only',
+      required: false,
+      default: false,
     });
 }
 

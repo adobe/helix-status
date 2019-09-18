@@ -85,5 +85,9 @@
   "wsk": {
     "name": "helix-services/status@4.3.3",
     "static": []
+  },
+  "statuspage": {
+    "name": "Helix Status",
+    "group": "Delivery"
   }
 }
