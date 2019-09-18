@@ -14,6 +14,7 @@
 const request = require('request-promise-native');
 const escape = require('xml-escape');
 const fs = require('fs');
+const { error } = require('@adobe/helix-log');
 const pkgversion = require('../package.json').version;
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
@@ -42,15 +43,13 @@ function xml(o, name) {
 const getPackage = memoize(() => new Promise((resolve) => {
   fs.readFile('package.json', 'utf-8', (err, data) => {
     if (err) {
-      // eslint-disable-next-line no-console
-      console.error('error while reading package.json:', err);
+      error('error while reading package.json:', err);
       resolve({});
     } else {
       try {
         resolve(JSON.parse(data));
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('error while parsing package.json:', e);
+        error('error while parsing package.json:', e);
         resolve({});
       }
     }

@@ -10,12 +10,11 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-console */
-
 const yargs = require('yargs');
 const fs = require('fs');
 const path = require('path');
 const request = require('request-promise-native');
+const { error, log } = require('@adobe/helix-log');
 
 const frequency = 15;
 const status = 'ENABLED';
@@ -76,13 +75,13 @@ async function getmonitors(auth, monitorid, monitorname) {
       return [];
     }
   } catch (e) {
-    console.error('Unable to retrieve monitors');
+    error('Unable to retrieve monitors');
     return [];
   }
 }
 
 async function updatescript(auth, monitor, url) {
-  console.log('Updating the script for monitor', monitor.name);
+  log('Updating the script for monitor', monitor.name);
 
 
   const scriptText = Buffer.from(fs
@@ -100,7 +99,7 @@ async function updatescript(auth, monitor, url) {
       scriptText,
     },
   });
-  console.log('done.');
+  log('done.');
 }
 
 async function createorupdate({
@@ -113,7 +112,7 @@ async function createorupdate({
     await updatescript(auth, monitor, url);
   } else {
     // create
-    console.log('Creating a new monitor', name);
+    log('Creating a new monitor', name);
     try {
       await request.post('https://synthetics.newrelic.com/synthetics/api/v3/monitors', {
         json: true,
@@ -133,7 +132,7 @@ async function createorupdate({
         auth, name, id, url,
       });
     } catch (e) {
-      console.error('Monitor creation failed', e.message);
+      error('Monitor creation failed', e.message);
       process.exit(1);
     }
   }
