@@ -193,7 +193,7 @@ Usage:
 
 ```bash
 $ npx newrelic
-newrelic-synthetics <cmd> url
+newrelic <cmd> url
 
 Commands:
   newrelic create url Create a new New Relic setup
