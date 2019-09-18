@@ -48,7 +48,7 @@ try {
 }
 
 
-async function getMonitors(auth, monitorid, monitorname) {
+async function getMonitors(auth, monitorname, monitorid) {
   try {
     let more = true;
     const loadedmonitors = [];
@@ -102,11 +102,8 @@ async function updateScript(auth, monitor, url) {
   console.log('done.');
 }
 
-async function updateOrCreateMonitor({
-  // eslint-disable-next-line camelcase
-  auth, name, monitor_id, url,
-}) {
-  const [monitor] = await getMonitors(auth, monitor_id, name);
+async function updateOrCreateMonitor(auth, name, monitorId, url) {
+  const [monitor] = await getMonitors(auth, name, monitorId);
 
   if (monitor) {
     console.log(`Monitor ID: ${monitor.id}`);
@@ -131,7 +128,7 @@ async function updateOrCreateMonitor({
         },
       });
       await updateOrCreateMonitor({
-        auth, name, id: monitor_id, url,
+        auth, name, id: monitorId, url,
       });
     } catch (e) {
       console.error('Monitor creation failed', e.message);

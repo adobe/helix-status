@@ -103,6 +103,8 @@ async function createComponent({
       console.error('Component creation failed', e.message);
       process.exit(1);
     }
+  }
+  if (comp) {
     console.log('Automation email:', comp.automation_email);
   }
   console.log('done.');
