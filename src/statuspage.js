@@ -170,7 +170,7 @@ function run() {
   return yargs
     .scriptName('statuspage')
     .usage('$0 <cmd>')
-    .command('create', 'Create a new component', (y) => baseargs(y), createComponent)
+    .command('create', 'Create a new Statuspage component', (y) => baseargs(y), createComponent)
     .help()
     .strict()
     .demandCommand(1)

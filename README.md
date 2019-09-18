@@ -160,7 +160,7 @@ $ npx statuspage
 statuspage <cmd>
 
 Commands:
-  statuspage create  Create a new component
+  statuspage create  Create a new Statuspage component
 
 Options:
   --version  Show version number                                       [boolean]
@@ -177,17 +177,16 @@ Automation email: component+abcdef01-2345-6789-abcd-ef0123456789@notifications.s
 done.
 ```
 
-You can configure the `name` and `group` arguments in `package.json`:
+You can pre-configure the `name` and `group` arguments in your `package.json`:
 ```json
 "statuspage": {
   "name": "Helix Status",
   "group": "Delivery"
 }
 ```
-By default, the check will use the package `name` from your `package.json`.
+By default, the check will use the package `name` from your `package.json`, and leave group empty.
 
 `statuspage` requires a Statuspage [API Key](https://developer.statuspage.io/#section/Authentication) that should be passed using either the `--auth` parameter or the `STATUSPAGE_AUTH` environment variable, as well as a Statuspage [Page ID] that should be passed using either the `--page_id` parameter or the `STATUSPAGE_PAGE_ID` environment variable. 
-
 
 ### New Relic: Automated Update of Synthetics Checks, Alert Policies and Notification Channels
 
@@ -204,16 +203,19 @@ $ npx newrelic
 newrelic <cmd> url
 
 Commands:
-  newrelic create url Create a new New Relic setup
-  newrelic update url Update an existing New Relic Setup
+  newrelic create url  Create a new New Relic setup
+  newrelic update url  Update an existing New Relic setup
 
 Options:
-  --auth        The New Relic API key (required)                       [string]
-  --email       The email address to send alerts to (optional)         [string]
-  --monitor_id  The ID of the monitor to update (optional)             [string]
-  --policy_id   The ID of the policy to update (optional)              [string]
-  --version  Show version number                                       [boolean]
-  --help     Show help                                                 [boolean]
+  --version     Show version number                                    [boolean]
+  --help        Show help                                              [boolean]
+  --auth        your New Relic API Key (alternatively use $NEWRELIC_AUTH env
+                var)                                         [string] [required]
+  --name        the name of the monitor and alert policy (defaults to package
+                name)                  [string] [default: "@adobe/helix-status"]
+  --email       the email address to send alerts to                     [string]
+  --monitor_id  The ID of the monitor to update                         [string]
+  --policy_id   The ID of the alert policy to update                    [string]
 
 $ npx newrelic update \
   https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/_status_check/healthcheck.json \

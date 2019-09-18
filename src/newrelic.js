@@ -34,10 +34,7 @@ const locations = ['AWS_AP_NORTHEAST_1',
   'AWS_US_EAST_1',
   'AWS_US_EAST_2',
   'AWS_US_WEST_1',
-  'AWS_US_WEST_2',
-  'LINODE_US_CENTRAL_1',
-  'LINODE_US_EAST_1',
-  'LINODE_US_WEST_1'];
+  'AWS_US_WEST_2'];
 const monitorType = 'SCRIPT_API';
 const channelType = 'EMAIL';
 
@@ -78,7 +75,7 @@ async function getMonitors(auth, monitorname, monitorid) {
       return [];
     }
   } catch (e) {
-    console.error('Unable to retrieve monitors', e.message);
+    console.error('Unable to retrieve monitors:', e.message);
     return [];
   }
 }
@@ -107,7 +104,6 @@ async function updateOrCreateMonitor(auth, name, monitorId, url) {
   const [monitor] = await getMonitors(auth, name, monitorId);
 
   if (monitor) {
-    console.log(`Monitor ID: ${monitor.id}`);
     // update
     await updateScript(auth, monitor, url);
   } else {
@@ -128,17 +124,18 @@ async function updateOrCreateMonitor(auth, name, monitorId, url) {
           slaThreshold,
         },
       });
-      await updateOrCreateMonitor({
-        auth, name, id: monitorId, url,
-      });
+      await updateOrCreateMonitor(auth, name, monitorId, url);
     } catch (e) {
-      console.error('Monitor creation failed', e.message);
+      console.error('Monitor creation failed:', e.message);
       process.exit(1);
     }
   }
 }
 
 async function getNotificationChannels(auth, email) {
+  if (!email) {
+    return [];
+  }
   try {
     const response = await request.get('https://api.newrelic.com/v2/alerts_channels.json', {
       headers: {
@@ -146,47 +143,48 @@ async function getNotificationChannels(auth, email) {
       },
       json: true,
     });
-    const loadedchannels = response.channels;
 
-    const channels = loadedchannels.map(({ id, recipients }) => ({ id, recipients }));
-    if (email) {
-      return channels.filter((channel) => channel.type === channelType
-        && channel.recipients === email);
-    } else {
-      return [];
-    }
+    const channels = response.channels.map(({ id, recipients }) => ({ id, recipients }));
+    return channels.filter((channel) => channel.type === channelType
+      && channel.recipients === email);
   } catch (e) {
-    console.error('Unable to retrieve channels', e.message);
+    console.error('Unable to retrieve channels:', e.message);
     return [];
   }
 }
 
 async function createNotificationChannel(auth, name, email) {
-  let [channel] = getNotificationChannels(auth, email);
+  let [channel] = await getNotificationChannels(auth, email);
 
   if (channel) {
     console.log(`Reusing existing notification channel ${channel.name} with same recipients`);
   } else {
     console.log('Creating a new notification channel', email);
 
-    channel = await request.post('https://api.newrelic.com/v2/alerts_channels.json', {
-      json: true,
-      headers: {
-        'X-Api-Key': auth,
-      },
-      body: {
-        channel: {
-          name,
-          type: channelType,
-          configuration: {
-            recipients: email,
-            include_json_attachment: true,
+    try {
+      channel = await request.post('https://api.newrelic.com/v2/alerts_channels.json', {
+        json: true,
+        headers: {
+          'X-Api-Key': auth,
+        },
+        body: {
+          channel: {
+            name,
+            type: channelType,
+            configuration: {
+              recipients: email,
+              include_json_attachment: false,
+            },
           },
         },
-      },
-    }).channel;
+      });
+      return channel.id;
+    } catch (e) {
+      console.error('Notification channel creation failed:', e.message /* JSON.stringify(JSON.parse(e.message), null, 2) */);
+      process.exit(1);
+    }
   }
-  return channel.id;
+  return null;
 }
 
 // eslint-disable-next-line no-unused-vars
