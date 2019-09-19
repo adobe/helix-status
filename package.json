@@ -5,8 +5,7 @@
   "main": "src/index.js",
   "bin": {
     "newrelic": "src/newrelic.js",
-    "statuspage": "src/statuspage.js",
-    "synthetics-check": "src/bin.js"
+    "statuspage": "src/statuspage.js"
   },
   "scripts": {
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 mocha",
