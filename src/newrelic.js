@@ -211,7 +211,7 @@ async function getPolicies(auth, policyId, policyName) {
 }
 
 async function updatePolicy(auth, policy, monitorId, channelId) {
-  console.log('Updating alert policy', policy.name, policy.id);
+  console.log('Updating alert policy', policy.name);
 
   // TODO: remove existing notification channels
   // add notification channel
