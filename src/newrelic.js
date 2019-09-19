@@ -36,7 +36,7 @@ const locations = ['AWS_AP_NORTHEAST_1',
   'AWS_US_WEST_1',
   'AWS_US_WEST_2'];
 const monitorType = 'SCRIPT_API';
-const channelType = 'EMAIL';
+const channelType = 'email';
 const incidentPreference = 'PER_POLICY';
 const conditionName = 'Multiple location failures';
 
@@ -83,7 +83,7 @@ async function getMonitors(auth, monitorid, monitorname) {
 }
 
 async function updateScript(auth, monitor, url) {
-  console.log('Updating the script for monitor', monitor.name);
+  console.log('Updating script for monitor', monitor.name);
 
   const scriptText = Buffer.from(fs
     .readFileSync(path.resolve(__dirname, 'synthetics.js'))
@@ -110,7 +110,7 @@ async function updateOrCreateMonitor(auth, name, monitorId, url) {
     await updateScript(auth, monitor, url);
   } else {
     // create
-    console.log('Creating a new monitor', name);
+    console.log('Creating new monitor', name);
     try {
       await request.post('https://synthetics.newrelic.com/synthetics/api/v3/monitors', {
         json: true,
@@ -126,19 +126,16 @@ async function updateOrCreateMonitor(auth, name, monitorId, url) {
           slaThreshold,
         },
       });
-      await updateOrCreateMonitor(auth, name, monitorId, url);
+      return await updateOrCreateMonitor(auth, name, monitorId, url);
     } catch (e) {
       console.error('Monitor creation failed:', e.message);
       process.exit(1);
     }
   }
-  return monitor ? monitor.id : null;
+  return monitor.id;
 }
 
-async function getChannels(auth, email) {
-  if (!email) {
-    return [];
-  }
+async function getChannels(auth, channelName, email) {
   try {
     const response = await request.get('https://api.newrelic.com/v2/alerts_channels.json', {
       headers: {
@@ -146,10 +143,9 @@ async function getChannels(auth, email) {
       },
       json: true,
     });
-
-    const channels = response.channels.map(({ id, recipients }) => ({ id, recipients }));
-    return channels.filter((channel) => channel.type === channelType
-      && channel.recipients === email);
+    return response.channels.filter((channel) => channel.type === channelType
+        && channel.name === channelName
+        && channel.configuration.recipients === email);
   } catch (e) {
     console.error('Unable to retrieve channels:', e.message);
     return [];
@@ -157,15 +153,15 @@ async function getChannels(auth, email) {
 }
 
 async function createChannel(auth, name, email) {
-  let [channel] = await getChannels(auth, email);
+  let [channel] = await getChannels(auth, name, email);
 
   if (channel) {
-    console.log(`Reusing existing notification channel ${channel.name} with same recipients`);
+    console.log(`Reusing notification channel ${channel.name}`);
   } else {
-    console.log('Creating a new notification channel', email);
+    console.log('Creating new notification channel', email);
 
     try {
-      channel = await request.post('https://api.newrelic.com/v2/alerts_channels.json', {
+      const response = await request.post('https://api.newrelic.com/v2/alerts_channels.json', {
         json: true,
         headers: {
           'X-Api-Key': auth,
@@ -181,6 +177,7 @@ async function createChannel(auth, name, email) {
           },
         },
       });
+      [channel] = response.channels;
     } catch (e) {
       console.error('Notification channel creation failed:', e.message);
       process.exit(1);
@@ -214,13 +211,12 @@ async function getPolicies(auth, policyId, policyName) {
 }
 
 async function updatePolicy(auth, policy, monitorId, channelId) {
-  console.log('Updating the alert policy', policy.name, policy.id);
+  console.log('Updating alert policy', policy.name, policy.id);
 
   // TODO: remove existing notification channels
   // add notification channel
   try {
     await request.put('https://api.newrelic.com/v2/alerts_policy_channels.json', {
-      json: true,
       headers: {
         'X-Api-Key': auth,
       },
@@ -250,7 +246,7 @@ async function updatePolicy(auth, policy, monitorId, channelId) {
     });
     // TODO: specify condition type (multiple) and threshold (2)
   } catch (e) {
-    console.error('Unable to add notification channel to alert policy', e.message);
+    console.error('Unable to add condition to alert policy', e.message);
   }
 }
 
@@ -262,7 +258,7 @@ async function updateOrCreatePolicy(auth, name, policyId, monitorId, channelId) 
     await updatePolicy(auth, policy, monitorId, channelId);
   } else {
     // create
-    console.log('Creating a new alert policy', name);
+    console.log('Creating new alert policy', name);
     try {
       policy = await request.post('https://api.newrelic.com/v2/alerts_policies.json', {
         json: true,

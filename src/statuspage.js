@@ -109,7 +109,7 @@ async function createComponent({
         description: '',
       },
     };
-    let msg = `Creating a new component ${name}`;
+    let msg = `Creating new component ${name}`;
     if (group) {
       msg += ` in group ${group}`;
       body.component.group_id = compGroup.id;

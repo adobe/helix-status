@@ -172,7 +172,7 @@ Options:
   --silent   Reduce output to automation email only   [boolean] [default: false]
 
 $ npx statuspage create --group "Foo services"
-Creating a new component @adobe/helix-status in group Foo Services
+Creating new component @adobe/helix-status in group Foo Services
 Automation email: component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
 done.
 ```
@@ -221,11 +221,11 @@ Options:
 $ npx newrelic update \
   https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/_status_check/healthcheck.json \
   component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
-Creating a new monitor @adobe/helix-status
-Updating the script for monitor @adobe/helix-status
-Creating a new notification channel component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
-Creating a new alert policy @adobe/helix-status
-Updating the alert policy @adobe/helix-status
+Creating new monitor @adobe/helix-status
+Updating script for monitor @adobe/helix-status
+Creating new notification channel component abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
+Creating new alert policy @adobe/helix-status
+Updating alert policy @adobe/helix-status
 done.
 ```
 
