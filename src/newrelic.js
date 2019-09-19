@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 
-/* eslint-disable no-console */
+/* eslint-disable no-console, camelcase */
 
 const yargs = require('yargs');
 const fs = require('fs');
@@ -37,6 +37,8 @@ const locations = ['AWS_AP_NORTHEAST_1',
   'AWS_US_WEST_2'];
 const monitorType = 'SCRIPT_API';
 const channelType = 'EMAIL';
+const incidentPreference = 'PER_POLICY';
+const conditionName = 'Multiple location failures';
 
 let packageName;
 
@@ -47,7 +49,7 @@ try {
 }
 
 
-async function getMonitors(auth, monitorname, monitorid) {
+async function getMonitors(auth, monitorid, monitorname) {
   try {
     let more = true;
     const loadedmonitors = [];
@@ -101,7 +103,7 @@ async function updateScript(auth, monitor, url) {
 }
 
 async function updateOrCreateMonitor(auth, name, monitorId, url) {
-  const [monitor] = await getMonitors(auth, name, monitorId);
+  const [monitor] = await getMonitors(auth, monitorId, name);
 
   if (monitor) {
     // update
@@ -130,9 +132,10 @@ async function updateOrCreateMonitor(auth, name, monitorId, url) {
       process.exit(1);
     }
   }
+  return monitor ? monitor.id : null;
 }
 
-async function getNotificationChannels(auth, email) {
+async function getChannels(auth, email) {
   if (!email) {
     return [];
   }
@@ -153,8 +156,8 @@ async function getNotificationChannels(auth, email) {
   }
 }
 
-async function createNotificationChannel(auth, name, email) {
-  let [channel] = await getNotificationChannels(auth, email);
+async function createChannel(auth, name, email) {
+  let [channel] = await getChannels(auth, email);
 
   if (channel) {
     console.log(`Reusing existing notification channel ${channel.name} with same recipients`);
@@ -178,27 +181,115 @@ async function createNotificationChannel(auth, name, email) {
           },
         },
       });
-      return channel.id;
     } catch (e) {
-      console.error('Notification channel creation failed:', e.message /* JSON.stringify(JSON.parse(e.message), null, 2) */);
+      console.error('Notification channel creation failed:', e.message);
       process.exit(1);
     }
   }
-  return null;
+  return channel ? channel.id : null;
 }
 
-// eslint-disable-next-line no-unused-vars
-async function updateOrCreateAlertPolicy(auth, name, monitorId, policyId, channelId) {
-  // TODO
+async function getPolicies(auth, policyId, policyName) {
+  try {
+    const response = await request.get('https://api.newrelic.com/v2/alerts_policies.json', {
+      headers: {
+        'X-Api-Key': auth,
+      },
+      json: true,
+    });
+
+    const policies = response.policies.map(({ id, name }) => ({ id, name }));
+    if (policyId) {
+      return policies.filter((policy) => policy.id === policyId);
+    }
+    if (policyName) {
+      return policies.filter((policy) => policy.name === policyName);
+    } else {
+      return [];
+    }
+  } catch (e) {
+    console.error('Unable to retrieve alert policies:', e.message);
+    return [];
+  }
+}
+
+async function updatePolicy(auth, policy, monitorId, channelId) {
+  console.log('Updating the alert policy', policy.name, policy.id);
+
+  // TODO: remove existing notification channels
+  // add notification channel
+  try {
+    await request.put('https://api.newrelic.com/v2/alerts_policy_channels.json', {
+      json: true,
+      headers: {
+        'X-Api-Key': auth,
+      },
+      form: {
+        channel_ids: channelId,
+        policy_id: policy.id,
+      },
+    });
+  } catch (e) {
+    console.error('Unable to add notification channel to alert policy', e.message);
+  }
+  // TODO: remove existing conditions
+  // add synthetics condition
+  try {
+    await request.post(`https://api.newrelic.com/v2/alerts_synthetics_conditions/policies/${policy.id}.json`, {
+      json: true,
+      headers: {
+        'X-Api-Key': auth,
+      },
+      body: {
+        synthetics_condition: {
+          name: conditionName,
+          monitor_id: monitorId,
+          enabled: true,
+        },
+      },
+    });
+    // TODO: specify condition type (multiple) and threshold (2)
+  } catch (e) {
+    console.error('Unable to add notification channel to alert policy', e.message);
+  }
+}
+
+async function updateOrCreatePolicy(auth, name, policyId, monitorId, channelId) {
+  let [policy] = await getPolicies(auth, policyId, name);
+
+  if (policy) {
+    // update
+    await updatePolicy(auth, policy, monitorId, channelId);
+  } else {
+    // create
+    console.log('Creating a new alert policy', name);
+    try {
+      policy = await request.post('https://api.newrelic.com/v2/alerts_policies.json', {
+        json: true,
+        headers: {
+          'X-Api-Key': auth,
+        },
+        body: {
+          policy: {
+            name,
+            incident_preference: incidentPreference,
+          },
+        },
+      });
+      await updateOrCreatePolicy(auth, name, policy.id, monitorId, channelId);
+    } catch (e) {
+      console.error('Alert policy creation failed:', e.message);
+      process.exit(1);
+    }
+  }
 }
 
 async function updateOrCreate({
-  // eslint-disable-next-line camelcase
   auth, name, url, email, monitor_id, policy_id,
 }) {
   const monitorId = await updateOrCreateMonitor(auth, name, monitor_id, url);
-  const channelId = email ? await createNotificationChannel(auth, name, email) : null;
-  await updateOrCreateAlertPolicy(auth, name, monitorId, policy_id, channelId);
+  const channelId = email ? await createChannel(auth, name, email) : null;
+  await updateOrCreatePolicy(auth, name, policy_id, monitorId, channelId);
 
   console.log('done.');
 }
@@ -207,33 +298,33 @@ function baseargs(y) {
   return y
     .positional('url', {
       type: 'string',
+      describe: 'The URL to check',
       required: true,
-      describe: 'the URL to check',
+    })
+    .positional('email', {
+      type: 'string',
+      describe: 'The email address to send alerts to',
+      required: true,
     })
     .option('auth', {
       type: 'string',
-      describe: 'your New Relic API Key (alternatively use $NEWRELIC_AUTH env var)',
+      describe: 'New Relic API Key (or env var $NEWRELIC_AUTH)',
       required: true,
     })
     .option('name', {
       type: 'string',
-      describe: 'the name of the monitor and alert policy (defaults to package name)',
+      describe: 'The name of the monitor and alert policy',
       required: packageName === undefined,
       default: packageName,
-    })
-    .option('email', {
-      type: 'string',
-      describe: 'the email address to send alerts to',
-      required: false,
     });
 }
 
 function run() {
   return yargs
     .scriptName('newrelic')
-    .usage('$0 <cmd> url')
-    .command('create url', 'Create a new New Relic setup', (y) => baseargs(y), updateOrCreate)
-    .command('update url', 'Update an existing New Relic setup', (y) => baseargs(y)
+    .usage('$0 <cmd> url email')
+    .command('create url email', 'Create a new New Relic setup', (y) => baseargs(y), updateOrCreate)
+    .command('update url email', 'Update an existing New Relic setup', (y) => baseargs(y)
       .option('monitor_id', {
         type: 'string',
         describe: 'The ID of the monitor to update',

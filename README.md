@@ -147,7 +147,7 @@ $http.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/
 
 ## Automated Monitoring
 
-`helix-status` provides the following command line tools intended to be run as part of your deployment pipeline to automate monitoring:
+`helix-status` provides the following command line tools intended to be run as part of your deployment pipeline to automate your monitoring:
 
 ### Statuspage: Automated Update of Components
 
@@ -194,36 +194,38 @@ By default, the check will use the package `name` from your `package.json`, and 
 1. creation or update of monitors in New Relics Synthetics
 1. creation of notification channels in New Relic Alerts
 1. creation or update of alert policies in New Relic Alerts
-1. linking of alert policies to monitors and notification channels
+1. wiring alert policies to monitors and notification channels
 
 Usage:
 
 ```bash
 $ npx newrelic
-newrelic <cmd> url
+newrelic <cmd> url email
 
 Commands:
-  newrelic create url  Create a new New Relic setup
-  newrelic update url  Update an existing New Relic setup
+  newrelic create url email  Create a new New Relic setup
+  newrelic update url email  Update an existing New Relic setup
+
+Positionals:
+  url    The URL to check                                    [string] [required]
+  email  The email address to send alerts to                 [string] [required]
 
 Options:
   --version     Show version number                                    [boolean]
   --help        Show help                                              [boolean]
-  --auth        your New Relic API Key (alternatively use $NEWRELIC_AUTH env
-                var)                                         [string] [required]
-  --name        the name of the monitor and alert policy (defaults to package
-                name)                  [string] [default: "@adobe/helix-status"]
-  --email       the email address to send alerts to                     [string]
+  --auth        New Relic API Key (or env var $NEWRELIC_AUTH)[string] [required]
+  --name        The name of the monitor and alert policy                [string]
   --monitor_id  The ID of the monitor to update                         [string]
   --policy_id   The ID of the alert policy to update                    [string]
 
 $ npx newrelic update \
   https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/_status_check/healthcheck.json \
-  --email component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
+  component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
 Creating a new monitor @adobe/helix-status
 Updating the script for monitor @adobe/helix-status
 Creating a new notification channel component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
 Creating a new alert policy @adobe/helix-status
+Updating the alert policy @adobe/helix-status
 done.
 ```
 
