@@ -32,6 +32,7 @@ $http.get('$$$URL$$$',
       $util.insights.set('errorURL', status.error.url);
     }
     if (status.status !== 'OK') {
+      // eslint-disable-next-line no-console
       console.error(body);
     }
     assert.equal(status.status, 'OK', `Expected an OK health check status, got: ${status.status}`);
