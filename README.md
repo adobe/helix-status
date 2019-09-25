@@ -160,7 +160,7 @@ $ npx statuspage
 statuspage <cmd>
 
 Commands:
-  statuspage create  Create a new Statuspage component
+  statuspage setup  Create or reuse a Statuspage component
 
 Options:
   --version  Show version number                                       [boolean]
@@ -171,9 +171,9 @@ Options:
   --group    The name of an existing component group                    [string]
   --silent   Reduce output to automation email only   [boolean] [default: false]
 
-$ npx statuspage create --group "Foo services"
-Creating new component @adobe/helix-status in group Foo Services
-Automation email: component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
+$ npx statuspage setup --group "Delivery"
+Creating component @adobe/helix-status in group Delivery
+Automation email: component+id@notifications.statuspage.io
 done.
 ```
 
@@ -203,29 +203,31 @@ $ npx newrelic
 newrelic <cmd> url email
 
 Commands:
-  newrelic create url email  Create a new New Relic setup
-  newrelic update url email  Update an existing New Relic setup
+  newrelic setup url email  Create or update a New Relic setup
 
 Positionals:
   url    The URL to check                                    [string] [required]
   email  The email address to send alerts to                 [string] [required]
 
 Options:
-  --version     Show version number                                    [boolean]
-  --help        Show help                                              [boolean]
-  --auth        New Relic API Key (or env var $NEWRELIC_AUTH)[string] [required]
-  --name        The name of the monitor and alert policy                [string]
-  --monitor_id  The ID of the monitor to update                         [string]
-  --policy_id   The ID of the alert policy to update                    [string]
+  --auth          Admin API Key (or env var $NEWRELIC_AUTH)   [string][required]
+  --name          The name of the monitor, channel and policy           [string]
+  --group_policy  The name of a common policy to add the monitor to     [string]
+  --version       Show version number                                  [boolean]
+  --help          Show help                                            [boolean]
 
-$ npx newrelic update \
-  https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/_status_check/healthcheck.json \
-  component+abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
-Creating new monitor @adobe/helix-status
+$ npx newrelic setup \
+  https://adobeioruntime.net/api/v1/web/namespace/package/action@v1/_status_check/healthcheck.json \
+  component+id@notifications.statuspage.io --group_policy "Delivery"
+Creating monitor @adobe/helix-status
+Updating locations for monitor @adobe/helix-status
 Updating script for monitor @adobe/helix-status
-Creating new notification channel component abcdef01-2345-6789-abcd-ef0123456789@notifications.statuspage.io
-Creating new alert policy @adobe/helix-status
-Updating alert policy @adobe/helix-status
+Creating notification channel @adobe/helix-status
+Creating alert policy @adobe/helix-status
+Linking notification channel to alert policy @adobe/helix-status
+Creating condition in alert policy
+Verifying group alert policy Delivery
+Updating alert policy condition
 done.
 ```
 

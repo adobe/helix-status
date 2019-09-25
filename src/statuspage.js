@@ -109,7 +109,7 @@ async function createComponent({
         description: '',
       },
     };
-    let msg = `Creating new component ${name}`;
+    let msg = `Creating component ${name}`;
     if (group) {
       msg += ` in group ${group}`;
       body.component.group_id = compGroup.id;
@@ -170,7 +170,7 @@ function run() {
   return yargs
     .scriptName('statuspage')
     .usage('$0 <cmd>')
-    .command('create', 'Create a new Statuspage component', (y) => baseargs(y), createComponent)
+    .command('setup', 'Create or reuse a Statuspage component', (y) => baseargs(y), createComponent)
     .help()
     .strict()
     .demandCommand(1)

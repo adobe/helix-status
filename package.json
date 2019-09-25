@@ -88,5 +88,8 @@
   "statuspage": {
     "name": "Helix Status",
     "group": "Delivery"
+  },
+  "newrelic": {
+    "group_policy": "Delivery Repeated Failure"
   }
 }
