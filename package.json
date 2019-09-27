@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/helix-log": "^2.0.0",
+    "@adobe/helix-log": "^2.1.1",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "snyk": "^1.228.1",
