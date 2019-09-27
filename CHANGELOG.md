@@ -1,3 +1,10 @@
+## [4.3.6](https://github.com/adobe/helix-status/compare/v4.3.5...v4.3.6) (2019-09-27)
+
+
+### Bug Fixes
+
+* **monitoring:** readd all AWS locations ([65cde25](https://github.com/adobe/helix-status/commit/65cde25))
+
 ## [4.3.5](https://github.com/adobe/helix-status/compare/v4.3.4...v4.3.5) (2019-09-27)
 
 
