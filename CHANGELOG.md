@@ -1,3 +1,10 @@
+## [4.3.4](https://github.com/adobe/helix-status/compare/v4.3.3...v4.3.4) (2019-09-27)
+
+
+### Bug Fixes
+
+* **monitoring:** remove deprecated locations, reduce overall number ([a2b619f](https://github.com/adobe/helix-status/commit/a2b619f)), closes [#50](https://github.com/adobe/helix-status/issues/50)
+
 ## [4.3.3](https://github.com/adobe/helix-status/compare/v4.3.2...v4.3.3) (2019-09-04)
 
 
