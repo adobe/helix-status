@@ -193,8 +193,8 @@ By default, the check will use the package `name` from your `package.json`, and 
 `newrelic` automates the following New Relic features:
 1. creation or update of monitors in New Relics Synthetics
 1. creation of notification channels in New Relic Alerts
-1. creation or update of alert policies in New Relic Alerts
-1. wiring alert policies to monitors and notification channels
+1. creation or update of alert policies and conditions in New Relic Alerts
+1. wiring alert policies to notification channels and conditions to monitors
 
 Usage:
 
@@ -234,6 +234,8 @@ done.
 By default, the check will use the `name` from your `package.json`, but you can override it using the `--name` parameter.
 
 `newrelic` requires a New Relic [Admin's API Key](https://docs.newrelic.com/docs/apis/get-started/intro-apis/understand-new-relic-api-keys#admin) (read the docs, it's different from your API key, even when you are an Admin) that should be passed using either the `--auth` parameter or the `NEWRELIC_AUTH` environment variable.
+
+Note: you need to have [Multi-location Synthetics alert conditions](https://rpm.newrelic.com/api/explore/alerts_location_failure_conditions) enabled for your account. More information can be found [here](https://docs.newrelic.com/docs/multi-location-synthetics-alert-conditions).
 
 # Development
 
