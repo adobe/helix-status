@@ -19,24 +19,15 @@ const { error, log } = require('@adobe/helix-log');
 const frequency = 15;
 const status = 'ENABLED';
 const slaThreshold = 7;
-const locations = ['AWS_AP_NORTHEAST_1',
-  'AWS_AP_NORTHEAST_2',
-  'AWS_AP_SOUTH_1',
-  'AWS_AP_SOUTHEAST_1',
+const locations = [
+  'AWS_AP_NORTHEAST_1',
   'AWS_AP_SOUTHEAST_2',
-  'AWS_CA_CENTRAL_1',
   'AWS_EU_CENTRAL_1',
-  'AWS_EU_WEST_1',
   'AWS_EU_WEST_2',
-  'AWS_EU_WEST_3',
   'AWS_SA_EAST_1',
   'AWS_US_EAST_1',
-  'AWS_US_EAST_2',
   'AWS_US_WEST_1',
-  'AWS_US_WEST_2',
-  'LINODE_US_CENTRAL_1',
-  'LINODE_US_EAST_1',
-  'LINODE_US_WEST_1'];
+];
 
 let packageName;
 
