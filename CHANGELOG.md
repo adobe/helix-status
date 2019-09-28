@@ -1,3 +1,15 @@
+# [5.0.0](https://github.com/adobe/helix-status/compare/v4.3.6...v5.0.0) (2019-09-28)
+
+
+### Features
+
+* **monitoring:** automate statuspage and new relic integration ([#46](https://github.com/adobe/helix-status/issues/46)) ([f87ae51](https://github.com/adobe/helix-status/commit/f87ae51))
+
+
+### BREAKING CHANGES
+
+* **monitoring:** removed `synthetics-check`, added `newrelic` and `statuspage`
+
 ## [4.3.6](https://github.com/adobe/helix-status/compare/v4.3.5...v4.3.6) (2019-09-27)
 
 
