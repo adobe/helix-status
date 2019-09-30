@@ -143,7 +143,8 @@ function baseargs(y) {
     })
     .option('page_id', {
       type: 'string',
-      describe: 'Statuspage Page ID (or env $STATUSPGAGE_PAGE_ID)',
+      alias: 'pageId',
+      describe: 'Statuspage Page ID (or env $STATUSPAGE_PAGE_ID)',
       required: true,
     })
     .option('name', {
