@@ -1,3 +1,10 @@
+## [5.0.1](https://github.com/adobe/helix-status/compare/v5.0.0...v5.0.1) (2019-09-30)
+
+
+### Bug Fixes
+
+* **monitoring:** missing alias for --page_id ([#54](https://github.com/adobe/helix-status/issues/54)) ([#55](https://github.com/adobe/helix-status/issues/55)) ([0e9af5e](https://github.com/adobe/helix-status/commit/0e9af5e))
+
 # [5.0.0](https://github.com/adobe/helix-status/compare/v4.3.6...v5.0.0) (2019-09-28)
 
 
