@@ -87,8 +87,8 @@
     "static": []
   },
   "statuspage": {
-    "name": "Helix Status",
-    "group": "Delivery"
+    "name": "Adobe I/O Runtime",
+    "group": "Runtime"
   },
   "newrelic": {
     "group_policy": "Delivery Repeated Failure"
