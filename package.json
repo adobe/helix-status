@@ -18,7 +18,13 @@
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
     "build": "wsk-builder -v",
-    "deploy": "wsk-builder -v --deploy --test"
+    "deploy": "wsk-builder -v --deploy --test",
+    "deploy-sequences": "wsk-builder --no-build -no-hints -l latest -l major -l minor",
+    "deploy-ci": "wsk-builder -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci"
+  },
+  "wsk": {
+    "name": "helix-services-private/status@${version}",
+    "linksPackage": "helix-services"
   },
   "repository": {
     "type": "git",
@@ -81,10 +87,6 @@
     "ghooks": {
       "pre-commit": "npx lint-staged"
     }
-  },
-  "wsk": {
-    "name": "helix-services/status@5.0.1",
-    "static": []
   },
   "statuspage": {
     "name": "Adobe I/O Runtime",
