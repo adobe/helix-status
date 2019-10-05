@@ -84,7 +84,7 @@ All `GET /_status_check/pingdom.xml` requests to your service will now respond w
 </pingdom_http_custom_check
 ```
 
-> **Note**: While the XML response format is similar to the one described in [Pingdom Custom HTTP Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) the `/_status_check/pingdom.xml` request is intented to be used for standard Pingdom UPTIME Checks only. It's _not_ suitable for Custom HTTP Checks which  expect an HTTP Status 200 XML response whereas UPTIME Checks determine the status of a service (UP/DOWN) based on the HTTP Status code of the response. For more information see [#21](https://github.com/adobe/helix-status/issues/21) and [here](https://help.pingdom.com/hc/en-us/articles/203749792-What-is-a-check-).
+> **Note**: While the XML response format is similar to the one described in [Pingdom Custom HTTP Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) the `/_status_check/pingdom.xml` request is intended to be used for standard Pingdom UPTIME Checks only. It's _not_ suitable for Custom HTTP Checks which  expect an HTTP Status 200 XML response whereas UPTIME Checks determine the status of a service (UP/DOWN) based on the HTTP Status code of the response. For more information see [#21](https://github.com/adobe/helix-status/issues/21) and [here](https://help.pingdom.com/hc/en-us/articles/203749792-What-is-a-check-).
 
 You can also specify a list of checks to run by passing second argument to `wrap`:
 
@@ -106,7 +106,7 @@ It is a good idea to use URLs that are representative of the API endpoints your 
 
 ## Usage with Probot
 
-If you are using [Probot](https://probot.github.io) for instance through [Serverless Probot on OpenWhisk](https://github.com/adobe/probot-serverless-openwhisk), the usage is slighly different:
+If you are using [Probot](https://probot.github.io) for instance through [Serverless Probot on OpenWhisk](https://github.com/adobe/probot-serverless-openwhisk), the usage is slightly different:
 
 ```javascript
 // import the probot status app
@@ -243,4 +243,4 @@ Note: you need to have [Multi-location Synthetics alert conditions](https://rpm.
 
 Deploying Helix Status requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
-All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get commited as `/helix-services/status@ci<num>` and tagged with the CI build number.
+All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get committed as `/helix-services/status@ci<num>` and tagged with the CI build number.
