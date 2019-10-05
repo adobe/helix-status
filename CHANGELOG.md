@@ -1,3 +1,10 @@
+## [5.0.2](https://github.com/adobe/helix-status/compare/v5.0.1...v5.0.2) (2019-10-05)
+
+
+### Bug Fixes
+
+* **deploy:** use helix-services-private ([#66](https://github.com/adobe/helix-status/issues/66)) ([33a3b9c](https://github.com/adobe/helix-status/commit/33a3b9c))
+
 ## [5.0.1](https://github.com/adobe/helix-status/compare/v5.0.0...v5.0.1) (2019-09-30)
 
 
