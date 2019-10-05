@@ -7,7 +7,6 @@ module.exports = {
     }],
     "@semantic-release/npm",
     ['@semantic-release/exec', {
-      'prepareCmd': 'npm run semantic-prepare ${nextRelease.version}',
       'publishCmd': 'npm run deploy'
     }],
     ['@semantic-release/git', {
