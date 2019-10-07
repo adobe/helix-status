@@ -52,7 +52,7 @@ $ npm run build
 $ npm run deploy
 ```
 
-# Helix Pingdom Status (as a Library)
+# Helix Status (as a Library)
 
 ## Installation
 
@@ -60,7 +60,7 @@ $ npm run deploy
 $ npm install -S @adobe/helix-status
 ```
 
-## Usage
+## Usage with Pingdom
 
 In the entry point of your action, add
 
@@ -119,9 +119,9 @@ probot
 
 `probotStatus()` accepts the same `checks` object that has been described above, so you can pass an array of URL checks.
 
-# Usage with New Relics Synthetics
+# Usage with New Relic Synthetics
 
-[New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) is a service that is similar to Pingdom, but more capable. It can be used with `helix-status` by creating an API Check script like this:
+[New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) is a service that is similar to Pingdom. It can be used with `helix-status` by creating an API Check script like this:
 
 ```javascript
 const assert = require('assert');
@@ -163,13 +163,14 @@ Commands:
   statuspage setup  Create or reuse a Statuspage component
 
 Options:
-  --version  Show version number                                       [boolean]
-  --help     Show help                                                 [boolean]
-  --auth     Statuspage API Key (or env $STATUSPAGE_AUTH)    [string] [required]
-  --page_id  Statuspage Page ID (or env $STATUSPGAGE_PAGE_ID)[string] [required]
-  --name     The name of the component                                  [string]
-  --group    The name of an existing component group                    [string]
-  --silent   Reduce output to automation email only   [boolean] [default: false]
+  --version      Show version number                                       [boolean]
+  --help         Show help                                                 [boolean]
+  --auth         Statuspage API Key (or env $STATUSPAGE_AUTH)    [string] [required]
+  --page_id      Statuspage Page ID (or env $STATUSPGAGE_PAGE_ID)[string] [required]
+  --name         The name of the component                                  [string]
+  --description  The description of the component                           [string]
+  --group        The name of an existing component group                    [string]
+  --silent       Reduce output to automation email only   [boolean] [default: false]
 
 $ npx statuspage setup --group "Delivery"
 Creating component @adobe/helix-status in group Delivery
