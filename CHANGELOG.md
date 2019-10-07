@@ -1,3 +1,10 @@
+# [5.1.0](https://github.com/adobe/helix-status/compare/v5.0.2...v5.1.0) (2019-10-07)
+
+
+### Features
+
+* **monitotring:** update statuspage component group and description ([3803301](https://github.com/adobe/helix-status/commit/3803301))
+
 ## [5.0.2](https://github.com/adobe/helix-status/compare/v5.0.1...v5.0.2) (2019-10-05)
 
 
