@@ -1,3 +1,10 @@
+# [5.2.0](https://github.com/adobe/helix-status/compare/v5.1.1...v5.2.0) (2019-10-22)
+
+
+### Features
+
+* **monitoring:** Extract and store Activation Metadata ([#76](https://github.com/adobe/helix-status/issues/76)) ([ebe9de0](https://github.com/adobe/helix-status/commit/ebe9de0))
+
 ## [5.1.1](https://github.com/adobe/helix-status/compare/v5.1.0...v5.1.1) (2019-10-17)
 
 
