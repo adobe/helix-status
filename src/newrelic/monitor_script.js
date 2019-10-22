@@ -45,6 +45,7 @@ $http.get('$$$URL$$$',
         },
         json: true,
       },
+      // Callback
       (e, details) => {
         if (e) {
           console.log('Failed to retrieve activation details:', e);

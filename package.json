@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-status",
-  "version": "5.0.1",
+  "version": "5.2.0",
   "description": "Report status for OpenWhisk Microservices for Uptime checks with Pingdom or New Relic",
   "main": "src/index.js",
   "bin": {
@@ -18,7 +18,13 @@
     "snyk-protect": "snyk protect",
     "prepare": "npm run snyk-protect",
     "build": "wsk-builder -v",
-    "deploy": "wsk-builder -v --deploy --test"
+    "deploy": "wsk-builder -v --deploy --test",
+    "deploy-sequences": "wsk-builder --no-build -no-hints -l latest -l major -l minor",
+    "deploy-ci": "wsk-builder -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci"
+  },
+  "wsk": {
+    "name": "helix-services-private/status@${version}",
+    "linksPackage": "helix-services"
   },
   "repository": {
     "type": "git",
@@ -31,7 +37,7 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/helix-log": "^2.1.1",
+    "@adobe/helix-log": "^3.0.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
     "snyk": "^1.228.5",
@@ -40,15 +46,15 @@
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
-    "@adobe/openwhisk-action-builder": "2.1.0",
-    "@pollyjs/adapter-node-http": "2.6.2",
-    "@pollyjs/core": "2.6.2",
-    "@pollyjs/persister-fs": "2.6.2",
+    "@adobe/openwhisk-action-builder": "2.1.1",
+    "@pollyjs/adapter-node-http": "2.6.3",
+    "@pollyjs/core": "2.6.3",
+    "@pollyjs/persister-fs": "2.6.3",
     "@semantic-release/changelog": "3.0.4",
     "@semantic-release/commit-analyzer": "6.3.0",
     "@semantic-release/exec": "3.3.7",
     "@semantic-release/git": "7.0.16",
-    "@semantic-release/github": "5.5.0",
+    "@semantic-release/github": "5.5.4",
     "@semantic-release/npm": "5.2.0",
     "@semantic-release/release-notes-generator": "7.3.0",
     "ajv": "6.10.2",
@@ -62,13 +68,13 @@
     "eslint-plugin-import": "2.18.2",
     "express": "4.17.1",
     "istanbul": "1.1.0-alpha.1",
-    "jsdoc-to-markdown": "5.0.1",
+    "jsdoc-to-markdown": "5.0.2",
     "junit-report-builder": "1.3.3",
-    "lint-staged": "9.4.1",
+    "lint-staged": "9.4.2",
     "lodash": "4.17.15",
-    "mocha": "6.2.0",
+    "mocha": "6.2.2",
     "nyc": "14.1.1",
-    "semantic-release": "15.13.24"
+    "semantic-release": "15.13.27"
   },
   "snyk": true,
   "lint-staged": {
@@ -81,10 +87,6 @@
     "ghooks": {
       "pre-commit": "npx lint-staged"
     }
-  },
-  "wsk": {
-    "name": "helix-services/status@5.0.1",
-    "static": []
   },
   "statuspage": {
     "name": "Adobe I/O Runtime",

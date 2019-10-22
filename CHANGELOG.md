@@ -1,3 +1,31 @@
+# [5.2.0](https://github.com/adobe/helix-status/compare/v5.1.1...v5.2.0) (2019-10-22)
+
+
+### Features
+
+* **monitoring:** Extract and store Activation Metadata ([#76](https://github.com/adobe/helix-status/issues/76)) ([ebe9de0](https://github.com/adobe/helix-status/commit/ebe9de0))
+
+## [5.1.1](https://github.com/adobe/helix-status/compare/v5.1.0...v5.1.1) (2019-10-17)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v3 ([#73](https://github.com/adobe/helix-status/issues/73)) ([a1a40b7](https://github.com/adobe/helix-status/commit/a1a40b7))
+
+# [5.1.0](https://github.com/adobe/helix-status/compare/v5.0.2...v5.1.0) (2019-10-07)
+
+
+### Features
+
+* **monitotring:** update statuspage component group and description ([3803301](https://github.com/adobe/helix-status/commit/3803301))
+
+## [5.0.2](https://github.com/adobe/helix-status/compare/v5.0.1...v5.0.2) (2019-10-05)
+
+
+### Bug Fixes
+
+* **deploy:** use helix-services-private ([#66](https://github.com/adobe/helix-status/issues/66)) ([33a3b9c](https://github.com/adobe/helix-status/commit/33a3b9c))
+
 ## [5.0.1](https://github.com/adobe/helix-status/compare/v5.0.0...v5.0.1) (2019-09-30)
 
 

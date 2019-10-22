@@ -21,15 +21,18 @@ const status = 'operational';
 let logger = console;
 let packageJSON = {};
 let defaultName;
+let defaultDescription;
 let defaultGroup;
 
 try {
   packageJSON = JSON.parse(fs.readFileSync('package.json'));
   if (packageJSON.statuspage) {
     defaultName = packageJSON.statuspage.name || packageJSON.name || undefined;
+    defaultDescription = packageJSON.statuspage.description || packageJSON.description || undefined;
     defaultGroup = packageJSON.statuspage.group || undefined;
   } else {
     defaultName = packageJSON.name;
+    defaultDescription = packageJSON.description;
     defaultGroup = undefined;
   }
 } catch (e) {
@@ -84,49 +87,79 @@ async function getComponents(auth, pageid, group, name) {
   }
 }
 
-async function createComponent({
-  auth, page_id, group, name, silent,
+async function createComponent(auth, pageid, name, description, group) {
+  // create component
+  const component = {
+    name,
+    description,
+    status,
+    only_show_if_degraded: false,
+    showcase: true,
+  };
+  let msg = `Creating component ${name}`;
+  if (group) {
+    msg += ` in group ${group.name}`;
+    component.group_id = group.id;
+  }
+  logger.log(msg);
+  try {
+    return await request.post(`https://api.statuspage.io/v1/pages/${pageid}/components`, {
+      json: true,
+      headers: {
+        Authorization: auth,
+      },
+      body: {
+        component,
+      },
+    });
+  } catch (e) {
+    logger.error('Component creation failed:', e.message);
+    process.exit(1);
+  }
+  return null;
+}
+
+async function updateComponent(auth, pageid, comp, description, group) {
+  const component = {};
+  if (comp.description !== description) {
+    component.description = description;
+  }
+  if (group && comp.group_id !== group.id) {
+    component.group_id = group.id;
+  }
+  if (Object.keys(component).length > 0) {
+    console.log('Updating component', comp.name);
+    try {
+      return await request.patch(`https://api.statuspage.io/v1/pages/${pageid}/components/${comp.id}`, {
+        json: true,
+        headers: {
+          Authorization: auth,
+        },
+        body: {
+          component,
+        },
+      });
+    } catch (e) {
+      console.error('Component update failed:', e);
+    }
+  }
+  return comp;
+}
+
+async function updateOrCreateComponent({
+  auth, page_id, group, name, description, silent,
 }) {
   setLogger(silent);
 
   let comp;
   const { component, compGroup } = await getComponents(auth, page_id, group, name);
   if (component) {
-    logger.warn(`Component "${name}" already exists`);
-    comp = component;
+    logger.log('Reusing existing component', name);
+    // update component
+    comp = await updateComponent(auth, page_id, component, description, compGroup);
   } else {
-    if (group && compGroup === undefined) {
-      logger.error(`Component group "${group}" not found`);
-      process.exit(1);
-    }
     // create component
-    const body = {
-      component: {
-        name,
-        status,
-        only_show_if_degraded: false,
-        showcase: true,
-        description: '',
-      },
-    };
-    let msg = `Creating component ${name}`;
-    if (group) {
-      msg += ` in group ${group}`;
-      body.component.group_id = compGroup.id;
-    }
-    logger.log(msg);
-    try {
-      comp = await request.post(`https://api.statuspage.io/v1/pages/${page_id}/components`, {
-        json: true,
-        headers: {
-          Authorization: auth,
-        },
-        body,
-      });
-    } catch (e) {
-      logger.error('Component creation failed:', e.message);
-      process.exit(1);
-    }
+    comp = await createComponent(auth, page_id, name, description, compGroup);
   }
   if (comp) {
     logger.log('Automation email:', comp.automation_email);
@@ -153,6 +186,11 @@ function baseargs(y) {
       required: defaultName === undefined,
       default: defaultName,
     })
+    .option('description', {
+      type: 'string',
+      describe: 'The description of the component',
+      default: defaultDescription,
+    })
     .option('group', {
       type: 'string',
       describe: 'The name of an existing component group',
@@ -171,7 +209,7 @@ function run() {
   return yargs
     .scriptName('statuspage')
     .usage('$0 <cmd>')
-    .command('setup', 'Create or reuse a Statuspage component', (y) => baseargs(y), createComponent)
+    .command('setup', 'Create or reuse a Statuspage component', (y) => baseargs(y), updateOrCreateComponent)
     .help()
     .strict()
     .demandCommand(1)
