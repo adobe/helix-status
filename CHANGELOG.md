@@ -1,3 +1,10 @@
+# [5.3.0](https://github.com/adobe/helix-status/compare/v5.2.0...v5.3.0) (2019-10-23)
+
+
+### Features
+
+* **monitoring:** Add more timing data ([#75](https://github.com/adobe/helix-status/issues/75)) ([1316554](https://github.com/adobe/helix-status/commit/1316554))
+
 # [5.2.0](https://github.com/adobe/helix-status/compare/v5.1.1...v5.2.0) (2019-10-22)
 
 
