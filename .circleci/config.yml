@@ -95,7 +95,7 @@ jobs:
         command: npm run deploy-ci
 
     - helix-post-deploy/monitoring:
-        statuspage_name: "Test [IGNORE]"
+        statuspage_name: "Orb Test [IGNORE]"
         statuspage_group: "Development"
         newrelic_name: "Orb Test [IGNORE]"
 
