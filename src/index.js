@@ -11,7 +11,6 @@
  */
 
 /* eslint-disable no-underscore-dangle */
-
 const request = require('request-promise-native');
 const escape = require('xml-escape');
 const fs = require('fs');
@@ -20,10 +19,6 @@ const pkgversion = require('../package.json').version;
 
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
-
-function foo() {
-  return true;
-}
 
 function memoize(fn) {
   let val;
