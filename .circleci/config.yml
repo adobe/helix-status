@@ -82,6 +82,11 @@ jobs:
 
     steps:
     - setup
+    - persist_to_workspace:
+        root: /home/circleci
+        paths:
+          - project
+          - .npm
     - run:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
@@ -93,7 +98,8 @@ jobs:
     - run:
         name: Branch Deployment
         command: npm run deploy-ci
-
+    - attach_workspace:
+        at: /home/circleci
     - helix-post-deploy/monitoring:
         statuspage_name: "Orb Test [IGNORE]"
         statuspage_group: "Development"
