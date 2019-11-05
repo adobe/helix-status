@@ -7,6 +7,9 @@ executors:
         NPM_CONFIG_PREFIX: "~/.npm-global"
     working_directory: ~/repo
 
+orbs:
+  helix-post-deploy: adobe/helix-post-deploy@0.0.1
+
 commands:
   setup:
     steps:
@@ -90,6 +93,11 @@ jobs:
     - run:
         name: Branch Deployment
         command: npm run deploy-ci
+
+    - helix-post-deploy/monitoring:
+        statuspage_name: "Test [IGNORE]"
+        statuspage_group: "Development"
+        newrelic_name: "Orb Test [IGNORE]"
 
 workflows:
   version: 2
