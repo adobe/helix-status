@@ -21,6 +21,10 @@ const pkgversion = require('../package.json').version;
 const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
 
+function foo() {
+  return true;
+}
+
 function memoize(fn) {
   let val;
   return () => {
