@@ -11,6 +11,7 @@
  */
 
 /* eslint-disable no-underscore-dangle */
+
 const request = require('request-promise-native');
 const escape = require('xml-escape');
 const fs = require('fs');
