@@ -51,11 +51,11 @@
     "@pollyjs/core": "2.6.3",
     "@pollyjs/persister-fs": "2.6.3",
     "@semantic-release/changelog": "3.0.5",
-    "@semantic-release/commit-analyzer": "6.3.1",
+    "@semantic-release/commit-analyzer": "6.3.2",
     "@semantic-release/exec": "3.3.8",
-    "@semantic-release/git": "7.0.17",
+    "@semantic-release/git": "7.0.18",
     "@semantic-release/github": "5.5.5",
-    "@semantic-release/npm": "5.3.2",
+    "@semantic-release/npm": "5.3.4",
     "@semantic-release/release-notes-generator": "7.3.2",
     "ajv": "6.10.2",
     "chai": "4.2.0",
@@ -74,7 +74,7 @@
     "lodash": "4.17.15",
     "mocha": "6.2.2",
     "nyc": "14.1.1",
-    "semantic-release": "15.13.28"
+    "semantic-release": "15.13.30"
   },
   "snyk": true,
   "lint-staged": {
