@@ -1,3 +1,10 @@
+## [5.3.1](https://github.com/adobe/helix-status/compare/v5.3.0...v5.3.1) (2019-11-06)
+
+
+### Bug Fixes
+
+* **ci:** correct tool path ([#84](https://github.com/adobe/helix-status/issues/84)) ([566f627](https://github.com/adobe/helix-status/commit/566f62702fe3f1c18af6cad3bedc6e65e3510ddb))
+
 # [5.3.0](https://github.com/adobe/helix-status/compare/v5.2.0...v5.3.0) (2019-10-23)
 
 
