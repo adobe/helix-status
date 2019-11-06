@@ -8,7 +8,7 @@ executors:
     working_directory: ~/repo
 
 orbs:
-  helix-post-deploy: adobe/helix-post-deploy@0.0.1
+  helix-post-deploy: adobe/helix-post-deploy@0.0.3
 
 commands:
   setup:
@@ -93,6 +93,7 @@ jobs:
         name: Branch Deployment
         command: npm run deploy-ci
     - helix-post-deploy/monitoring:
+        tool_path: "./src"
         statuspage_name: "Orb Test [IGNORE]"
         statuspage_group: "Development"
         newrelic_name: "Orb Test [IGNORE]"
