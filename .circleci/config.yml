@@ -82,11 +82,6 @@ jobs:
 
     steps:
     - setup
-    - persist_to_workspace:
-        root: ~/repo
-        paths:
-          - project
-          - .npm
     - run:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
@@ -97,8 +92,6 @@ jobs:
     - run:
         name: Branch Deployment
         command: npm run deploy-ci
-    - attach_workspace:
-        at: ~/repo
     - helix-post-deploy/monitoring:
         statuspage_name: "Orb Test [IGNORE]"
         statuspage_group: "Development"
