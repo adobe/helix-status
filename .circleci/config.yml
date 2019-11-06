@@ -83,7 +83,7 @@ jobs:
     steps:
     - setup
     - persist_to_workspace:
-        root: /home/circleci
+        root: ~/repo
         paths:
           - project
           - .npm
@@ -99,7 +99,7 @@ jobs:
         name: Branch Deployment
         command: npm run deploy-ci
     - attach_workspace:
-        at: /home/circleci
+        at: ~/repo
     - helix-post-deploy/monitoring:
         statuspage_name: "Orb Test [IGNORE]"
         statuspage_group: "Development"
