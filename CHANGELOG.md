@@ -1,3 +1,10 @@
+## [5.3.2](https://github.com/adobe/helix-status/compare/v5.3.1...v5.3.2) (2019-11-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v4 ([#85](https://github.com/adobe/helix-status/issues/85)) ([6d2aca3](https://github.com/adobe/helix-status/commit/6d2aca3ec2f0ab96a4b5c2cc0e0498ca898c58c0))
+
 ## [5.3.1](https://github.com/adobe/helix-status/compare/v5.3.0...v5.3.1) (2019-11-06)
 
 
