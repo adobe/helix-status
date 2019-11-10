@@ -51,7 +51,7 @@
     "@pollyjs/core": "2.6.3",
     "@pollyjs/persister-fs": "2.6.3",
     "@semantic-release/changelog": "3.0.5",
-    "@semantic-release/commit-analyzer": "6.3.2",
+    "@semantic-release/commit-analyzer": "6.3.3",
     "@semantic-release/exec": "3.3.8",
     "@semantic-release/git": "7.0.18",
     "@semantic-release/github": "5.5.5",
