@@ -41,7 +41,7 @@ $http.get('$$$URL$$$',
       $http.get({
         url: `https://adobeioruntime.net/api/v1/namespaces/_/activations/${id}`,
         headers: {
-          Authorization: `Basic ${Buffer.from($secure.WSK_AUTH_HELIX).toString('base64')}`,
+          Authorization: `Basic ${Buffer.from($secure.WSK_AUTH_$$$NS$$$).toString('base64')}`,
         },
         json: true,
       },
