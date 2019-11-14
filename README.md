@@ -236,7 +236,12 @@ By default, the check will use the `name` from your `package.json`, but you can 
 
 `newrelic` requires a New Relic [Admin's API Key](https://docs.newrelic.com/docs/apis/get-started/intro-apis/understand-new-relic-api-keys#admin) (read the docs, it's different from your API key, even when you are an Admin) that should be passed using either the `--auth` parameter or the `NEWRELIC_AUTH` environment variable.
 
-Note: you need to have [Multi-location Synthetics alert conditions](https://rpm.newrelic.com/api/explore/alerts_location_failure_conditions) enabled for your account. More information can be found [here](https://docs.newrelic.com/docs/multi-location-synthetics-alert-conditions).
+#### New Relic Synthetics Setup
+- Have [Multi-location Synthetics alert conditions](https://rpm.newrelic.com/api/explore/alerts_location_failure_conditions) enabled for your account. More information can be found [here](https://docs.newrelic.com/docs/multi-location-synthetics-alert-conditions).
+- Add `WSK_AUTH` keys as [secure credentials](https://docs.newrelic.com/docs/synthetics/new-relic-synthetics/using-monitors/secure-credentials-store-credentials-information-scripted-browsers) for all Adobe I/O Runtime namespaces: `WSK_AUTH_FOO` for namespace `foo`, `WSK_AUTH_FOO_BAR` for `foo-bar` etc.
+
+#### Use with CircleCI
+You can invoke the [adobe/helix-post-deploy](https://circleci.com/orbs/registry/orb/adobe/helix-post-deploy) orb in your CircleCI config.yaml and use the `monitoring` command as a step in your job, with optional parameters. Note: this does not replace adding `@adobe/helix-status` as a dependency in your package.json.
 
 # Development
 

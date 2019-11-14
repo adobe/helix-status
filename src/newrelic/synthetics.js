@@ -38,6 +38,13 @@ const MONITOR_TYPE = 'SCRIPT_API';
 
 /* eslint-disable no-console */
 
+function getNS(url) {
+  // extracts the I/O Runtime namespace from a URL like:
+  // https://adobeioruntime.net/api/v1/web/namespace/package/action@latest/_status_check/healthcheck.json
+  const ns = /\/api\/v\d\/web\/([\w]|[\w][\w@ .-]*[\w@.-]+)\//.exec(url);
+  return ns ? ns[1].replace(/[@ .-]/g, '_').toUpperCase() : 'DEFAULT';
+}
+
 async function getMonitors(auth, monitorname) {
   try {
     let more = true;
@@ -90,6 +97,7 @@ async function updateMonitor(auth, monitor, url) {
     .readFileSync(path.resolve(__dirname, 'monitor_script.js'))
     .toString()
     .replace('$$$URL$$$', url))
+    .replace('$$$NS$$$', getNS(url))
     .toString('base64');
   try {
     await request.put(`https://synthetics.newrelic.com/synthetics/api/v3/monitors/${monitor.id}/script`, {
