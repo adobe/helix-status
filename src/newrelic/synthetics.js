@@ -39,6 +39,8 @@ const MONITOR_TYPE = 'SCRIPT_API';
 /* eslint-disable no-console */
 
 function getNS(url) {
+  // extracts the I/O Runtime namespace from a URL like:
+  // https://adobeioruntime.net/api/v1/web/namespace/package/action@latest/_status_check/healthcheck.json
   const ns = /\/api\/v\d\/web\/([\w]|[\w][\w@ .-]*[\w@.-]+)\//.exec(url);
   return ns ? ns[1].replace(/[@ .-]/g, '_').toUpperCase() : 'DEFAULT';
 }
