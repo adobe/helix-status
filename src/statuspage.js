@@ -19,24 +19,15 @@ const request = require('request-promise-native');
 const status = 'operational';
 
 let logger = console;
+const config = {};
 let packageJSON = {};
-let defaultName;
-let defaultDescription;
-let defaultGroup;
 
 try {
   packageJSON = JSON.parse(fs.readFileSync('package.json'));
-  if (packageJSON.statuspage) {
-    defaultName = packageJSON.statuspage.name || packageJSON.name || undefined;
-    defaultDescription = packageJSON.statuspage.description || packageJSON.description || undefined;
-    defaultGroup = packageJSON.statuspage.group || undefined;
-  } else {
-    defaultName = packageJSON.name;
-    defaultDescription = packageJSON.description;
-    defaultGroup = undefined;
-  }
+  config.name = packageJSON.name;
+  config.description = packageJSON.description;
 } catch (e) {
-  defaultName = undefined;
+  config.name = undefined;
 }
 
 function setLogger(silent) {
@@ -183,19 +174,19 @@ function baseargs(y) {
     .option('name', {
       type: 'string',
       describe: 'The name of the component',
-      required: defaultName === undefined,
-      default: defaultName,
+      required: config.name === undefined,
+      default: config.name,
     })
     .option('description', {
       type: 'string',
       describe: 'The description of the component',
-      default: defaultDescription,
+      default: config.description,
+      required: false,
     })
     .option('group', {
       type: 'string',
       describe: 'The name of an existing component group',
       required: false,
-      default: defaultGroup,
     })
     .option('silent', {
       type: 'boolean',

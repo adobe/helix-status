@@ -23,12 +23,7 @@ let packageJSON = {};
 // load config
 try {
   packageJSON = JSON.parse(fs.readFileSync('package.json'));
-  if (packageJSON.newrelic) {
-    config.packageName = packageJSON.newrelic.name || packageJSON.name || undefined;
-    config.groupPolicy = packageJSON.newrelic.group_policy;
-  } else {
-    config.packageName = packageJSON.name;
-  }
+  config.packageName = packageJSON.name;
 } catch (e) {
   config.packageName = undefined;
 }
@@ -59,7 +54,6 @@ function baseargs(y) {
     .option('group_policy', {
       type: 'string',
       describe: 'The name of a common policy to add the monitor to',
-      default: config.groupPolicy,
       required: false,
     });
 }
