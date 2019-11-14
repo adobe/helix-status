@@ -1,3 +1,10 @@
+# [5.4.0](https://github.com/adobe/helix-status/compare/v5.3.2...v5.4.0) (2019-11-14)
+
+
+### Features
+
+* **monitoring:** use namespace specific wsk auth ([#89](https://github.com/adobe/helix-status/issues/89)) ([f5b522c](https://github.com/adobe/helix-status/commit/f5b522c748ee05266e70612f2650cb7ac55e6e79))
+
 ## [5.3.2](https://github.com/adobe/helix-status/compare/v5.3.1...v5.3.2) (2019-11-08)
 
 
