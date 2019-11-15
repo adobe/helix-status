@@ -1,3 +1,11 @@
+## [6.0.1](https://github.com/adobe/helix-status/compare/v6.0.0...v6.0.1) (2019-11-15)
+
+
+### Bug Fixes
+
+* **release:** trigger release ([d4cbce2](https://github.com/adobe/helix-status/commit/d4cbce2ae9e7ff9d35c8d2231913c47592ac290d))
+* **release:** trigger release [skip ci] ([306f986](https://github.com/adobe/helix-status/commit/306f986c8a936b1e967736a822658fa951e9d9c1))
+
 # [6.0.0](https://github.com/adobe/helix-status/compare/v5.4.0...v6.0.0) (2019-11-15)
 
 
