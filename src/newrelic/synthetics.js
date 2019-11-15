@@ -96,8 +96,8 @@ async function updateMonitor(auth, monitor, url) {
   const scriptText = Buffer.from(fs
     .readFileSync(path.resolve(__dirname, 'monitor_script.js'))
     .toString()
-    .replace('$$$URL$$$', url))
-    .replace('$$$NS$$$', getNS(url))
+    .replace('$$$URL$$$', url)
+    .replace('$$$NS$$$', getNS(url)))
     .toString('base64');
   try {
     await request.put(`https://synthetics.newrelic.com/synthetics/api/v3/monitors/${monitor.id}/script`, {
