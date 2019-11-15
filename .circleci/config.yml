@@ -8,7 +8,7 @@ executors:
     working_directory: ~/repo
 
 orbs:
-  helix-post-deploy: adobe/helix-post-deploy@1.1.0
+  helix-post-deploy: adobe/helix-post-deploy@1.2.1
 
 commands:
   setup:
@@ -72,6 +72,9 @@ jobs:
 
     - helix-post-deploy/monitoring:
         tool_path: ./src
+        statuspage_name: Adobe I/O Runtime
+        statuspage_group: Runtime
+        newrelic_group_policy: Delivery Repeated Failure
 
   branch-deploy:
     executor: node10

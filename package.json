@@ -87,12 +87,5 @@
     "ghooks": {
       "pre-commit": "npx lint-staged"
     }
-  },
-  "statuspage": {
-    "name": "Adobe I/O Runtime",
-    "group": "Runtime"
-  },
-  "newrelic": {
-    "group_policy": "Delivery Repeated Failure"
   }
 }
