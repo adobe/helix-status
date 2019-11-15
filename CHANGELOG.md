@@ -1,3 +1,15 @@
+# [6.0.0](https://github.com/adobe/helix-status/compare/v5.4.0...v6.0.0) (2019-11-15)
+
+
+### Code Refactoring
+
+* **monitoring:** remove config loading from package.json ([#93](https://github.com/adobe/helix-status/issues/93)) ([2d5a245](https://github.com/adobe/helix-status/commit/2d5a24546fafca87e7b82f49679fbeb18729a5c1))
+
+
+### BREAKING CHANGES
+
+* **monitoring:** Monitoring config in package.json no longer supported. Use command parameters in .circleci/config.yml instead. See https://circleci.com/orbs/registry/orb/adobe/helix-post-deploy for more information.
+
 # [5.4.0](https://github.com/adobe/helix-status/compare/v5.3.2...v5.4.0) (2019-11-14)
 
 
