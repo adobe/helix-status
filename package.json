@@ -15,8 +15,6 @@
     "semantic-prepare": "node ./build/prepare.js",
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
     "commit": "git-cz",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect",
     "build": "wsk-builder -v",
     "deploy": "wsk-builder -v --deploy --test",
     "deploy-sequences": "wsk-builder --no-build -no-hints -l latest -l major -l minor",
@@ -40,9 +38,8 @@
     "@adobe/helix-log": "^4.0.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
-    "snyk": "^1.228.5",
     "xml-escape": "^1.1.0",
-    "yargs": "^14.0.0"
+    "yargs": "^15.0.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
@@ -76,7 +73,6 @@
     "nyc": "14.1.1",
     "semantic-release": "15.13.30"
   },
-  "snyk": true,
   "lint-staged": {
     "*.js": "eslint"
   },
