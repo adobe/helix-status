@@ -3,10 +3,6 @@
   "version": "6.0.2",
   "description": "Report status for OpenWhisk Microservices for Uptime checks with Pingdom or New Relic",
   "main": "src/index.js",
-  "bin": {
-    "newrelic": "src/newrelic.js",
-    "statuspage": "src/statuspage.js"
-  },
   "scripts": {
     "test": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 mocha",
     "test-ci": "nyc --reporter=text --reporter=lcov --check-coverage --branches 100 --statements 100 --lines 100 mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
