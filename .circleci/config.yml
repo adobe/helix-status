@@ -79,7 +79,6 @@ jobs:
 
   branch-deploy:
     executor: node10
-    context: Project Helix
 
     steps:
     - setup
@@ -99,12 +98,14 @@ workflows:
     jobs:
     - build
     - branch-deploy:
+        context: Project Helix
         requires:
           - build
         filters:
           branches:
             ignore: master
     - semantic-release:
+        context: Project Helix
         requires:
         - build
         filters:
