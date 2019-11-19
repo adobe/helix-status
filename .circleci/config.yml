@@ -51,6 +51,7 @@ jobs:
 
   semantic-release:
     executor: node10
+    context: Project Helix
 
     steps:
     - setup
@@ -78,6 +79,7 @@ jobs:
 
   branch-deploy:
     executor: node10
+    context: Project Helix
 
     steps:
     - setup
