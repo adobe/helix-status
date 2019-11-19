@@ -1,3 +1,15 @@
+# [7.0.0](https://github.com/adobe/helix-status/compare/v6.0.2...v7.0.0) (2019-11-19)
+
+
+### Features
+
+* **monitoring:** move scripts to own repository ([#97](https://github.com/adobe/helix-status/issues/97)) ([c39a624](https://github.com/adobe/helix-status/commit/c39a62444dd15bc0c46e1c1c8a253b0dd2c26da6))
+
+
+### BREAKING CHANGES
+
+* **monitoring:** For monitoring automation, you now have to include @adobe/helix-ops as dev dependency in your package.json
+
 ## [6.0.2](https://github.com/adobe/helix-status/compare/v6.0.1...v6.0.2) (2019-11-15)
 
 
