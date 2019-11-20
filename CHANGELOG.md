@@ -1,3 +1,10 @@
+## [7.0.2](https://github.com/adobe/helix-status/compare/v7.0.1...v7.0.2) (2019-11-20)
+
+
+### Bug Fixes
+
+* **deps:** don't pin request-promise-native and update renovate config ([#104](https://github.com/adobe/helix-status/issues/104)) ([423cfdd](https://github.com/adobe/helix-status/commit/423cfdd9029d21a83ea0208ec3687c6da2ba61c2))
+
 ## [7.0.1](https://github.com/adobe/helix-status/compare/v7.0.0...v7.0.1) (2019-11-20)
 
 
