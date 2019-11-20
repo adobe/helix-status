@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/adobe/helix-status/compare/v7.0.0...v7.0.1) (2019-11-20)
+
+
+### Bug Fixes
+
+* **deps:** update request-promise-native@1.0.8 ([#105](https://github.com/adobe/helix-status/issues/105)) ([b98dc9e](https://github.com/adobe/helix-status/commit/b98dc9e008611fab5c01219704d05384e8d405dd))
+
 # [7.0.0](https://github.com/adobe/helix-status/compare/v6.0.2...v7.0.0) (2019-11-19)
 
 
