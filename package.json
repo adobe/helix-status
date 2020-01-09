@@ -31,15 +31,15 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/helix-log": "4.0.0",
+    "@adobe/helix-log": "4.4.2",
     "request": "2.88.0",
     "request-promise-native": "^1.0.8",
     "xml-escape": "1.1.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.0",
-    "@adobe/helix-ops": "1.0.1",
-    "@adobe/openwhisk-action-builder": "2.3.1",
+    "@adobe/helix-ops": "1.2.0",
+    "@adobe/openwhisk-action-builder": "2.4.0",
     "@pollyjs/adapter-node-http": "3.0.2",
     "@pollyjs/core": "3.0.0",
     "@pollyjs/persister-fs": "3.0.0",
