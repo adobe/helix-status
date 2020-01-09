@@ -1,3 +1,10 @@
+## [7.0.3](https://github.com/adobe/helix-status/compare/v7.0.2...v7.0.3) (2020-01-09)
+
+
+### Bug Fixes
+
+* **deps:** update [@adobe](https://github.com/adobe) ([#106](https://github.com/adobe/helix-status/issues/106)) ([ec5a8db](https://github.com/adobe/helix-status/commit/ec5a8db2b508af7193abf425003d08f94deca8bf))
+
 ## [7.0.2](https://github.com/adobe/helix-status/compare/v7.0.1...v7.0.2) (2019-11-20)
 
 
