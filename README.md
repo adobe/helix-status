@@ -8,7 +8,7 @@
 [![GitHub license](https://img.shields.io/github/license/adobe/helix-status.svg)](https://github.com/adobe/helix-status/blob/master/LICENSE.txt)
 [![GitHub issues](https://img.shields.io/github/issues/adobe/helix-status.svg)](https://github.com/adobe/helix-status/issues)
 [![LGTM Code Quality Grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/adobe/helix-status.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/adobe/helix-status)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release) [![Greenkeeper badge](https://badges.greenkeeper.io/adobe/helix-status.svg)](https://greenkeeper.io/)
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 ## Problem
 
@@ -144,6 +144,60 @@ $http.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/
   }
 );
 ```
+
+# Advanced Checks
+
+By default, `helix-status` will take a map of URLs and make a `GET` request for each URL provided. In some scenarios, you need to provide additional detail to craft the request and `helix-status` supports three types of advanced checks for that:
+
+## Request Options
+
+If you need to adjust things like request method (from `GET` to `POST`) or set request headers (e.g. `Accept`), instead of providing a URL as string, you can provide a [request options object, according to the `request/request` documentation](https://github.com/request/request#requestoptions-callback).
+
+Make sure not to forget the `uri`.
+
+```javascript
+module.exports.main = wrap(main, 
+  { example: {
+    uri: 'http://www.example.com',
+    method: 'POST',
+    headers: {
+      accept: 'application/json'
+    }
+  }});
+```
+
+## Custom Status Check Function
+
+For more advanced use cases, you can provide a `function` in your checks. This function will be executed with the `params` of your OpenWhisk function when requested with the status check or health check URLs.
+
+Keep in mind that the check function should execute reasonably fast, but it can be async.
+
+```javascript
+module.exports.main = wrap(main, 
+  { example: function(params) => params.foo === params.bar });
+```
+
+## Request Options with Dynamic Values
+
+A combination of the two techniques above is the usage of request options with Dynamic Values. This can be used if you need to populate properties of the request object or request headers with values provided in the `params` of the execution.
+
+A typical example would be making a call to an API that requires an API key, where the API key would be stored in the default parameters of the OpenWhisk action.
+
+To achieve this, provide a request options object as described in [Request Options](#request-options), but note that values both of the `options` and the `options.headers` object can be `function`s. Each property that is a function will be replaced with the value that function returns when called with the action's parameters.
+
+```javascript
+module.exports.main = wrap(main, 
+  { example: {
+    uri: 'http://www.example.com',
+    method: 'POST',
+    headers: {
+      accept: 'application/json',
+      authorization: params => `Bearer ${params.EXAMPLE_API_TOKEN}`
+    }
+  }});
+```
+
+The example above shows how to extract the `EXAMPLE_API_TOKEN` value from the action's (default) parameters and applies it to the `Authorization` header.
 
 # Development
 
