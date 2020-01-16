@@ -199,6 +199,15 @@ module.exports.main = wrap(main,
 
 The example above shows how to extract the `EXAMPLE_API_TOKEN` value from the action's (default) parameters and applies it to the `Authorization` header.
 
+# Status Codes
+
+The health check reports following HTTP status codes:
+
+- `200` (OK): all health checks performed successfully
+- `504` (Gateway Timeout): the health check took too long to execute
+- `502` (Gateway Error): the health check got an error response from the checked URL
+- `500` (Server Error): the generic check function did not execute successfully
+
 # Development
 
 ## Deploying Helix Status
