@@ -85,6 +85,81 @@ describe('Index Tests', () => {
     assert.equal(result2, 'boo');
   });
 
+  it('wrap function supports function check', async () => {
+    let triggered = false;
+    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+      funccheck: () => {
+        triggered = true;
+      },
+    });
+
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.ok(!triggered);
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+    assert.ok(triggered);
+  });
+
+  it('wrap function supports function check with options', async () => {
+    let triggered = false;
+    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+      funccheck: (opts) => {
+        triggered = opts;
+      },
+    });
+
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.ok(!triggered);
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+    assert.ok(triggered);
+  });
+
+  it('wrap function supports request options check', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+      optscheck: {
+        uri: 'https://www.example.com',
+        method: 'POST',
+      },
+    });
+
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+  });
+
+  it('wrap function supports request options check with functions', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+      optscheck: {
+        uri: 'https://www.example.com',
+        method: 'POST',
+        headers: {
+          Referer: (params) => params.__ow_path,
+        },
+      },
+    });
+
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 200, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+  });
+
   it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.equal(result.statusCode, 200);
@@ -250,7 +325,7 @@ describe('Timeout Tests', () => {
   it('index function fails after timeout', async () => {
     const result = await report({
       snail: 'https://httpstat.us/200?sleep=1000',
-    }, 10);
+    }, {}, 10);
 
     assert.ok(result.body.match(/<status>failed/));
     assert.ok(result.body.match(/<version>\d+\./));
