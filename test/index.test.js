@@ -104,6 +104,22 @@ describe('Index Tests', () => {
     assert.ok(triggered);
   });
 
+  it('wrap function reports failure for failing function check', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+      funccheck: () => {
+        throw new Error('Boom!');
+      },
+    });
+
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 500, 'calling with health check path get reports');
+    assert.equal(result.headers['Content-Type'], 'application/json');
+    assert.equal(typeof result.body, 'object');
+  });
+
   it('wrap function supports function check with options', async () => {
     let triggered = false;
     const wrapped = wrap(({ name } = {}) => name || 'foo', {

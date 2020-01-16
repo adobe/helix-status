@@ -184,7 +184,7 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
       : 502; // gateway error
     const body = (e.response ? e.response.body : '') || e.message;
     return {
-      statusCode,
+      statusCode: e.options ? statusCode : 500,
       headers: {
         'Content-Type': decorator.mime,
         'X-Version': version,
@@ -194,7 +194,7 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
         version,
         response_time: Math.abs(Date.now() - start),
         error: {
-          url: e.options.uri,
+          url: e.options ? e.options.uri : undefined,
           statuscode: e.response ? e.response.statusCode : undefined,
           body,
         },
