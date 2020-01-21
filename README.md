@@ -152,3 +152,4 @@ $http.get('https://adobeioruntime.net/api/v1/web/helix/helix-services/status@v3/
 Deploying Helix Status requires the `wsk` command line client, authenticated to a namespace of your choice. For Project Helix, we use the `helix` namespace.
 
 All commits to master that pass the testing will be deployed automatically. All commits to branches that will pass the testing will get committed as `/helix-services/status@ci<num>` and tagged with the CI build number.
+
