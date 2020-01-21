@@ -195,7 +195,9 @@ describe('Index Tests', () => {
     const pwd = process.cwd();
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_package'));
-      const result = await main({});
+      const result = await main({
+        example: 'https://www.example.com',
+      });
       assert.equal(result.statusCode, 200);
       assert.ok(result.body.match(/<version>n\/a<\/version>/));
     } finally {
