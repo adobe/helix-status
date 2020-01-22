@@ -60,33 +60,98 @@ const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
 const getName = memoize(async () => (await getPackage()).name || 'n/a');
 
-
-async function report(checks = {}, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
-  const start = Date.now();
+async function uricheck(key, uri, timeout) {
   const version = await getVersion();
   const name = await getName();
 
-  try {
-    const checker = async ([key, uri]) => {
-      const response = await request({
-        uri,
-        resolveWithFullResponse: true,
-        time: true,
-        timeout,
-        headers: {
-          'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
-        },
-      });
-      return {
-        key,
-        response,
-      };
-    };
+  const response = await request({
+    uri,
+    resolveWithFullResponse: true,
+    time: true,
+    timeout,
+    headers: {
+      'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
+    },
+  });
+  return {
+    key,
+    response,
+  };
+}
 
+function seal(obj = {}, init, params) {
+  return Object.keys(obj).reduce((p, key) => {
+    const value = obj[key];
+    if (typeof value === 'function') {
+      // eslint-disable-next-line no-param-reassign
+      p[key] = value(params);
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      p[key] = value;
+    }
+    return p;
+  }, init);
+}
+
+async function requestcheck(key, opts, timeout, params) {
+  const version = await getVersion();
+  const name = await getName();
+
+  const requestoptions = seal(opts, {
+    resolveWithFullResponse: true,
+    time: true,
+    timeout,
+  }, params);
+
+  const headers = seal(opts.headers, {
+    'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
+  }, params);
+  requestoptions.headers = headers;
+
+  const response = await request(requestoptions);
+  return {
+    key,
+    response,
+  };
+}
+
+async function funccheck(key, func, params) {
+  const start = Date.now();
+  const result = await func(params);
+  const end = Date.now();
+
+  return {
+    key,
+    response: {
+      result,
+      timings: {
+        end: end - start,
+      },
+    },
+  };
+}
+
+function makechecker(timeout, params) {
+  return async function checker([key, check]) {
+    if (typeof check === 'string') {
+      return uricheck(key, check, timeout);
+    } else if (typeof check === 'function') {
+      return funccheck(key, check, params);
+    }
+    return requestcheck(key, check, timeout, params);
+  };
+}
+
+
+async function report(checks = {}, params, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
+  const start = Date.now();
+  const version = await getVersion();
+
+  try {
     const runchecks = Object.keys(checks)
       .filter((key) => key.match('^[a-z0-9]+$'))
       .map((key) => [key, checks[key]])
-      .map(checker);
+      .map(makechecker(timeout, params));
 
     const checkresults = await Promise.all(runchecks);
 
@@ -119,7 +184,7 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
       : 502; // gateway error
     const body = (e.response ? e.response.body : '') || e.message;
     return {
-      statusCode,
+      statusCode: e.options ? statusCode : 500,
       headers: {
         'Content-Type': decorator.mime,
         'X-Version': version,
@@ -129,7 +194,7 @@ async function report(checks = {}, timeout = 10000, decorator = { body: xml, mim
         version,
         response_time: Math.abs(Date.now() - start),
         error: {
-          url: e.options.uri,
+          url: e.options ? e.options.uri : undefined,
           statuscode: e.response ? e.response.statusCode : undefined,
           body,
         },
@@ -146,12 +211,12 @@ function wrap(func, checks) {
     // Pingdom status check?
     if (params
       && params.__ow_path === PINGDOM_XML_PATH) {
-      return report(checks);
+      return report(checks, params);
     }
     // New Relic status check?
     if (params
       && params.__ow_path === HEALTHCHECK_PATH) {
-      return report(checks, 10000, {
+      return report(checks, params, 10000, {
         body: (j) => j,
         mime: 'application/json',
       });
@@ -176,14 +241,14 @@ function probotStatus(checks = {}) {
     const router = probot.route(`/${baseroute}`);
 
     router.get(`/${pingroute}`, async (_, res) => {
-      const r = await report(checks);
+      const r = await report(checks, {});
 
       res.set(r.headers);
       res.send(r.body);
     });
 
     router.get(`/${healthroute}`, async (_, res) => {
-      const r = await report(checks, 10000, {
+      const r = await report(checks, {}, 10000, {
         body: (j) => j,
         mime: 'application/json',
       });
@@ -209,7 +274,7 @@ function main(paramsorfunction, checks = {}) {
     // New Relic status check?
     if (paramsorfunction
       && paramsorfunction.__ow_path === HEALTHCHECK_PATH) {
-      return report(paramsorfunction, 10000, {
+      return report(paramsorfunction, {}, 10000, {
         body: (j) => j,
         mime: 'application/json',
       });
