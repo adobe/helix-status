@@ -1,3 +1,11 @@
+# [7.1.0](https://github.com/adobe/helix-status/compare/v7.0.3...v7.1.0) (2020-01-22)
+
+
+### Features
+
+* **checks:** report error 500 when generic status check function cannot be executed ([c8923ef](https://github.com/adobe/helix-status/commit/c8923ef96189352696039a9c078ded9e62efae03)), closes [#48](https://github.com/adobe/helix-status/issues/48)
+* **status:** enable function checks, option checks and parametrized option checks ([cbc190c](https://github.com/adobe/helix-status/commit/cbc190c2f486d4d72b46a01437f6b8fbb26bbb3c)), closes [#48](https://github.com/adobe/helix-status/issues/48)
+
 ## [7.0.3](https://github.com/adobe/helix-status/compare/v7.0.2...v7.0.3) (2020-01-09)
 
 
