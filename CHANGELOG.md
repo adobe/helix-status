@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/adobe/helix-status/compare/v7.1.0...v7.1.1) (2020-01-23)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v4.5.0 ([#115](https://github.com/adobe/helix-status/issues/115)) ([2489484](https://github.com/adobe/helix-status/commit/248948485c344482dcffca6565ba0f6c7abd60ae))
+
 # [7.1.0](https://github.com/adobe/helix-status/compare/v7.0.3...v7.1.0) (2020-01-22)
 
 
