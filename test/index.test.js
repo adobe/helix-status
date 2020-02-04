@@ -14,6 +14,7 @@
 
 'use strict';
 
+const http = require('http');
 const assert = require('assert');
 const path = require('path');
 const { AssertionError } = require('assert');
@@ -332,17 +333,43 @@ describe('Test mini-XML generator', () => {
 });
 
 describe('Timeout Tests', () => {
-  it('index function reports timeouts with status 504', async () => {
-    const result = await index({ example: 'http://httpstat.us/200?sleep=15000' });
+  let port;
+  let svr;
+  beforeEach(async () => {
+    // use custom server, since polly interferes with request.timeout.
+    svr = await new Promise((resolve) => {
+      const server = http.createServer((req, res) => {
+        const url = new URL(req.url, `http://${req.headers.host}`);
+        setTimeout(() => {
+          res.statusCode = 200;
+          res.end('200');
+        }, url.searchParams.get('sleep'));
+      });
+      server.listen(0, () => {
+        port = server.address().port;
+        resolve(server);
+      });
+    });
+  });
 
+  afterEach(async () => {
+    svr.close();
+    return new Promise((resolve) => {
+      svr.on('close', resolve);
+    });
+  });
+
+  it('index function reports timeouts with status 504', async () => {
+    const result = await index({ example: `http://localhost:${port}/?sleep=11000` });
     assert.ok(result.body.match(/<version>\d+\./));
     assert.ok(result.body.match(/<status>failed/));
     assert.equal(result.statusCode, 504);
+    svr.close();
   }).timeout(20000);
 
   it('index function fails after timeout', async () => {
     const result = await report({
-      snail: 'https://httpstat.us/200?sleep=1000',
+      snail: `http://localhost:${port}/?sleep=100`,
     }, {}, 10);
 
     assert.ok(result.body.match(/<status>failed/));

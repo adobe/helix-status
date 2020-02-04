@@ -176,6 +176,7 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
       }, decorator.name),
     };
   } catch (e) {
+    // istanbul ignore next
     const istimeout = () => e.cause
         && (e.cause.code === 'ESOCKETTIMEDOUT'
          || e.cause.code === 'ETIMEDOUT');
