@@ -1,3 +1,10 @@
+## [7.1.3](https://github.com/adobe/helix-status/compare/v7.1.2...v7.1.3) (2020-04-14)
+
+
+### Bug Fixes
+
+* **deploy:** use helix-services package ([#153](https://github.com/adobe/helix-status/issues/153)) ([9e25f90](https://github.com/adobe/helix-status/commit/9e25f9062d0c0894855dc61a5b75c6864c024ed8))
+
 ## [7.1.2](https://github.com/adobe/helix-status/compare/v7.1.1...v7.1.2) (2020-02-25)
 
 
