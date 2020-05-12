@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adobe/helix-status"
+    "url": "https://github.com/adobe/helix-status.git"
   },
   "author": "",
   "license": "Apache-2.0",
