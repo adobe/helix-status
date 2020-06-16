@@ -142,7 +142,6 @@ function makechecker(timeout, params) {
   };
 }
 
-
 async function report(checks = {}, params, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
   const start = Date.now();
   const version = await getVersion();
