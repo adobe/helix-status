@@ -45,7 +45,6 @@ describe('Index Tests', () => {
     },
   });
 
-
   it('index function returns function for function', async () => {
     const wrapped = await index(() => 'foo');
     assert.deepEqual(typeof wrapped, 'function');
