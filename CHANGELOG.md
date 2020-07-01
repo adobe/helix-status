@@ -1,3 +1,18 @@
+# [8.0.0](https://github.com/adobe/helix-status/compare/v7.1.3...v8.0.0) (2020-07-01)
+
+
+### Bug Fixes
+
+* **status:** remove support for pingdom status ([d446744](https://github.com/adobe/helix-status/commit/d4467445d706e06182bf0dcb4b1a10d0bda8c74a)), closes [#44](https://github.com/adobe/helix-status/issues/44)
+
+
+### BREAKING CHANGES
+
+* **status:** requests to /_status_check/pingdom.xml no longer
+                 return an XML status response.
+                 additionally, the exports for `xml` and
+                 `PINGDOM_XML_PATH` were removed.
+
 ## [7.1.3](https://github.com/adobe/helix-status/compare/v7.1.2...v7.1.3) (2020-04-14)
 
 
