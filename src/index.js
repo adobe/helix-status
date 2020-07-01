@@ -11,13 +11,11 @@
  */
 
 /* eslint-disable no-underscore-dangle */
-const escape = require('xml-escape');
 const fs = require('fs');
 const { error } = require('@adobe/helix-log');
 const fetchAPI = require('@adobe/helix-fetch');
 const pkgversion = require('../package.json').version;
 
-const PINGDOM_XML_PATH = '/_status_check/pingdom.xml';
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
 
 function memoize(fn) {
@@ -28,16 +26,6 @@ function memoize(fn) {
     }
     return val;
   };
-}
-
-function xml(o, name) {
-  let value = o;
-  if (typeof o === 'object') {
-    value = Object.keys(o).map((k) => xml(o[k], k)).join('\n');
-  } else if (typeof o === 'string') {
-    value = escape(o);
-  }
-  return `<${name}>${value}</${name}>`;
 }
 
 const getPackage = memoize(() => new Promise((resolve) => {
@@ -105,7 +93,7 @@ async function request(opts) {
   } catch (e) {
     /* istanbul ignore next */
     if (e instanceof fetchAPI.AbortError) {
-      e.options = options;
+      e.options = opts;
       e.message = 'Error: ETIMEDOUT';
     }
     // this is needed, otherwise the sockets hang
@@ -152,8 +140,7 @@ async function uricheck(key, uri, timeout) {
 }
 
 function seal(obj = {}, init, params) {
-  return Object.keys(obj).reduce((p, key) => {
-    const value = obj[key];
+  return Object.entries(obj).reduce((p, [key, value]) => {
     if (typeof value === 'function') {
       // eslint-disable-next-line no-param-reassign
       p[key] = value(params);
@@ -208,7 +195,7 @@ function makechecker(timeout, params) {
   };
 }
 
-async function report(checks = {}, params, timeout = 10000, decorator = { body: xml, mime: 'application/xml', name: 'pingdom_http_custom_check' }) {
+async function report(checks = {}, params, timeout = 10000) {
   const start = Date.now();
   const version = await getVersion();
 
@@ -223,10 +210,10 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': decorator.mime,
+        'Content-Type': 'application/json',
         'X-Version': version,
       },
-      body: decorator.body({
+      body: {
         status: 'OK',
         version,
         response_time: Math.abs(Date.now() - start),
@@ -238,7 +225,7 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
           p[key] = Math.floor(response.timings.end);
           return p;
         }, {}),
-      }, decorator.name),
+      },
     };
   } catch (e) {
     let statusCode = 502; // gateway error
@@ -249,10 +236,10 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
     return {
       statusCode: e.options ? statusCode : 500,
       headers: {
-        'Content-Type': decorator.mime,
+        'Content-Type': 'application/json',
         'X-Version': version,
       },
-      body: decorator.body({
+      body: {
         status: 'failed',
         version,
         response_time: Math.abs(Date.now() - start),
@@ -264,25 +251,15 @@ async function report(checks = {}, params, timeout = 10000, decorator = { body: 
         process: {
           activation: process.env.__OW_ACTIVATION_ID,
         },
-      }, decorator.name),
+      },
     };
   }
 }
 
 function wrap(func, checks) {
   return (params) => {
-    // Pingdom status check?
-    if (params
-      && params.__ow_path === PINGDOM_XML_PATH) {
+    if (params && params.__ow_path === HEALTHCHECK_PATH) {
       return report(checks, params);
-    }
-    // New Relic status check?
-    if (params
-      && params.__ow_path === HEALTHCHECK_PATH) {
-      return report(checks, params, 10000, {
-        body: (j) => j,
-        mime: 'application/json',
-      });
     }
     return func(params);
   };
@@ -298,24 +275,9 @@ function wrap(func, checks) {
  */
 function probotStatus(checks = {}) {
   return (probot) => {
-    const [, baseroute, pingroute] = PINGDOM_XML_PATH.split('/');
-    const healthroute = HEALTHCHECK_PATH.split('/')[2];
-
-    const router = probot.route(`/${baseroute}`);
-
-    router.get(`/${pingroute}`, async (_, res) => {
-      const r = await report(checks, {});
-
-      res.set(r.headers);
-      res.send(r.body);
-    });
-
-    router.get(`/${healthroute}`, async (_, res) => {
-      const r = await report(checks, {}, 10000, {
-        body: (j) => j,
-        mime: 'application/json',
-      });
-
+    const router = probot.route();
+    router.get(HEALTHCHECK_PATH, async (_, res) => {
+      const r = await report(checks);
       res.set(r.headers);
       res.send(r.body);
     });
@@ -334,19 +296,11 @@ function main(paramsorfunction, checks = {}) {
   if (typeof paramsorfunction === 'function') {
     return wrap(paramsorfunction, checks);
   } else if (typeof paramsorfunction === 'object') {
-    // New Relic status check?
-    if (paramsorfunction
-      && paramsorfunction.__ow_path === HEALTHCHECK_PATH) {
-      return report(paramsorfunction, {}, 10000, {
-        body: (j) => j,
-        mime: 'application/json',
-      });
-    }
     return report(paramsorfunction);
   }
   throw new Error('Invalid Arguments: expected function or object');
 }
 
 module.exports = {
-  main, wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH, probotStatus,
+  main, wrap, report, HEALTHCHECK_PATH, probotStatus,
 };

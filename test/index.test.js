@@ -22,8 +22,15 @@ const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
 const index = require('../src/index.js').main;
+const pkgJson = require('../package.json');
+
+const TEST_ACTIVATION_ID = '1234';
+
+// eslint-disable-next-line no-underscore-dangle
+process.env.__OW_ACTIVATION_ID = TEST_ACTIVATION_ID;
+
 const {
-  wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
+  wrap, report, HEALTHCHECK_PATH,
 } = require('../src/index.js');
 
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
@@ -51,23 +58,6 @@ describe('Index Tests', () => {
     const wrapped = await index(() => 'foo');
     assert.deepEqual(typeof wrapped, 'function');
     assert.deepEqual(wrapped(), 'foo');
-  });
-
-  it('wrap function takes over when called with pingdom status path', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo');
-    assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without Pingdom status path passes through');
-
-    const result = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}` });
-    assert.equal(result.statusCode, 200, 'calling with Pingdom status path get reports');
-    assert.equal(result.headers['Content-Type'], 'application/xml');
-    assert.equal(typeof result.body, 'string');
-
-    const result1 = await wrapped({ __ow_path: `${PINGDOM_XML_PATH}`, FOO_BAR: 'baz' });
-    assert.equal(result1.statusCode, 200, 'calling with Pingdom status path get reports');
-
-    const result2 = await wrapped({ name: 'boo' });
-    assert.equal(result2, 'boo');
   });
 
   it('wrap function takes over when called with health check path', async () => {
@@ -206,7 +196,7 @@ describe('Index Tests', () => {
   it('index function returns status code for objects', async () => {
     const result = await index({});
     assert.equal(result.statusCode, 200);
-    assert.ok(result.body.match(/<version>\d+\./));
+    assert.equal(typeof result.body, 'object');
   });
 
   it('index function returns status code for objects as JSON', async () => {
@@ -226,7 +216,7 @@ describe('Index Tests', () => {
         example: 'https://www.example.com',
       });
       assert.equal(result.statusCode, 200);
-      assert.ok(result.body.match(/<version>n\/a<\/version>/));
+      assert.equal(result.body.version, 'n/a');
     } finally {
       process.chdir(pwd);
     }
@@ -241,7 +231,7 @@ describe('Index Tests', () => {
       process.chdir(path.resolve(__dirname, 'fixtures', 'custom_package'));
       const result = await main({});
       assert.equal(result.statusCode, 200);
-      assert.ok(result.body.match(/<version>10.42-beta<\/version>/));
+      assert.equal(result.body.version, '10.42-beta');
       assert.equal(result.headers['X-Version'], '10.42-beta');
     } finally {
       process.chdir(pwd);
@@ -257,7 +247,7 @@ describe('Index Tests', () => {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_valid_package_json'));
       const result = await main({});
       assert.equal(result.statusCode, 200);
-      assert.ok(result.body.match(/<version>n\/a<\/version>/));
+      assert.equal(result.body.version, 'n/a');
     } finally {
       process.chdir(pwd);
     }
@@ -272,7 +262,7 @@ describe('Index Tests', () => {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_package_version'));
       const result = await main({});
       assert.equal(result.statusCode, 200);
-      assert.ok(result.body.match(/<version>n\/a<\/version>/));
+      assert.equal(result.body.version, 'n/a');
     } finally {
       process.chdir(pwd);
     }
@@ -280,10 +270,9 @@ describe('Index Tests', () => {
 
   it('index function makes HTTP requests', async () => {
     const result = await index({ example: 'http://www.example.com' });
-    const { body } = result;
 
-    assert.ok(body.match(/<example>/));
-    assert.ok(result.body.match(/<version>\d+\./));
+    assert.ok(/\d+/.test(result.body.example));
+    assert.equal(result.body.version, pkgJson.version);
     assert.equal(result.statusCode, 200);
   });
 
@@ -291,9 +280,19 @@ describe('Index Tests', () => {
     const ERROR_STATUS = 503;
     const result = await index({ example: `http://httpstat.us/${ERROR_STATUS}` });
 
-    assert.ok(result.body.match(/<version>\d+\./));
-    assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(new RegExp(`<statuscode>${ERROR_STATUS}`)));
+    delete result.body.response_time;
+    assert.deepEqual(result.body, {
+      error: {
+        body: '',
+        statuscode: 503,
+        url: 'http://httpstat.us/503',
+      },
+      process: {
+        activation: TEST_ACTIVATION_ID,
+      },
+      status: 'failed',
+      version: pkgJson.version,
+    });
     assert.equal(result.statusCode, 502);
   });
 
@@ -306,10 +305,20 @@ describe('Index Tests', () => {
       example: 'http://www.example.com',
       fail: 'http://www.fail.com/',
     });
+    delete result.body.response_time;
 
-    assert.ok(result.body.match(/<statuscode>500/));
-    assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>\d+\./));
+    assert.deepEqual(result.body, {
+      error: {
+        body: '{}',
+        statuscode: 500,
+        url: 'http://www.fail.com/',
+      },
+      process: {
+        activation: TEST_ACTIVATION_ID,
+      },
+      status: 'failed',
+      version: pkgJson.version,
+    });
     assert.equal(result.statusCode, 502);
   });
 
@@ -342,22 +351,6 @@ describe('Index Tests', () => {
   });
 });
 
-describe('Test mini-XML generator', () => {
-  it('Generates XML from String', () => {
-    assert.equal(xml('Hello World', 'foo'), '<foo>Hello World</foo>');
-  });
-
-  it('Generates XML from Number', () => {
-    assert.equal(xml(12, 'foo'), '<foo>12</foo>');
-  });
-
-  it('Generates XML from Object', () => {
-    assert.equal(xml({ hey: 'ho', bar: 'baz', zip: { zap: 'zup' } }, 'foo'), `<foo><hey>ho</hey>
-<bar>baz</bar>
-<zip><zap>zup</zap></zip></foo>`);
-  });
-});
-
 describe('Timeout Tests', () => {
   let port;
   let svr;
@@ -386,23 +379,47 @@ describe('Timeout Tests', () => {
   });
 
   it('index function reports timeouts with status 504', async () => {
-    const result = await index({ example: `http://localhost:${port}/?sleep=11000` });
-    assert.ok(result.body.match(/<version>\d+\./));
-    assert.ok(result.body.match(/<status>failed/));
+    const url = `http://localhost:${port}/?sleep=11000`;
+    const result = await index({ example: url });
+    assert.ok(result.body.response_time > 10000);
+    delete result.body.response_time;
+    assert.deepEqual(result.body, {
+      error: {
+        body: 'Error: ETIMEDOUT',
+        statuscode: undefined,
+        url,
+      },
+      process: {
+        activation: TEST_ACTIVATION_ID,
+      },
+      status: 'failed',
+      version: pkgJson.version,
+    });
     assert.equal(result.statusCode, 504);
     svr.close();
   }).timeout(20000);
 
   it('index function fails after timeout', async () => {
+    const url = `http://localhost:${port}/?sleep=100`;
     const result = await report({
-      snail: `http://localhost:${port}/?sleep=100`,
+      snail: url,
     }, {}, 10);
 
-    assert.ok(result.body.match(/<status>failed/));
-    assert.ok(result.body.match(/<version>\d+\./));
+    assert.ok(result.body.response_time > 10);
+    delete result.body.response_time;
 
-    // error can be ESOCKETTIMEDOUT or ETIMEDOUT
-    assert.ok(result.body.match(/<body>Error: E(SOCKET)?TIMEDOUT<\/body>/));
+    assert.deepEqual(result.body, {
+      error: {
+        body: 'Error: ETIMEDOUT',
+        statuscode: undefined,
+        url,
+      },
+      process: {
+        activation: TEST_ACTIVATION_ID,
+      },
+      status: 'failed',
+      version: pkgJson.version,
+    });
     assert.equal(result.statusCode, 504);
   });
 });

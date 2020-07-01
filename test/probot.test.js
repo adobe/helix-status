@@ -50,33 +50,6 @@ describe('Probot Tests', async () => {
     });
   });
 
-  it('probotStatus serves XML status', async () => {
-    const app = express();
-
-    app.get('/foo', (req, res) => {
-      res.send('bar');
-    });
-
-    probotStatus()({
-      route: () => app,
-    });
-
-    await chai.request(app).get('/foo').then((res) => {
-      expect(res).to.have.status(200);
-      expect(res.text).to.equal('bar');
-    });
-
-    await chai.request(app).get('/pingdom.xml').then((res) => {
-      expect(res).to.have.status(200);
-      expect(res).to.have.header('content-type', 'application/xml; charset=utf-8');
-    });
-
-    await chai.request(app).get('/healthcheck.json').then((res) => {
-      expect(res).to.have.status(200);
-      expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
-    });
-  });
-
   it('probotStatus serves JSON status', async () => {
     const app = express();
 
@@ -93,7 +66,7 @@ describe('Probot Tests', async () => {
       expect(res.text).to.equal('bar');
     });
 
-    await chai.request(app).get('/healthcheck.json').then((res) => {
+    await chai.request(app).get('/_status_check/healthcheck.json').then((res) => {
       expect(res).to.have.status(200);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
     });
