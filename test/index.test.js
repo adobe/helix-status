@@ -26,6 +26,8 @@ const {
   wrap, report, PINGDOM_XML_PATH, xml, HEALTHCHECK_PATH,
 } = require('../src/index.js');
 
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+
 describe('Index Tests', () => {
   setupPolly({
     recordIfMissing: false,
@@ -40,7 +42,7 @@ describe('Index Tests', () => {
     },
     matchRequestsBy: {
       headers: {
-        exclude: ['user-agent'],
+        exclude: ['user-agent', 'accept', 'accept-encoding', 'connection'],
       },
     },
   });
@@ -154,6 +156,31 @@ describe('Index Tests', () => {
     assert.equal(result.statusCode, 200, 'calling with health check path get reports');
     assert.equal(result.headers['Content-Type'], 'application/json');
     assert.equal(typeof result.body, 'object');
+  });
+
+  it('wrap function rejects options check with no uri', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+      optscheck: {
+        method: 'POST',
+      },
+    });
+
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
+    assert.equal(result.statusCode, 500);
+    delete result.body.process;
+    delete result.body.response_time;
+    delete result.body.version;
+    assert.deepEqual(result.body, {
+      error: {
+        body: 'request needs uri parameter.',
+        statuscode: undefined,
+        url: undefined,
+      },
+      status: 'failed',
+    });
   });
 
   it('wrap function supports request options check with functions', async () => {
@@ -302,12 +329,12 @@ describe('Index Tests', () => {
     const { server } = this.polly;
 
     let ua;
-    server.get('http://localhost/test').intercept((req) => {
+    server.get('http://example.com/test').intercept((req) => {
       ua = req.headers['user-agent'];
     });
 
     await index({
-      localhost: 'http://localhost/test',
+      localhost: 'http://example.com/test',
     });
 
     assert.ok(ua);

@@ -24,14 +24,16 @@ const {
   probotStatus,
 } = require('../src/index.js');
 
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+
 chai.use(chaiHttp);
 
-describe('Probot Tests', () => {
+describe('Probot Tests', async () => {
   it('probotStatus returns a function', () => {
     assert.equal(typeof probotStatus(), 'function');
   });
 
-  it('probotStatus does not interfere with regular app code', () => {
+  it('probotStatus does not interfere with regular app code', async () => {
     const app = express();
 
     app.get('/foo', (req, res) => {
@@ -42,13 +44,13 @@ describe('Probot Tests', () => {
       route: () => app,
     });
 
-    chai.request(app).get('/foo').then((res) => {
+    await chai.request(app).get('/foo').then((res) => {
       expect(res).to.have.status(200);
       expect(res.text).to.equal('bar');
     });
   });
 
-  it('probotStatus serves XML status', () => {
+  it('probotStatus serves XML status', async () => {
     const app = express();
 
     app.get('/foo', (req, res) => {
@@ -59,23 +61,23 @@ describe('Probot Tests', () => {
       route: () => app,
     });
 
-    chai.request(app).get('/foo').then((res) => {
+    await chai.request(app).get('/foo').then((res) => {
       expect(res).to.have.status(200);
       expect(res.text).to.equal('bar');
     });
 
-    chai.request(app).get('/pingdom.xml').then((res) => {
+    await chai.request(app).get('/pingdom.xml').then((res) => {
       expect(res).to.have.status(200);
       expect(res).to.have.header('content-type', 'application/xml; charset=utf-8');
     });
 
-    chai.request(app).get('/healthcheck.json').then((res) => {
+    await chai.request(app).get('/healthcheck.json').then((res) => {
       expect(res).to.have.status(200);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
     });
   });
 
-  it('probotStatus serves JSON status', () => {
+  it('probotStatus serves JSON status', async () => {
     const app = express();
 
     app.get('/foo', (req, res) => {
@@ -86,12 +88,12 @@ describe('Probot Tests', () => {
       route: () => app,
     });
 
-    chai.request(app).get('/foo').then((res) => {
+    await chai.request(app).get('/foo').then((res) => {
       expect(res).to.have.status(200);
       expect(res.text).to.equal('bar');
     });
 
-    chai.request(app).get('/healthcheck.json').then((res) => {
+    await chai.request(app).get('/healthcheck.json').then((res) => {
       expect(res).to.have.status(200);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
     });
