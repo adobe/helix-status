@@ -169,10 +169,9 @@ async function requestcheck(key, opts, timeout, params) {
   const version = await getVersion();
   const name = await getName();
 
-  const requestoptions = seal(opts, {
-    headers: seal(opts.headers, {
-      'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
-    }, params),
+  const requestoptions = seal(opts, {}, params);
+  requestoptions.headers = seal(opts.headers, {
+    'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
   }, params);
 
   const response = await request(requestoptions);
