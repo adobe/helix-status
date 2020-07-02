@@ -11,9 +11,9 @@
  */
 
 /* eslint-disable no-underscore-dangle */
-const request = require('request-promise-native');
 const fs = require('fs');
 const { error } = require('@adobe/helix-log');
+const fetchAPI = require('@adobe/helix-fetch');
 const pkgversion = require('../package.json').version;
 
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
@@ -48,14 +48,86 @@ const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
 const getName = memoize(async () => (await getPackage()).name || 'n/a');
 
+const getFetchContext = memoize(() => {
+  /* istanbul ignore next */
+  if (process.env.HELIX_FETCH_FORCE_HTTP1) {
+    return fetchAPI.context({
+      httpProtocol: 'http1',
+      httpsProtocols: ['http1'],
+    });
+  } else {
+    /* istanbul ignore next */
+    return fetchAPI;
+  }
+});
+
+/**
+ * Use fetch to emulate a request call as it is used in this code.
+ * @param {object} opts Request options.
+ * @returns {object} a response object.
+ */
+async function request(opts) {
+  const { uri } = opts;
+  if (!uri) {
+    throw new Error('request needs uri parameter.');
+  }
+  const options = {
+    cache: 'no-store',
+    ...opts,
+  };
+
+  delete options.uri;
+  const context = getFetchContext();
+
+  if (options.timeout) {
+    options.signal = context.timeoutSignal(options.timeout);
+    delete options.timeout;
+  }
+
+  const start = Date.now();
+  let response;
+  let body;
+  try {
+    response = await context.fetch(uri, options);
+    body = await response.text();
+  } catch (e) {
+    /* istanbul ignore next */
+    if (e instanceof fetchAPI.AbortError) {
+      e.options = opts;
+      e.message = 'Error: ETIMEDOUT';
+    }
+    // this is needed, otherwise the sockets hang
+    await context.disconnectAll();
+    throw e;
+  }
+  const end = Date.now();
+
+  const requestResponse = {
+    statusCode: response.status,
+    url: response.url,
+    headers: response.headers,
+    body,
+    timings: {
+      end: end - start,
+    },
+  };
+
+  if (response.ok) {
+    return requestResponse;
+  } else {
+    const err = new Error();
+    err.options = opts;
+    err.response = requestResponse;
+    throw err;
+  }
+}
+
 async function uricheck(key, uri, timeout) {
   const version = await getVersion();
   const name = await getName();
 
   const response = await request({
     uri,
-    resolveWithFullResponse: true,
-    time: true,
     timeout,
     headers: {
       'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
@@ -84,13 +156,9 @@ async function requestcheck(key, opts, timeout, params) {
   const version = await getVersion();
   const name = await getName();
 
-  const requestoptions = seal(opts, {
-    resolveWithFullResponse: true,
-    time: true,
-    timeout,
-    headers: seal(opts.headers, {
-      'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
-    }, params),
+  const requestoptions = seal(opts, {}, params);
+  requestoptions.headers = seal(opts.headers, {
+    'user-agent': `helix-status/${pkgversion} (${name}@${version})`,
   }, params);
 
   const response = await request(requestoptions);
@@ -160,13 +228,10 @@ async function report(checks = {}, params, timeout = 10000) {
       },
     };
   } catch (e) {
-    // istanbul ignore next
-    const istimeout = () => e.cause
-        && (e.cause.code === 'ESOCKETTIMEDOUT'
-         || e.cause.code === 'ETIMEDOUT');
-
-    const statusCode = istimeout() ? 504 // gateway timeout
-      : 502; // gateway error
+    let statusCode = 502; // gateway error
+    if (e instanceof fetchAPI.AbortError) {
+      statusCode = 504; // gateway timeout
+    }
     const body = (e.response ? e.response.body : '') || e.message;
     return {
       statusCode: e.options ? statusCode : 500,
@@ -204,7 +269,7 @@ function wrap(func, checks) {
  * Status Checks as a Probot "app": call with a map of checks
  * and get a function that can be passed into Probot's `withApp`
  * function.
- * @param {object} checks a map of checks to perform. Each key is a name of the check,
+ * @param {object} checks A map of checks to perform. Each key is a name of the check,
  * each value a URL to ping
  * @returns {function} a probot app function that can be added to any given bot
  */

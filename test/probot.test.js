@@ -24,9 +24,11 @@ const {
   probotStatus,
 } = require('../src/index.js');
 
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
+
 chai.use(chaiHttp);
 
-describe('Probot Tests', () => {
+describe('Probot Tests', async () => {
   it('probotStatus returns a function', () => {
     assert.equal(typeof probotStatus(), 'function');
   });
