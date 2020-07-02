@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/adobe/helix-status/compare/v8.0.0...v8.1.0) (2020-07-02)
+
+
+### Features
+
+* **status:** use helix-fetch instead of request ([#187](https://github.com/adobe/helix-status/issues/187)) ([a4cef49](https://github.com/adobe/helix-status/commit/a4cef497726b34a0531842e85c848c65a23c6c50)), closes [#185](https://github.com/adobe/helix-status/issues/185)
+
 # [8.0.0](https://github.com/adobe/helix-status/compare/v7.1.3...v8.0.0) (2020-07-01)
 
 
