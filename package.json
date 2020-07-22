@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/helix-fetch": "1.8.0",
+    "@adobe/helix-fetch": "1.8.1",
     "@adobe/helix-log": "4.5.1"
   },
   "devDependencies": {
