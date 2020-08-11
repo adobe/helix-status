@@ -1,3 +1,10 @@
+## [8.1.3](https://github.com/adobe/helix-status/compare/v8.1.2...v8.1.3) (2020-08-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v1.9.1 ([#206](https://github.com/adobe/helix-status/issues/206)) ([ae94a87](https://github.com/adobe/helix-status/commit/ae94a87625980062fe6ad29f02511e681d03aa2e))
+
 ## [8.1.2](https://github.com/adobe/helix-status/compare/v8.1.1...v8.1.2) (2020-07-23)
 
 
