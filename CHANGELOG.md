@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/adobe/helix-status/compare/v8.1.3...v8.2.0) (2020-09-21)
+
+
+### Features
+
+* rename default branch from "master" to "main" ([ef62be7](https://github.com/adobe/helix-status/commit/ef62be73edc8b04e7dbc7afa25566ea52d00dcff))
+
 ## [8.1.3](https://github.com/adobe/helix-status/compare/v8.1.2...v8.1.3) (2020-08-11)
 
 
