@@ -7,23 +7,20 @@ executors:
         NPM_CONFIG_PREFIX: "~/.npm-global"
     working_directory: ~/repo
 
-orbs:
-  helix-post-deploy: adobe/helix-post-deploy@1.10.0
-
 commands:
   setup:
     steps:
     - checkout
-    # - restore_cache:
-    #     keys:
-    #     - v1-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+    - restore_cache:
+        keys:
+        - v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
     - run:
         name: Installing Dependencies
         command: npm ci
-    # - save_cache:
-    #     paths:
-    #     - node_modules
-    #     key: v1-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
+    - save_cache:
+        paths:
+        - node_modules
+        key: v2-dependencies-{{ arch }}-{{ checksum "package-lock.json" }}
     - run:
         name: prepare test git user
         command: git config --global user.email "circleci@example.com" && git config --global user.name "CircleCi Build"
@@ -58,50 +55,15 @@ jobs:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
 
-    - helix-post-deploy/config-wsk
-
-    - helix-post-deploy/config-env
-
     - run:
         name: Semantic Release
         command: npm run semantic-release
-
-    - run:
-        name: Link Sequences
-        command: npm run deploy-sequences
-
-    - helix-post-deploy/monitoring:
-        statuspage_name: Adobe I/O Runtime
-        statuspage_group: Runtime
-        newrelic_group_policy: Delivery Repeated Failure
-
-  branch-deploy:
-    executor: node10
-
-    steps:
-    - setup
-    - run:
-        name: revert changes to package-lock.json
-        command: git checkout -- package-lock.json
-
-    - helix-post-deploy/config-wsk
-
-    - run:
-        name: Branch Deployment
-        command: npm run deploy-ci
 
 workflows:
   version: 2
   build:
     jobs:
     - build
-    - branch-deploy:
-        context: Project Helix
-        requires:
-          - build
-        filters:
-          branches:
-            ignore: main
     - semantic-release:
         context: Project Helix
         requires:
