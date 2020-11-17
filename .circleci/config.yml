@@ -49,32 +49,6 @@ jobs:
     - store_artifacts:
         path: junit
 
-  semantic-release:
-    executor: node10
-
-    steps:
-    - setup
-    - run:
-        name: revert changes to package-lock.json
-        command: git checkout -- package-lock.json
-
-    - helix-post-deploy/config-wsk
-
-    - helix-post-deploy/config-env
-
-    - run:
-        name: Semantic Release
-        command: npm run semantic-release
-
-    - run:
-        name: Link Sequences
-        command: npm run deploy-sequences
-
-    - helix-post-deploy/monitoring:
-        statuspage_name: Adobe I/O Runtime
-        statuspage_group: Runtime
-        newrelic_group_policy: Delivery Repeated Failure
-
   branch-deploy:
     executor: node10
 
@@ -102,11 +76,3 @@ workflows:
         filters:
           branches:
             ignore: main
-    - semantic-release:
-        context: Project Helix
-        requires:
-        - build
-        filters:
-          branches:
-            only: main
-
