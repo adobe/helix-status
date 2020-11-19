@@ -1,3 +1,11 @@
+## [8.2.2](https://github.com/adobe/helix-status/compare/v8.2.1...v8.2.2) (2020-11-19)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v4.5.3 ([#234](https://github.com/adobe/helix-status/issues/234)) ([d0b4816](https://github.com/adobe/helix-status/commit/d0b4816026c07cc3f36f61c9a90613028726fca0))
+* **probot:** adjust to new probot version ([#237](https://github.com/adobe/helix-status/issues/237)) ([fd05bd5](https://github.com/adobe/helix-status/commit/fd05bd5c36fcf904093d6a07b90f1917779fcfaa))
+
 ## [8.2.1](https://github.com/adobe/helix-status/compare/v8.2.0...v8.2.1) (2020-09-30)
 
 
