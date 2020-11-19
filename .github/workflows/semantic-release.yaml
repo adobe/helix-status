@@ -23,6 +23,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
-      - run:
-          name: Link Sequences
-          command: npm run deploy-sequences
+      - run: npm run deploy-sequences
