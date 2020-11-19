@@ -41,7 +41,7 @@ describe('Probot Tests', async () => {
     });
 
     probotStatus({})({
-      route: () => app,
+      getRouter: () => app,
     });
 
     await chai.request(app).get('/foo').then((res) => {
@@ -58,7 +58,7 @@ describe('Probot Tests', async () => {
     });
 
     probotStatus()({
-      route: () => app,
+      getRouter: () => app,
     });
 
     await chai.request(app).get('/foo').then((res) => {

@@ -275,7 +275,7 @@ function wrap(func, checks) {
  */
 function probotStatus(checks = {}) {
   return (probot) => {
-    const router = probot.route();
+    const router = probot.getRouter();
     router.get(HEALTHCHECK_PATH, async (_, res) => {
       const r = await report(checks);
       res.set(r.headers);
