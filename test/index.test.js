@@ -57,13 +57,13 @@ describe('Index Tests', () => {
   it('index function returns function for function', async () => {
     const wrapped = await index(() => 'foo');
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo');
+    assert.deepEqual(await wrapped(), 'foo');
   });
 
   it('wrap function takes over when called with health check path', async () => {
     const wrapped = wrap(({ name } = {}) => name || 'foo');
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
     assert.equal(result.statusCode, 200, 'calling with health check path get reports');
@@ -77,6 +77,21 @@ describe('Index Tests', () => {
     assert.equal(result2, 'boo');
   });
 
+  it('wrap function takes over when called with health check path (universal deploy)', async () => {
+    const wrapped = wrap(({ name } = {}) => name || 'foo');
+    assert.deepEqual(typeof wrapped, 'function');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
+
+    const result = await wrapped(/* Request */ {}, {
+      pathInfo: {
+        suffix: HEALTHCHECK_PATH,
+      },
+    });
+    assert.equal(result.status, 200, 'calling with health check path get reports');
+    assert.equal(result.headers.get('Content-Type'), 'application/json');
+    assert.equal(typeof result.body, 'object');
+  });
+
   it('wrap function supports function check', async () => {
     let triggered = false;
     const wrapped = wrap(({ name } = {}) => name || 'foo', {
@@ -86,7 +101,7 @@ describe('Index Tests', () => {
     });
 
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
     assert.ok(!triggered);
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
@@ -104,7 +119,7 @@ describe('Index Tests', () => {
     });
 
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
     assert.equal(result.statusCode, 500, 'calling with health check path get reports');
@@ -121,7 +136,7 @@ describe('Index Tests', () => {
     });
 
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
     assert.ok(!triggered);
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
@@ -140,7 +155,7 @@ describe('Index Tests', () => {
     });
 
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
     assert.equal(result.statusCode, 200, 'calling with health check path get reports');
@@ -156,7 +171,7 @@ describe('Index Tests', () => {
     });
 
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
     assert.equal(result.statusCode, 500);
@@ -185,7 +200,7 @@ describe('Index Tests', () => {
     });
 
     assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(wrapped(), 'foo', 'calling without health check path passes through');
+    assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
     assert.equal(result.statusCode, 200, 'calling with health check path get reports');

@@ -14,6 +14,7 @@
 const fs = require('fs');
 const { error } = require('@adobe/helix-log');
 const fetchAPI = require('@adobe/helix-fetch');
+const { Response } = require('node-fetch');
 const pkgversion = require('../package.json').version;
 
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
@@ -257,11 +258,27 @@ async function report(checks = {}, params, timeout = 10000) {
 }
 
 function wrap(func, checks) {
-  return (params) => {
-    if (params && params.__ow_path === HEALTHCHECK_PATH) {
-      return report(checks, params);
+  return async (...args) => {
+    // eslint-disable-next-line prefer-const
+    let [params = {}, context = {}] = args;
+    let path;
+    if (context.pathInfo) {
+      params = context.env || {};
+      path = context.pathInfo.suffix;
+    } else {
+      path = params.__ow_path;
     }
-    return func(params);
+    if (path === HEALTHCHECK_PATH) {
+      const result = await report(checks, params);
+      if (context.pathInfo) {
+        return new Response(JSON.stringify(result.body), {
+          headers: result.headers,
+          status: result.statusCode,
+        });
+      }
+      return result;
+    }
+    return func(...args);
   };
 }
 
