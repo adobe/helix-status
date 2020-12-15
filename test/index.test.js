@@ -420,6 +420,7 @@ describe('Timeout Tests', () => {
       snail: url,
     }, {}, 10);
 
+    console.log(result);
     assert.ok(result.body.response_time >= 10);
     delete result.body.response_time;
 
