@@ -303,19 +303,16 @@ function probotStatus(checks = {}) {
 
 /**
  * This is the main function
- * @param {object|function} paramsorfunction a params object (if called as an OpenWhisk action)
- * or a function to wrap.
- * @param {object} checks a map of checks to perfom. Each key is a name of the check,
- * each value a URL to ping
- * @returns {object|function} a status report for Pingdom or a wrapped function
+ * @param {Request} req Universal API Request
+ * @param {HEDYContext} context Universal API Context
+ * @returns {Response} a status response
  */
-function main(paramsorfunction, checks = {}) {
-  if (typeof paramsorfunction === 'function') {
-    return wrap(paramsorfunction, checks);
-  } else if (typeof paramsorfunction === 'object') {
-    return report(paramsorfunction);
-  }
-  throw new Error('Invalid Arguments: expected function or object');
+async function main(req, context) {
+  const result = await report({}, context.env);
+  return new Response(JSON.stringify(result.body), {
+    headers: result.headers,
+    status: result.statusCode,
+  });
 }
 
 module.exports = {
