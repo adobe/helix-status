@@ -17,11 +17,9 @@
 const http = require('http');
 const assert = require('assert');
 const path = require('path');
-const { AssertionError } = require('assert');
 const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
 const { setupMocha: setupPolly } = require('@pollyjs/core');
 const FSPersister = require('@pollyjs/persister-fs');
-const index = require('../src/index.js').main;
 const pkgJson = require('../package.json');
 
 const TEST_ACTIVATION_ID = '1234';
@@ -30,7 +28,7 @@ const TEST_ACTIVATION_ID = '1234';
 process.env.__OW_ACTIVATION_ID = TEST_ACTIVATION_ID;
 
 const {
-  wrap, report, HEALTHCHECK_PATH,
+  main: index, wrap, report, HEALTHCHECK_PATH,
 } = require('../src/index.js');
 
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
@@ -52,12 +50,6 @@ describe('Index Tests', () => {
         exclude: ['user-agent', 'accept', 'accept-encoding', 'connection'],
       },
     },
-  });
-
-  it('index function returns function for function', async () => {
-    const wrapped = await index(() => 'foo');
-    assert.deepEqual(typeof wrapped, 'function');
-    assert.deepEqual(await wrapped(), 'foo');
   });
 
   it('wrap function takes over when called with health check path', async () => {
@@ -209,13 +201,13 @@ describe('Index Tests', () => {
   });
 
   it('index function returns status code for objects', async () => {
-    const result = await index({});
-    assert.equal(result.statusCode, 200);
+    const result = await index({}, {});
+    assert.equal(result.status, 200);
     assert.equal(typeof result.body, 'object');
   });
 
   it('index function returns status code for objects as JSON', async () => {
-    const result = await index({ __ow_path: HEALTHCHECK_PATH });
+    const result = await report({ __ow_path: HEALTHCHECK_PATH });
     assert.equal(result.statusCode, 200);
     assert.equal(typeof result.body, 'object');
   });
@@ -223,11 +215,11 @@ describe('Index Tests', () => {
   it('index function returns n/a for missing package.json', async () => {
     delete require.cache[require.resolve('../src/index.js')];
     // eslint-disable-next-line global-require
-    const { main } = require('../src/index.js');
+    const { report: localReport } = require('../src/index.js');
     const pwd = process.cwd();
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_package'));
-      const result = await main({
+      const result = await localReport({
         example: 'https://www.example.com',
       });
       assert.equal(result.statusCode, 200);
@@ -240,11 +232,11 @@ describe('Index Tests', () => {
   it('index function returns correct package version', async () => {
     delete require.cache[require.resolve('../src/index.js')];
     // eslint-disable-next-line global-require
-    const { main } = require('../src/index.js');
+    const { report: localReport } = require('../src/index.js');
     const pwd = process.cwd();
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'custom_package'));
-      const result = await main({});
+      const result = await localReport({});
       assert.equal(result.statusCode, 200);
       assert.equal(result.body.version, '10.42-beta');
       assert.equal(result.headers['X-Version'], '10.42-beta');
@@ -256,11 +248,11 @@ describe('Index Tests', () => {
   it('index function returns n/a for corrupt package.json', async () => {
     delete require.cache[require.resolve('../src/index.js')];
     // eslint-disable-next-line global-require
-    const { main } = require('../src/index.js');
+    const { report: localReport } = require('../src/index.js');
     const pwd = process.cwd();
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_valid_package_json'));
-      const result = await main({});
+      const result = await localReport({});
       assert.equal(result.statusCode, 200);
       assert.equal(result.body.version, 'n/a');
     } finally {
@@ -271,11 +263,11 @@ describe('Index Tests', () => {
   it('index function returns n/a for missing package version', async () => {
     delete require.cache[require.resolve('../src/index.js')];
     // eslint-disable-next-line global-require
-    const { main } = require('../src/index.js');
+    const { report: localReport } = require('../src/index.js');
     const pwd = process.cwd();
     try {
       process.chdir(path.resolve(__dirname, 'fixtures', 'no_package_version'));
-      const result = await main({});
+      const result = await localReport({});
       assert.equal(result.statusCode, 200);
       assert.equal(result.body.version, 'n/a');
     } finally {
@@ -284,7 +276,7 @@ describe('Index Tests', () => {
   });
 
   it('index function makes HTTP requests', async () => {
-    const result = await index({ example: 'http://www.example.com' });
+    const result = await report({ example: 'http://www.example.com' });
 
     assert.ok(/\d+/.test(result.body.example));
     assert.equal(result.body.version, pkgJson.version);
@@ -293,7 +285,7 @@ describe('Index Tests', () => {
 
   it('index function returns error status code', async () => {
     const ERROR_STATUS = 503;
-    const result = await index({ example: `http://httpstat.us/${ERROR_STATUS}` });
+    const result = await report({ example: `http://httpstat.us/${ERROR_STATUS}` });
 
     delete result.body.response_time;
     assert.deepEqual(result.body, {
@@ -316,7 +308,7 @@ describe('Index Tests', () => {
 
     server.get('http://www.fail.com/').intercept((_, res) => res.sendStatus(500).json({}));
 
-    const result = await index({
+    const result = await report({
       example: 'http://www.example.com',
       fail: 'http://www.fail.com/',
     });
@@ -337,18 +329,6 @@ describe('Index Tests', () => {
     assert.equal(result.statusCode, 502);
   });
 
-  it('index function throws if passed invalid arguments', async () => {
-    try {
-      await index();
-      assert.fail('this should never happen');
-    } catch (e) {
-      if (e instanceof AssertionError) {
-        throw e;
-      }
-      assert.equal(e.message, 'Invalid Arguments: expected function or object');
-    }
-  });
-
   it('User agent string contains helix-status/', async function test() {
     const { server } = this.polly;
 
@@ -357,7 +337,7 @@ describe('Index Tests', () => {
       ua = req.headers['user-agent'];
     });
 
-    await index({
+    await report({
       localhost: 'http://example.com/test',
     });
 
@@ -395,7 +375,7 @@ describe('Timeout Tests', () => {
 
   it('index function reports timeouts with status 504', async () => {
     const url = `http://localhost:${port}/?sleep=11000`;
-    const result = await index({ example: url });
+    const result = await report({ example: url });
     assert.ok(result.body.response_time > 10000);
     delete result.body.response_time;
     assert.deepEqual(result.body, {
