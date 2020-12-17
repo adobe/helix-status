@@ -23,4 +23,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.ADOBE_BOT_NPM_TOKEN }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          HLX_AWS_REGION: us-east-1
+          HLX_AWS_API: 2k3mydk3bl
+          HLX_AWS_ROLE: arn:aws:iam::320028119408:role/lambda-role
+
       - run: npm run deploy-sequences
