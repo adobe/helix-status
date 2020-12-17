@@ -1,3 +1,15 @@
+# [9.0.0](https://github.com/adobe/helix-status/compare/v8.2.3...v9.0.0) (2020-12-17)
+
+
+### Features
+
+* **universal:** make wrapper work with universal deploy ([#243](https://github.com/adobe/helix-status/issues/243)) ([ac7aad1](https://github.com/adobe/helix-status/commit/ac7aad139da089244bdb3615247d6c238b2af1c1)), closes [#244](https://github.com/adobe/helix-status/issues/244)
+
+
+### BREAKING CHANGES
+
+* **universal:** the `main` function no longer auto-wraps if a function is passed. use `wrap()` and `report()` directly instead.
+
 ## [8.2.3](https://github.com/adobe/helix-status/compare/v8.2.2...v8.2.3) (2020-12-10)
 
 
