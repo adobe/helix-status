@@ -14,7 +14,7 @@
     "commit": "git-cz",
     "build": "hedy -v",
     "deploy": "hedy -v --deploy --test",
-    "deploy-sequences": "hedy --target=wsk --no-build -no-hints -l latest -l major -l minor",
+    "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor",
     "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci"
   },
   "wsk": {
