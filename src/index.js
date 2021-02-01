@@ -90,8 +90,6 @@ async function request(opts) {
       e.options = opts;
       e.message = 'Error: ETIMEDOUT';
     }
-    // this is needed, otherwise the sockets hang
-    await context.reset();
     throw e;
   }
   const end = Date.now();
