@@ -35,7 +35,7 @@ const {
 describe('Index Tests', () => {
   setupPolly({
     recordIfMissing: false,
-    recordFailedRequests: true,
+    recordFailedRequests: false,
     logging: false,
     adapters: [NodeHttpAdapter],
     persister: FSPersister,
