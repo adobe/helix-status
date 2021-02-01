@@ -14,7 +14,7 @@
 const fs = require('fs');
 const { error } = require('@adobe/helix-log');
 const fetchAPI = require('@adobe/helix-fetch');
-const { Response } = require('node-fetch');
+const { Response } = require('@adobe/helix-fetch');
 const pkgversion = require('../package.json').version;
 
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
@@ -49,18 +49,11 @@ const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
 const getName = memoize(async () => (await getPackage()).name || 'n/a');
 
-const getFetchContext = memoize(() => {
-  /* istanbul ignore next */
-  if (process.env.HELIX_FETCH_FORCE_HTTP1) {
-    return fetchAPI.context({
-      httpProtocol: 'http1',
-      httpsProtocols: ['http1'],
-    });
-  } else {
+const getFetchContext = memoize(() => (
+  process.env.HELIX_FETCH_FORCE_HTTP1
+    ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
     /* istanbul ignore next */
-    return fetchAPI;
-  }
-});
+    : fetchAPI));
 
 /**
  * Use fetch to emulate a request call as it is used in this code.
@@ -98,7 +91,7 @@ async function request(opts) {
       e.message = 'Error: ETIMEDOUT';
     }
     // this is needed, otherwise the sockets hang
-    await context.disconnectAll();
+    await context.reset();
     throw e;
   }
   const end = Date.now();
