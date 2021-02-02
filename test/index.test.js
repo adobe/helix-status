@@ -26,12 +26,11 @@ const TEST_ACTIVATION_ID = '1234';
 
 // eslint-disable-next-line no-underscore-dangle
 process.env.__OW_ACTIVATION_ID = TEST_ACTIVATION_ID;
+process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 const {
   main: index, wrap, report, HEALTHCHECK_PATH,
 } = require('../src/index.js');
-
-process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 describe('Index Tests', () => {
   setupPolly({
@@ -290,7 +289,7 @@ describe('Index Tests', () => {
     delete result.body.response_time;
     assert.deepEqual(result.body, {
       error: {
-        body: '',
+        body: '503 Service Unavailable',
         statuscode: 503,
         url: 'http://httpstat.us/503',
       },
@@ -309,7 +308,6 @@ describe('Index Tests', () => {
     server.get('http://www.fail.com/').intercept((_, res) => res.sendStatus(500).json({}));
 
     const result = await report({
-      example: 'http://www.example.com',
       fail: 'http://www.fail.com/',
     });
     delete result.body.response_time;
