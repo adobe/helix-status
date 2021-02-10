@@ -1,3 +1,10 @@
+## [9.0.2](https://github.com/adobe/helix-status/compare/v9.0.1...v9.0.2) (2021-02-10)
+
+
+### Bug Fixes
+
+* force release ([3889a6f](https://github.com/adobe/helix-status/commit/3889a6fc0dd7f1b0a678b0ef7ad643a526473171))
+
 ## [9.0.1](https://github.com/adobe/helix-status/compare/v9.0.0...v9.0.1) (2021-02-02)
 
 
