@@ -73,12 +73,12 @@ jobs:
 
     - store_artifacts:
         path: junit
-        
+
   pages-branch-deploy:
     executor: node12
     environment:
       NAMESPACE: helix-pages
-      AUTH: $HELIX_PAGES_WSK_AUTH      
+      WSK_AUTH: $HELIX_PAGES_WSK_AUTH      
 
     steps:
     - setup
@@ -86,7 +86,12 @@ jobs:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
 
-    - helix-post-deploy/config-wsk
+    - run:
+        name: Configure OpenWhisk
+        command: >-
+          echo -e
+          "APIHOST=https://adobeioruntime.net\nNAMESPACE=helix\nAUTH=$WSK_AUTH\n"
+          > ~/.wskprops
 
     - run:
         name: Branch Deployment
