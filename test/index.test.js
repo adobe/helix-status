@@ -398,7 +398,7 @@ describe('Timeout Tests', () => {
       snail: url,
     }, {}, 10);
 
-    assert.ok(result.body.response_time >= 10);
+    assert.ok(result.body.response_time >= 10 || result.body.error);
     delete result.body.response_time;
 
     assert.deepEqual(result.body, {
