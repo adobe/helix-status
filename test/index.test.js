@@ -374,7 +374,7 @@ describe('Timeout Tests', () => {
   it('index function reports timeouts with status 504', async () => {
     const url = `http://localhost:${port}/?sleep=11000`;
     const result = await report({ example: url });
-    assert.ok(result.body.response_time > 10000);
+    assert.ok(result.body.response_time > 10000, `Got response: ${JSON.stringify(result.body, 2)}, expected response_time > 10000`);
     delete result.body.response_time;
     assert.deepEqual(result.body, {
       error: {
