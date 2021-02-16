@@ -13,14 +13,10 @@
     "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
     "commit": "git-cz",
     "build": "hedy -v",
-    "deploy": "hedy -v --deploy --test",
+    "deploy": "hedy -v --deploy --test --namespace helix --name \"helix-services/status@${version}\"",
     "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor",
-    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci",
+    "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --namespace helix  --name \"helix-services/status@${version}\"",
     "deploy-pages-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --fastly-service-id 3F0xJzfyehcX3g3DQGubj9 --checkpath /_status_check/healthcheck.json --namespace helix-pages --name status-ci"
-  },
-  "wsk": {
-    "namespace": "helix",
-    "name": "helix-services/status@${version}"
   },
   "repository": {
     "type": "git",
