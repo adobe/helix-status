@@ -90,9 +90,13 @@ jobs:
           "APIHOST=https://adobeioruntime.net\nNAMESPACE=helix-pages\nAUTH=$HELIX_PAGES_WSK_AUTH\n"
           > ~/.wskprops
 
+    - run: cat ~/.wskprops
+
     - run:
         name: Branch Deployment
         command: npm run deploy-pages-ci
+        environment:
+          WSK_AUTH: $HELIX_PAGES_WSK_AUTH
 
 workflows:
   version: 2
