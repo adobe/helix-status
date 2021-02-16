@@ -75,10 +75,7 @@ jobs:
         path: junit
 
   pages-branch-deploy:
-    executor: node12
-    environment:
-      NAMESPACE: helix-pages
-      WSK_AUTH: $HELIX_PAGES_WSK_AUTH      
+    executor: node12   
 
     steps:
     - setup
@@ -90,7 +87,7 @@ jobs:
         name: Configure OpenWhisk
         command: >-
           echo -e
-          "APIHOST=https://adobeioruntime.net\nNAMESPACE=helix\nAUTH=$WSK_AUTH\n"
+          "APIHOST=https://adobeioruntime.net\nNAMESPACE=helix-pages\nAUTH=$HELIX_PAGES_WSK_AUTH\n"
           > ~/.wskprops
 
     - run:
