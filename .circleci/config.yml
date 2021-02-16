@@ -68,12 +68,38 @@ jobs:
         name: Post-Deployment Integration Test
         command: npm run test-postdeploy
 
+  pages-branch-deploy:
+    executor: node12
+
+    steps:
+    - setup
+    - run:
+        name: revert changes to package-lock.json
+        command: git checkout -- package-lock.json
+
+    - helix-post-deploy/config-wsk:
+    # we need to override the wsk authentication
+        environment:
+          NAMESPACE: helix-pages
+          AUTH: $HELIX_PAGES_WSK_AUTH
+
+    - run:
+        name: Branch Deployment
+        command: npm run deploy-pages-ci
+
 workflows:
   version: 2
   build:
     jobs:
     - build
     - branch-deploy:
+        context: Project Helix
+        requires:
+          - build
+        filters:
+          branches:
+            ignore: main
+    - pages-branch-deploy:
         context: Project Helix
         requires:
           - build
