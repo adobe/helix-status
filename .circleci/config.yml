@@ -68,6 +68,12 @@ jobs:
         name: Post-Deployment Integration Test
         command: npm run test-postdeploy
 
+    - store_test_results:
+        path: junit
+
+    - store_artifacts:
+        path: junit
+        
   pages-branch-deploy:
     executor: node12
     environment:
