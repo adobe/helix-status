@@ -93,6 +93,13 @@ jobs:
           echo -e
           "APIHOST=https://adobeioruntime.net\nNAMESPACE=helix-pages\nAUTH=$HELIX_PAGES_WSK_AUTH\n"
           > ~/.wskprops
+    - run:
+        name: Override WSK_AUTH
+        command: echo 'export WSK_AUTH=$HELIX_PAGES_WSK_AUTH' >> $BASH_ENV
+
+    - run:
+        name: Validate WSK_AUTH
+        command: echo $WSK_AUTH | md5sum
 
     - run:
         name: Branch Deployment
