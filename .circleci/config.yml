@@ -70,6 +70,9 @@ jobs:
 
   pages-branch-deploy:
     executor: node12
+    environment:
+      NAMESPACE: helix-pages
+      AUTH: $HELIX_PAGES_WSK_AUTH      
 
     steps:
     - setup
@@ -77,11 +80,7 @@ jobs:
         name: revert changes to package-lock.json
         command: git checkout -- package-lock.json
 
-    - helix-post-deploy/config-wsk:
-    # we need to override the wsk authentication
-        environment:
-          NAMESPACE: helix-pages
-          AUTH: $HELIX_PAGES_WSK_AUTH
+    - helix-post-deploy/config-wsk
 
     - run:
         name: Branch Deployment
