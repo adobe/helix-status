@@ -16,7 +16,7 @@
     "deploy": "hedy -v --deploy --test --namespace helix --name helix-services/status@$npm_package_version",
     "deploy-sequences": "hedy --no-build -no-hints -l latest -l major -l minor",
     "deploy-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --namespace helix  --name helix-services/status@ci$CIRCLE_BUILD_NUM",
-    "deploy-pages-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --fastly-service-id 3F0xJzfyehcX3g3DQGubj9 --checkpath /_status_check/healthcheck.json --namespace helix-pages --name helix-status/status@ci$CIRCLE_BUILD_NUM"
+    "deploy-pages-ci": "hedy -v --deploy --test=/_status_check/healthcheck.json --pkgVersion=ci$CIRCLE_BUILD_NUM -l ci --fastly-service-id 3F0xJzfyehcX3g3DQGubj9 --checkpath /_status_check/healthcheck.json --namespace helix-pages --name pages_status/status@ci$CIRCLE_BUILD_NUM"
   },
   "repository": {
     "type": "git",
