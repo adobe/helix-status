@@ -32,12 +32,12 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/helix-fetch": "2.1.6",
+    "@adobe/helix-fetch": "2.1.7",
     "@adobe/helix-log": "5.0.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
-    "@adobe/helix-deploy": "3.6.4",
+    "@adobe/helix-deploy": "3.6.6",
     "@pollyjs/adapter-node-http": "5.1.0",
     "@pollyjs/core": "5.1.0",
     "@pollyjs/persister-fs": "5.0.0",
