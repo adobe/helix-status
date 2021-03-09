@@ -1,3 +1,10 @@
+## [9.0.9](https://github.com/adobe/helix-status/compare/v9.0.8...v9.0.9) (2021-03-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-deploy to v3.9.1 ([#311](https://github.com/adobe/helix-status/issues/311)) ([9e1ca34](https://github.com/adobe/helix-status/commit/9e1ca34f09ffd698b962eaa87a99eb7b3caff0e0))
+
 ## [9.0.8](https://github.com/adobe/helix-status/compare/v9.0.7...v9.0.8) (2021-03-09)
 
 
