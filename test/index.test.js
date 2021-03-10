@@ -28,9 +28,7 @@ const TEST_ACTIVATION_ID = '1234';
 process.env.__OW_ACTIVATION_ID = TEST_ACTIVATION_ID;
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
-const {
-  main: index, wrap, report, HEALTHCHECK_PATH,
-} = require('../src/index.js');
+const { wrap, report, HEALTHCHECK_PATH } = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
@@ -196,18 +194,6 @@ describe('Index Tests', () => {
     const result = await wrapped({ __ow_path: `${HEALTHCHECK_PATH}` });
     assert.equal(result.statusCode, 200, 'calling with health check path get reports');
     assert.equal(result.headers['Content-Type'], 'application/json');
-    assert.equal(typeof result.body, 'object');
-  });
-
-  it('index function returns status code for objects', async () => {
-    const result = await index({}, {});
-    assert.equal(result.status, 200);
-    assert.equal(typeof result.body, 'object');
-  });
-
-  it('index function returns status code for objects as JSON', async () => {
-    const result = await report({ __ow_path: HEALTHCHECK_PATH });
-    assert.equal(result.statusCode, 200);
     assert.equal(typeof result.body, 'object');
   });
 
