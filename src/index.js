@@ -292,20 +292,10 @@ function probotStatus(checks = {}) {
   };
 }
 
-/**
- * This is the main function
- * @param {Request} req Universal API Request
- * @param {HEDYContext} context Universal API Context
- * @returns {Response} a status response
- */
-async function main(req, context) {
-  const result = await report({}, context.env);
-  return new Response(JSON.stringify(result.body), {
-    headers: result.headers,
-    status: result.statusCode,
-  });
-}
-
 module.exports = {
-  main, wrap, report, HEALTHCHECK_PATH, probotStatus,
+  helixStatus: wrap,
+  wrap,
+  report,
+  HEALTHCHECK_PATH,
+  probotStatus,
 };

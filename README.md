@@ -1,6 +1,6 @@
 # Helix Status
 
-> Report status for OpenWhisk Microservices for Pingdom (and others) Uptime (HTTP) checks
+> Report status for OpenWhisk Microservices for New Relic (and others) Uptime (HTTP) checks
 
 ## Status
 [![codecov](https://img.shields.io/codecov/c/github/adobe/helix-status.svg)](https://codecov.io/gh/adobe/helix-status)
@@ -12,7 +12,8 @@
 
 ## Problem
 
-You have a microservice that is deployed as an OpenWhisk HTTP action or even a number of these microservices and you want to establish monitoring of service uptime using Pingdom.
+You have a microservice that is deployed as an OpenWhisk HTTP action or even a number of these 
+microservices and you want to establish monitoring of service uptime using New Relic.
 
 In case the service is down, you want to quickly understand if it is a problem with
 
@@ -20,39 +21,12 @@ In case the service is down, you want to quickly understand if it is a problem w
 - one of your backend API providers which might be unreachable
 - your own service which could be broken (for instance due to a deployment change)
 
-Finally, you know that there are [Uptime (HTTP) Checks](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, and similar services such as [New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) but you do not want to keep repeating the same code for returning a status check in each of your micro services.
+Finally, you know that there are [New Relic Synthetics](https://docs.newrelic.com/docs/synthetics) but you 
+do not want to keep repeating the same code for returning a status check in each of your micro services.
 
 ## Solution
 
-`helix-status` is:
-
-1. a micro service (running as an OpenWhisk HTTP action) that responds to Pingdom Uptime (HTTP) Checks (and similar)
-2. a library that allows you to wrap your own actions to get a standardized monitoring response
-
-# Helix Status (as a Service)
-
-## Usage
-
-The service is installed and available for Adobe I/O Runtime at `https://adobeioruntime.net/api/v1/web/helix/helix-services/status@latest`.
-
-```bash
-curl https://adobeioruntime.net/api/v1/web/helix/helix-services/status@latest/_status_check/pingdom.xml
-curl https://adobeioruntime.net/api/v1/web/helix/helix-services/status@latest/_status_check/healthcheck.json
-```
-
-If you want to monitor the availability of Adobe I/O Runtime, just add a new [Uptime (HTTP) Check](https://help.pingdom.com/hc/en-us/articles/203679631-How-to-set-up-an-uptime-HTTP-check) in Pingdom, using the `https://` protocol, and `adobeioruntime.net/api/v1/web/helix/helix-services/status@latest/_status_check/pingdom.xml` as the URL.
-
-## Deployment in your own Namespace
-
-If you want to use the service in your own namespace or an OpenWhisk instance that is not Adobe I/O Runtime, make sure your `~/.wskprops` is set up correctly and run:
-
-```bash
-$ npm install
-$ npm run build
-$ npm run deploy
-```
-
-# Helix Status (as a Library)
+`helix-status` is a library that allows you to wrap your own actions to get a standardized monitoring response
 
 ## Installation
 
@@ -60,7 +34,7 @@ $ npm run deploy
 $ npm install -S @adobe/helix-status
 ```
 
-## Usage with Pingdom
+## Usage 
 
 In the entry point of your action, add
 
@@ -74,17 +48,16 @@ to the top of your file and override the `module.exports.main` with:
 module.exports.main = wrap(main);
 ```
 
-All `GET /_status_check/pingdom.xml` requests to your service will now respond with an XML response similar to below:
+All `GET /_status_check/healthcheck.json` requests to your service will now respond with an XML response similar to below:
 
-```xml
-<pingdom_http_custom_check>
-  <status>OK</status>
-  <response_time>0</response_time>
-
-</pingdom_http_custom_check
+```json
+{
+  "status": "OK",
+  "version": "1.5.4",
+  "response_time": 6,
+  "process": {}
+}
 ```
-
-> **Note**: While the XML response format is similar to the one described in [Pingdom Custom HTTP Check](https://help.pingdom.com/hc/en-us/articles/115000431709-HTTP-Custom-Check) the `/_status_check/pingdom.xml` request is intended to be used for standard Pingdom UPTIME Checks only. It's _not_ suitable for Custom HTTP Checks which  expect an HTTP Status 200 XML response whereas UPTIME Checks determine the status of a service (UP/DOWN) based on the HTTP Status code of the response. For more information see [#21](https://github.com/adobe/helix-status/issues/21) and [here](https://help.pingdom.com/hc/en-us/articles/203749792-What-is-a-check-).
 
 You can also specify a list of checks to run by passing second argument to `wrap`:
 
@@ -94,12 +67,16 @@ module.exports.main = wrap(main, { example: 'http://www.example.com'})
 
 you will then see results like this:
 
-```xml
-<pingdom_http_custom_check>
-  <status>OK</status>
-  <response_time>181</response_time>
-  <example>176</example>
-</pingdom_http_custom_check>
+```json
+{
+  "status": "OK",
+  "version": "1.5.4",
+  "response_time": 249,
+  "process": {
+    "activation": "7ef3047190924313b3047190923313e9"
+  },
+  "example": 247
+}
 ```
 
 It is a good idea to use URLs that are representative of the API endpoints your service is calling in normal operation as checks.
