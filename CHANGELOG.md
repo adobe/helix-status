@@ -1,3 +1,10 @@
+# [9.1.0](https://github.com/adobe/helix-status/compare/v9.0.9...v9.1.0) (2021-03-10)
+
+
+### Features
+
+* split into library and service ([#312](https://github.com/adobe/helix-status/issues/312)) ([7bbc895](https://github.com/adobe/helix-status/commit/7bbc8957af278b296cec36491fab9f90b51fdc53)), closes [#299](https://github.com/adobe/helix-status/issues/299)
+
 ## [9.0.9](https://github.com/adobe/helix-status/compare/v9.0.8...v9.0.9) (2021-03-09)
 
 

@@ -1,6 +1,6 @@
 {
   "name": "@adobe/helix-status",
-  "version": "9.0.9",
+  "version": "9.1.0",
   "description": "Report status for OpenWhisk Microservices for Uptime checks with Pingdom or New Relic",
   "main": "src/index.js",
   "scripts": {
