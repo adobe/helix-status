@@ -27,7 +27,7 @@
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
     "@adobe/helix-fetch": "2.2.0",
-    "@adobe/helix-log": "5.0.1"
+    "@adobe/helix-log": "5.0.2"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "1.1.4",
