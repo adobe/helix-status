@@ -1,3 +1,10 @@
+## [9.1.6](https://github.com/adobe/helix-status/compare/v9.1.5...v9.1.6) (2021-04-12)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-log to v5.0.3 ([#322](https://github.com/adobe/helix-status/issues/322)) ([421117a](https://github.com/adobe/helix-status/commit/421117a22755474e5ae83aae2b9ed062c29aafba))
+
 ## [9.1.5](https://github.com/adobe/helix-status/compare/v9.1.4...v9.1.5) (2021-04-03)
 
 
