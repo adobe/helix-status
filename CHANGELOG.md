@@ -1,3 +1,10 @@
+## [9.1.8](https://github.com/adobe/helix-status/compare/v9.1.7...v9.1.8) (2021-06-13)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/helix-fetch to v2.3.0 ([#342](https://github.com/adobe/helix-status/issues/342)) ([f348b47](https://github.com/adobe/helix-status/commit/f348b476b056183f955c7dbca2f51629b2a5b6ff))
+
 ## [9.1.7](https://github.com/adobe/helix-status/compare/v9.1.6...v9.1.7) (2021-05-19)
 
 
