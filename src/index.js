@@ -12,7 +12,6 @@
 
 /* eslint-disable no-underscore-dangle */
 const fs = require('fs');
-const { error } = require('@adobe/helix-log');
 const fetchAPI = require('@adobe/helix-fetch');
 const { Response } = require('@adobe/helix-fetch');
 const pkgversion = require('../package.json').version;
@@ -32,13 +31,15 @@ function memoize(fn) {
 const getPackage = memoize(() => new Promise((resolve) => {
   fs.readFile('package.json', 'utf-8', (err, data) => {
     if (err) {
-      error('error while reading package.json:', err);
+      // eslint-disable-next-line no-console
+      console.error('error while reading package.json:', err);
       resolve({});
     } else {
       try {
         resolve(JSON.parse(data));
       } catch (e) {
-        error('error while parsing package.json:', e);
+        // eslint-disable-next-line no-console
+        console.error('error while parsing package.json:', e);
         resolve({});
       }
     }
