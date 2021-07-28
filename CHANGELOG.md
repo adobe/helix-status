@@ -1,3 +1,10 @@
+# [9.2.0](https://github.com/adobe/helix-status/compare/v9.1.8...v9.2.0) (2021-07-28)
+
+
+### Features
+
+* remove helix-log to reduce dependencies ([#347](https://github.com/adobe/helix-status/issues/347)) ([ba976ca](https://github.com/adobe/helix-status/commit/ba976cad2ae1d43dc56e9a617ab71d1d3753f10f))
+
 ## [9.1.8](https://github.com/adobe/helix-status/compare/v9.1.7...v9.1.8) (2021-06-13)
 
 
