@@ -53,8 +53,7 @@ const getName = memoize(async () => (await getPackage()).name || 'n/a');
 const getFetchContext = memoize(() => (
   process.env.HELIX_FETCH_FORCE_HTTP1
     ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
-    /* istanbul ignore next */
-    : fetchAPI));
+    : /* istanbul ignore next */ fetchAPI));
 
 /**
  * Use fetch to emulate a request call as it is used in this code.
