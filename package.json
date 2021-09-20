@@ -49,7 +49,7 @@
     "lint-staged": "11.1.2",
     "mocha": "9.1.1",
     "nyc": "15.1.0",
-    "semantic-release": "17.4.7"
+    "semantic-release": "18.0.0"
   },
   "lint-staged": {
     "*.js": "eslint"
