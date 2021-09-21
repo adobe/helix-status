@@ -1,3 +1,10 @@
+## [9.2.3](https://github.com/adobe/helix-status/compare/v9.2.2...v9.2.3) (2021-09-21)
+
+
+### Bug Fixes
+
+* use node 14 ([ddf9fc2](https://github.com/adobe/helix-status/commit/ddf9fc282d9c84861e895c3b5fe3e79ae0c6a1ee))
+
 ## [9.2.2](https://github.com/adobe/helix-status/compare/v9.2.1...v9.2.2) (2021-08-18)
 
 
