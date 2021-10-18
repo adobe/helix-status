@@ -50,10 +50,9 @@ const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
 const getName = memoize(async () => (await getPackage()).name || 'n/a');
 
-const getFetchContext = memoize(() => (
-  process.env.HELIX_FETCH_FORCE_HTTP1
-    ? fetchAPI.context({ alpnProtocols: [fetchAPI.ALPN_HTTP1_1] })
-    : /* istanbul ignore next */ fetchAPI));
+const { fetch, timeoutSignal } = process.env.HELIX_FETCH_FORCE_HTTP1
+  ? fetchAPI.h1()
+  : /* istanbul ignore next */ fetchAPI;
 
 /**
  * Use fetch to emulate a request call as it is used in this code.
@@ -71,10 +70,9 @@ async function request(opts) {
   };
 
   delete options.uri;
-  const context = getFetchContext();
 
   if (options.timeout) {
-    options.signal = context.timeoutSignal(options.timeout);
+    options.signal = timeoutSignal(options.timeout);
     delete options.timeout;
   }
 
@@ -82,7 +80,7 @@ async function request(opts) {
   let response;
   let body;
   try {
-    response = await context.fetch(uri, options);
+    response = await fetch(uri, options);
     body = await response.text();
   } catch (e) {
     /* istanbul ignore next */
