@@ -129,6 +129,7 @@ async function uricheck(key, uri, timeout) {
   };
 }
 
+// eslint-disable-next-line default-param-last
 function seal(obj = {}, init, params) {
   return Object.entries(obj).reduce((p, [key, value]) => {
     if (typeof value === 'function') {
@@ -185,6 +186,7 @@ function makechecker(timeout, params) {
   };
 }
 
+// eslint-disable-next-line default-param-last
 async function report(checks = {}, params, timeout = 10000) {
   const start = Date.now();
   const version = await getVersion();
