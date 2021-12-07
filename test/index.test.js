@@ -33,7 +33,7 @@ const { wrap, report, HEALTHCHECK_PATH } = require('../src/index.js');
 describe('Index Tests', () => {
   setupPolly({
     recordIfMissing: false,
-    recordFailedRequests: false,
+    recordFailedRequests: true,
     logging: false,
     adapters: [NodeHttpAdapter],
     persister: FSPersister,
