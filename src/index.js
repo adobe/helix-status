@@ -12,8 +12,8 @@
 
 /* eslint-disable no-underscore-dangle */
 const fs = require('fs');
-const fetchAPI = require('@adobe/helix-fetch');
-const { Response } = require('@adobe/helix-fetch');
+const fetchAPI = require('@adobe/fetch');
+const { Response } = require('@adobe/fetch');
 const pkgversion = require('../package.json').version;
 
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
