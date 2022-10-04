@@ -360,7 +360,7 @@ describe('Timeout Tests', () => {
   it('index function reports timeouts with status 504', async () => {
     const url = `http://localhost:${port}/?sleep=11000`;
     const result = await report({ example: url });
-    assert.ok(result.body.response_time >= 10000, `response time should be greater than 10s, but was ${result.body.response_time}ms`);
+    assert.ok(result.body.response_time <= 10000 * 1.01, `response time should be greater than 10s, but was ${result.body.response_time}ms`);
     delete result.body.response_time;
     assert.deepEqual(result.body, {
       error: {
