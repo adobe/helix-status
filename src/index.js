@@ -14,7 +14,7 @@
 const fs = require('fs');
 const {
   fetch, timeoutSignal, Response, AbortError,
-} = require('@adobe/fetch').h1();
+} = require('@adobe/fetch').h1NoCache();
 const pkgversion = require('../package.json').version;
 
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
