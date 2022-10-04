@@ -12,8 +12,9 @@
 
 /* eslint-disable no-underscore-dangle */
 const fs = require('fs');
-const fetchAPI = require('@adobe/fetch');
-const { Response } = require('@adobe/fetch');
+const {
+  fetch, timeoutSignal, Response, AbortError,
+} = require('@adobe/fetch').h1();
 const pkgversion = require('../package.json').version;
 
 const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
@@ -50,10 +51,6 @@ const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
 const getName = memoize(async () => (await getPackage()).name || 'n/a');
 
-const { fetch, timeoutSignal } = process.env.HELIX_FETCH_FORCE_HTTP1
-  ? fetchAPI.h1()
-  : /* istanbul ignore next */ fetchAPI;
-
 /**
  * Use fetch to emulate a request call as it is used in this code.
  * @param {object} opts Request options.
@@ -84,7 +81,7 @@ async function request(opts) {
     body = await response.text();
   } catch (e) {
     /* istanbul ignore next */
-    if (e instanceof fetchAPI.AbortError) {
+    if (e instanceof AbortError) {
       e.options = opts;
       e.message = 'Error: ETIMEDOUT';
     }
@@ -221,7 +218,7 @@ async function report(checks = {}, params, timeout = 10000) {
     };
   } catch (e) {
     let statusCode = 502; // gateway error
-    if (e instanceof fetchAPI.AbortError) {
+    if (e instanceof AbortError) {
       statusCode = 504; // gateway timeout
     }
     const body = (e.response ? e.response.body : '') || e.message;
