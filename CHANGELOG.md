@@ -1,3 +1,11 @@
+## [9.2.15](https://github.com/adobe/helix-status/compare/v9.2.14...v9.2.15) (2022-10-04)
+
+
+### Bug Fixes
+
+* use stateless fetch context ([0c0de0c](https://github.com/adobe/helix-status/commit/0c0de0c71e57a8c873ad783f6237ac08af976b17))
+* use stateless fetch context ([f776b2f](https://github.com/adobe/helix-status/commit/f776b2fd8eba7bc7d94990fc9bf8bbdbd2031ec7))
+
 ## [9.2.14](https://github.com/adobe/helix-status/compare/v9.2.13...v9.2.14) (2022-09-22)
 
 
