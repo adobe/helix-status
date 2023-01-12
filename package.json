@@ -13,7 +13,8 @@
   },
   "wsk": {
     "namespace": "helix",
-    "name": "helix-services/status@${version}"
+    "name": "helix-services/status@${version}",
+    "nodeVersion": 18
   },
   "repository": {
     "type": "git",
