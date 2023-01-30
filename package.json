@@ -3,18 +3,20 @@
   "version": "9.2.19",
   "description": "Report status for OpenWhisk Microservices for Uptime checks with Pingdom or New Relic",
   "main": "src/index.js",
+  "type": "module",
   "scripts": {
-    "test": "nyc mocha",
-    "test-ci": "nyc mocha --reporter xunit --reporter-options output=./junit/test-results.xml && codecov",
+    "test": "c8 mocha",
     "lint": "eslint .",
     "semantic-release": "semantic-release",
-    "docs": "npx jsdoc2md -c .jsdoc.json --files 'src/*.js'  > docs/API.md",
-    "commit": "git-cz"
+    "prepare": "husky install"
   },
-  "wsk": {
-    "namespace": "helix",
-    "name": "helix-services/status@${version}",
-    "nodeVersion": 18
+  "mocha": {
+    "require": [
+      "test/setup-env.js"
+    ],
+    "reporter": "mocha-multi-reporters",
+    "reporter-options": "configFile=.mocha-multi.json",
+    "loader": "esmock"
   },
   "repository": {
     "type": "git",
@@ -36,29 +38,20 @@
     "@pollyjs/persister-fs": "6.0.5",
     "@semantic-release/changelog": "6.0.2",
     "@semantic-release/git": "10.0.1",
+    "c8": "7.12.0",
     "chai": "4.3.7",
     "chai-http": "4.3.0",
-    "codecov": "3.8.3",
-    "commitizen": "4.3.0",
-    "cz-conventional-changelog": "3.3.0",
     "eslint": "8.32.0",
+    "esmock": "2.1.0",
     "express": "4.18.2",
-    "jsdoc-to-markdown": "8.0.0",
+    "husky": "8.0.3",
     "junit-report-builder": "3.0.1",
     "lint-staged": "13.1.0",
     "mocha": "10.2.0",
-    "nyc": "15.1.0",
+    "mocha-multi-reporters": "1.5.1",
     "semantic-release": "19.0.5"
   },
   "lint-staged": {
     "*.js": "eslint"
-  },
-  "config": {
-    "commitizen": {
-      "path": "node_modules/cz-conventional-changelog"
-    },
-    "ghooks": {
-      "pre-commit": "npx lint-staged"
-    }
   }
 }

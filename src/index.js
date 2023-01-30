@@ -11,41 +11,44 @@
  */
 
 /* eslint-disable no-underscore-dangle */
-const fs = require('fs');
+import fs from 'fs/promises';
+import { h1NoCache } from '@adobe/fetch';
+import pkgJson from './package.cjs';
+
 const {
   fetch, timeoutSignal, Response, AbortError,
-} = require('@adobe/fetch').h1NoCache();
-const pkgversion = require('../package.json').version;
+} = h1NoCache();
+const { version: pkgversion } = pkgJson;
 
-const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
+export const HEALTHCHECK_PATH = '/_status_check/healthcheck.json';
 
 function memoize(fn) {
   let val;
-  return () => {
+  return async () => {
     if (!val) {
-      val = fn();
+      val = await fn();
     }
     return val;
   };
 }
 
-const getPackage = memoize(() => new Promise((resolve) => {
-  fs.readFile('package.json', 'utf-8', (err, data) => {
-    if (err) {
-      // eslint-disable-next-line no-console
-      console.error('error while reading package.json:', err);
-      resolve({});
-    } else {
-      try {
-        resolve(JSON.parse(data));
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('error while parsing package.json:', e);
-        resolve({});
-      }
-    }
-  });
-}));
+const getPackage = memoize(async () => {
+  let data;
+  try {
+    data = await fs.readFile('package.json', 'utf-8');
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('error while reading package.json:', e);
+    return {};
+  }
+  try {
+    return JSON.parse(data);
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.error('error while parsing package.json:', e);
+    return {};
+  }
+});
 
 const getVersion = memoize(async () => (await getPackage()).version || 'n/a');
 
@@ -184,7 +187,7 @@ function makechecker(timeout, params) {
 }
 
 // eslint-disable-next-line default-param-last
-async function report(checks = {}, params, timeout = 10000) {
+export async function report(checks = {}, params, timeout = 10000) {
   const start = Date.now();
   const version = await getVersion();
 
@@ -245,7 +248,7 @@ async function report(checks = {}, params, timeout = 10000) {
   }
 }
 
-function wrap(func, checks) {
+export function helixStatus(func, checks) {
   return async (...args) => {
     // eslint-disable-next-line prefer-const
     let [params = {}, context = {}] = args;
@@ -278,7 +281,7 @@ function wrap(func, checks) {
  * each value a URL to ping
  * @returns {function} a probot app function that can be added to any given bot
  */
-function probotStatus(checks = {}) {
+export function probotStatus(checks = {}) {
   return (probot) => {
     const router = probot.getRouter();
     router.get(HEALTHCHECK_PATH, async (_, res) => {
@@ -288,11 +291,3 @@ function probotStatus(checks = {}) {
     });
   };
 }
-
-module.exports = {
-  helixStatus: wrap,
-  wrap,
-  report,
-  HEALTHCHECK_PATH,
-  probotStatus,
-};

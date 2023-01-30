@@ -4,6 +4,9 @@ executors:
     docker:
       - image: cimg/node:18.2
 
+orbs:
+  codecov: codecov/codecov@3.2.4
+
 commands:
   setup:
     steps:
@@ -25,14 +28,12 @@ jobs:
       - run:
           name: Lint
           command: npm run lint
-
       - run:
           name: Getting Code Coverage
-          command: npm run test-ci
-
+          command: npm run test
+      - codecov/upload
       - store_test_results:
           path: junit
-
       - store_artifacts:
           path: junit
 
