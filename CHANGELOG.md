@@ -1,3 +1,19 @@
+# [10.0.0](https://github.com/adobe/helix-status/compare/v9.2.19...v10.0.0) (2023-01-30)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v3.5.1 ([2240ab4](https://github.com/adobe/helix-status/commit/2240ab4c5ba07ac486da52467aec556e45ca5cac))
+* use ESM  ([1f932e8](https://github.com/adobe/helix-status/commit/1f932e86c3834db57ded11457406ae338bbfef03))
+
+
+### BREAKING CHANGES
+
+* requires ESM
+
+* fix(deps): update dependency @adobe/fetch to v4
+* fix: use esm
+
 ## [9.2.19](https://github.com/adobe/helix-status/compare/v9.2.18...v9.2.19) (2022-12-25)
 
 
