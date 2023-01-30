@@ -14,15 +14,13 @@
 
 'use strict';
 
-const assert = require('assert');
-const express = require('express');
-const chai = require('chai');
-const chaiHttp = require('chai-http');
+import assert from 'assert';
+import express from 'express';
+import chai from 'chai';
+import chaiHttp from 'chai-http';
+import { probotStatus } from '../src/index.js';
 
 const { expect } = chai;
-const {
-  probotStatus,
-} = require('../src/index.js');
 
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 

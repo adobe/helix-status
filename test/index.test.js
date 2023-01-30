@@ -11,24 +11,22 @@
  */
 
 /* eslint-env mocha */
+import http from 'http';
+import assert from 'assert';
+import path from 'path';
+import NodeHttpAdapter from '@pollyjs/adapter-node-http';
+import { setupMocha as setupPolly } from '@pollyjs/core';
+import esmock from 'esmock';
 
-'use strict';
-
-const http = require('http');
-const assert = require('assert');
-const path = require('path');
-const NodeHttpAdapter = require('@pollyjs/adapter-node-http');
-const { setupMocha: setupPolly } = require('@pollyjs/core');
-const FSPersister = require('@pollyjs/persister-fs');
-const pkgJson = require('../package.json');
+import FSPersister from '@pollyjs/persister-fs';
+import pkgJson from '../src/package.cjs';
+import { report, helixStatus, HEALTHCHECK_PATH } from '../src/index.js';
 
 const TEST_ACTIVATION_ID = '1234';
 
 // eslint-disable-next-line no-underscore-dangle
 process.env.__OW_ACTIVATION_ID = TEST_ACTIVATION_ID;
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
-
-const { wrap, report, HEALTHCHECK_PATH } = require('../src/index.js');
 
 describe('Index Tests', () => {
   setupPolly({
@@ -39,7 +37,7 @@ describe('Index Tests', () => {
     persister: FSPersister,
     persisterOptions: {
       fs: {
-        recordingsDir: path.resolve(__dirname, 'fixtures/recordings'),
+        recordingsDir: path.resolve(__testdir, 'fixtures/recordings'),
       },
     },
     matchRequestsBy: {
@@ -50,7 +48,7 @@ describe('Index Tests', () => {
   });
 
   it('wrap function takes over when called with health check path', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo');
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo');
     assert.deepEqual(typeof wrapped, 'function');
     assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
@@ -67,7 +65,7 @@ describe('Index Tests', () => {
   });
 
   it('wrap function takes over when called with health check path (universal deploy)', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo');
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo');
     assert.deepEqual(typeof wrapped, 'function');
     assert.deepEqual(await wrapped(), 'foo', 'calling without health check path passes through');
 
@@ -83,7 +81,7 @@ describe('Index Tests', () => {
 
   it('wrap function supports function check', async () => {
     let triggered = false;
-    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       funccheck: () => {
         triggered = true;
       },
@@ -101,7 +99,7 @@ describe('Index Tests', () => {
   });
 
   it('wrap function reports failure for failing function check', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       funccheck: () => {
         throw new Error('Boom!');
       },
@@ -118,7 +116,7 @@ describe('Index Tests', () => {
 
   it('wrap function supports function check with options', async () => {
     let triggered = false;
-    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       funccheck: (opts) => {
         triggered = opts;
       },
@@ -136,7 +134,7 @@ describe('Index Tests', () => {
   });
 
   it('wrap function supports request options check', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       optscheck: {
         uri: 'https://www.example.com',
         method: 'POST',
@@ -153,7 +151,7 @@ describe('Index Tests', () => {
   });
 
   it('wrap function rejects options check with no uri', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       optscheck: {
         method: 'POST',
       },
@@ -178,7 +176,7 @@ describe('Index Tests', () => {
   });
 
   it('wrap function supports request options check with functions', async () => {
-    const wrapped = wrap(({ name } = {}) => name || 'foo', {
+    const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       optscheck: {
         uri: 'https://www.example.com',
         method: 'POST',
@@ -198,12 +196,10 @@ describe('Index Tests', () => {
   });
 
   it('index function returns n/a for missing package.json', async () => {
-    delete require.cache[require.resolve('../src/index.js')];
-    // eslint-disable-next-line global-require
-    const { report: localReport } = require('../src/index.js');
+    const { report: localReport } = await esmock('../src/index.js');
     const pwd = process.cwd();
     try {
-      process.chdir(path.resolve(__dirname, 'fixtures', 'no_package'));
+      process.chdir(path.resolve(__testdir, 'fixtures', 'no_package'));
       const result = await localReport({
         example: 'https://www.example.com',
       });
@@ -215,12 +211,10 @@ describe('Index Tests', () => {
   });
 
   it('index function returns correct package version', async () => {
-    delete require.cache[require.resolve('../src/index.js')];
-    // eslint-disable-next-line global-require
-    const { report: localReport } = require('../src/index.js');
+    const { report: localReport } = await esmock('../src/index.js');
     const pwd = process.cwd();
     try {
-      process.chdir(path.resolve(__dirname, 'fixtures', 'custom_package'));
+      process.chdir(path.resolve(__testdir, 'fixtures', 'custom_package'));
       const result = await localReport({});
       assert.equal(result.statusCode, 200);
       assert.equal(result.body.version, '10.42-beta');
@@ -231,12 +225,10 @@ describe('Index Tests', () => {
   });
 
   it('index function returns n/a for corrupt package.json', async () => {
-    delete require.cache[require.resolve('../src/index.js')];
-    // eslint-disable-next-line global-require
-    const { report: localReport } = require('../src/index.js');
+    const { report: localReport } = await esmock('../src/index.js');
     const pwd = process.cwd();
     try {
-      process.chdir(path.resolve(__dirname, 'fixtures', 'no_valid_package_json'));
+      process.chdir(path.resolve(__testdir, 'fixtures', 'no_valid_package_json'));
       const result = await localReport({});
       assert.equal(result.statusCode, 200);
       assert.equal(result.body.version, 'n/a');
@@ -246,12 +238,10 @@ describe('Index Tests', () => {
   });
 
   it('index function returns n/a for missing package version', async () => {
-    delete require.cache[require.resolve('../src/index.js')];
-    // eslint-disable-next-line global-require
-    const { report: localReport } = require('../src/index.js');
+    const { report: localReport } = await esmock('../src/index.js');
     const pwd = process.cwd();
     try {
-      process.chdir(path.resolve(__dirname, 'fixtures', 'no_package_version'));
+      process.chdir(path.resolve(__testdir, 'fixtures', 'no_package_version'));
       const result = await localReport({});
       assert.equal(result.statusCode, 200);
       assert.equal(result.body.version, 'n/a');
