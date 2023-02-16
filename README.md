@@ -39,13 +39,13 @@ $ npm install -S @adobe/helix-status
 In the entry point of your action, add
 
 ```javascript
-const { wrap } = require('@adobe/helix-status');
+const { helixStatus } = require('@adobe/helix-status');
 ```
 
 to the top of your file and override the `module.exports.main` with:
 
 ```javascript
-module.exports.main = wrap(main);
+module.exports.main = helixStatus(main);
 ```
 
 All `GET /_status_check/healthcheck.json` requests to your service will now respond with an XML response similar to below:
@@ -62,7 +62,7 @@ All `GET /_status_check/healthcheck.json` requests to your service will now resp
 You can also specify a list of checks to run by passing second argument to `wrap`:
 
 ```javascript
-module.exports.main = wrap(main, { example: 'http://www.example.com'})
+module.exports.main = helixStatus(main, { example: 'http://www.example.com'})
 ```
 
 you will then see results like this:
