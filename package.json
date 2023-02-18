@@ -38,7 +38,7 @@
     "@pollyjs/persister-fs": "6.0.5",
     "@semantic-release/changelog": "6.0.2",
     "@semantic-release/git": "10.0.1",
-    "c8": "7.12.0",
+    "c8": "7.13.0",
     "chai": "4.3.7",
     "chai-http": "4.3.0",
     "eslint": "8.34.0",
@@ -46,7 +46,7 @@
     "express": "4.18.2",
     "husky": "8.0.3",
     "junit-report-builder": "3.0.1",
-    "lint-staged": "13.1.1",
+    "lint-staged": "13.1.2",
     "mocha": "10.2.0",
     "mocha-multi-reporters": "1.5.1",
     "semantic-release": "20.1.0"
