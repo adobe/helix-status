@@ -29,10 +29,10 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/fetch": "4.0.3"
+    "@adobe/fetch": "4.0.4"
   },
   "devDependencies": {
-    "@adobe/eslint-config-helix": "2.0.1",
+    "@adobe/eslint-config-helix": "2.0.2",
     "@pollyjs/adapter-node-http": "6.0.5",
     "@pollyjs/core": "6.0.5",
     "@pollyjs/persister-fs": "6.0.5",
