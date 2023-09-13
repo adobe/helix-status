@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/fetch": "4.0.13"
+    "@adobe/fetch": "4.1.0"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.3",
