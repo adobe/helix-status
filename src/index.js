@@ -269,6 +269,7 @@ export function helixStatus(func, checks) {
       }
       return result;
     }
+    args.context.version = version;
     return func(...args);
   };
 }
