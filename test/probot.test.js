@@ -16,11 +16,12 @@
 
 import assert from 'assert';
 import express from 'express';
-import chai from 'chai';
+import { expect } from 'chai';
+import * as chai from 'chai';
 import chaiHttp from 'chai-http';
 import { probotStatus } from '../src/index.js';
 
-const { expect } = chai;
+const { request } = chai.use(chaiHttp);
 
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
@@ -42,7 +43,7 @@ describe('Probot Tests', async () => {
       getRouter: () => app,
     });
 
-    await chai.request(app).get('/foo').then((res) => {
+    await request(app).get('/foo').then((res) => {
       expect(res).to.have.status(200);
       expect(res.text).to.equal('bar');
     });
@@ -59,12 +60,12 @@ describe('Probot Tests', async () => {
       getRouter: () => app,
     });
 
-    await chai.request(app).get('/foo').then((res) => {
+    await request(app).get('/foo').then((res) => {
       expect(res).to.have.status(200);
       expect(res.text).to.equal('bar');
     });
 
-    await chai.request(app).get('/_status_check/healthcheck.json').then((res) => {
+    await request(app).get('/_status_check/healthcheck.json').then((res) => {
       expect(res).to.have.status(200);
       expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
     });
