@@ -1,3 +1,10 @@
+## [10.0.12](https://github.com/adobe/helix-status/compare/v10.0.11...v10.0.12) (2024-04-11)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.1.2 ([674a3a2](https://github.com/adobe/helix-status/commit/674a3a271b259cef85bc91e40a242c644fd0b6e1))
+
 ## [10.0.11](https://github.com/adobe/helix-status/compare/v10.0.10...v10.0.11) (2023-10-30)
 
 
