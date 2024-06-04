@@ -1,3 +1,15 @@
+# [10.1.0](https://github.com/adobe/helix-status/compare/v10.0.12...v10.1.0) (2024-06-04)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @adobe/fetch to v4.1.3 ([275c578](https://github.com/adobe/helix-status/commit/275c5787e1e9619543d040df70f4005474caca48))
+
+
+### Features
+
+* use gh-actions ([#567](https://github.com/adobe/helix-status/issues/567)) ([f510aa8](https://github.com/adobe/helix-status/commit/f510aa8904d7000f6f8cce23738387a53902d0e2))
+
 ## [10.0.12](https://github.com/adobe/helix-status/compare/v10.0.11...v10.0.12) (2024-04-11)
 
 
