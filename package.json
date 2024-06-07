@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/adobe/helix-status#readme",
   "dependencies": {
-    "@adobe/fetch": "4.1.4"
+    "@adobe/fetch": "4.1.8"
   },
   "devDependencies": {
     "@adobe/eslint-config-helix": "2.0.6",
