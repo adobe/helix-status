@@ -11,16 +11,13 @@
  */
 
 /* eslint-env mocha */
-import http from 'http';
 import assert from 'assert';
 import path from 'path';
-import NodeHttpAdapter from '@pollyjs/adapter-node-http';
-import { setupMocha as setupPolly } from '@pollyjs/core';
 import esmock from 'esmock';
 
-import FSPersister from '@pollyjs/persister-fs';
 import pkgJson from '../src/package.cjs';
 import { report, helixStatus, HEALTHCHECK_PATH } from '../src/index.js';
+import { Nock } from './utils.js';
 
 const TEST_ACTIVATION_ID = '1234';
 
@@ -29,22 +26,13 @@ process.env.__OW_ACTIVATION_ID = TEST_ACTIVATION_ID;
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
 describe('Index Tests', () => {
-  setupPolly({
-    recordIfMissing: false,
-    recordFailedRequests: true,
-    logging: false,
-    adapters: [NodeHttpAdapter],
-    persister: FSPersister,
-    persisterOptions: {
-      fs: {
-        recordingsDir: path.resolve(__testdir, 'fixtures/recordings'),
-      },
-    },
-    matchRequestsBy: {
-      headers: {
-        exclude: ['user-agent', 'accept', 'accept-encoding', 'connection'],
-      },
-    },
+  let nock;
+  beforeEach(() => {
+    nock = new Nock().env();
+  });
+
+  afterEach(() => {
+    nock.done();
   });
 
   it('wrap function takes over when called with health check path', async () => {
@@ -251,7 +239,10 @@ describe('Index Tests', () => {
   });
 
   it('index function makes HTTP requests', async () => {
-    const result = await report({ example: 'http://www.example.com' });
+    nock('https://www.example.com')
+      .get('/')
+      .reply(200);
+    const result = await report({ example: 'https://www.example.com' });
 
     assert.ok(/\d+/.test(result.body.example));
     assert.equal(result.body.version, pkgJson.version);
@@ -259,15 +250,17 @@ describe('Index Tests', () => {
   });
 
   it('index function returns error status code', async () => {
-    const ERROR_STATUS = 503;
-    const result = await report({ example: `http://httpstat.us/${ERROR_STATUS}` });
+    nock('https://httpstat.us/')
+      .get('/503')
+      .reply(503, '503 Service Unavailable');
+    const result = await report({ example: 'https://httpstat.us/503' });
 
     delete result.body.response_time;
-    assert.deepEqual(result.body, {
+    assert.deepStrictEqual(result.body, {
       error: {
         body: '503 Service Unavailable',
         statuscode: 503,
-        url: 'http://httpstat.us/503',
+        url: 'https://httpstat.us/503',
       },
       process: {
         activation: TEST_ACTIVATION_ID,
@@ -278,13 +271,13 @@ describe('Index Tests', () => {
     assert.equal(result.statusCode, 502);
   });
 
-  it('index function fails with useful error message', async function test() {
-    const { server } = this.polly;
-
-    server.get('http://www.fail.com/').intercept((_, res) => res.sendStatus(500).json({}));
+  it('index function fails with useful error message', async () => {
+    nock('https://www.fail.com/')
+      .get('/')
+      .reply(500, {});
 
     const result = await report({
-      fail: 'http://www.fail.com/',
+      fail: 'https://www.fail.com/',
     });
     delete result.body.response_time;
 
@@ -292,7 +285,7 @@ describe('Index Tests', () => {
       error: {
         body: '{}',
         statuscode: 500,
-        url: 'http://www.fail.com/',
+        url: 'https://www.fail.com/',
       },
       process: {
         activation: TEST_ACTIVATION_ID,
@@ -303,60 +296,46 @@ describe('Index Tests', () => {
     assert.equal(result.statusCode, 502);
   });
 
-  it('User agent string contains helix-status/', async function test() {
-    const { server } = this.polly;
-
+  it('User agent string contains helix-status/', async () => {
     let ua;
-    server.get('http://example.com/test').intercept((req) => {
-      ua = req.headers['user-agent'];
-    });
+    nock('https://example.com')
+      .get('/test')
+      .reply(function req() {
+        ua = this.req.headers['user-agent'];
+        return [200];
+      });
 
     await report({
-      localhost: 'http://example.com/test',
+      localhost: 'https://example.com/test',
     });
-
-    assert.ok(ua);
-    assert.ok(ua.match(/helix-status\//));
+    assert.match(ua, /helix-status\//);
   });
 });
 
 describe('Timeout Tests', () => {
-  let port;
-  let svr;
-  beforeEach(async () => {
-    // use custom server, since polly interferes with request.timeout.
-    svr = await new Promise((resolve) => {
-      const server = http.createServer((req, res) => {
-        const url = new URL(req.url, `http://${req.headers.host}`);
-        setTimeout(() => {
-          res.statusCode = 200;
-          res.end('200');
-        }, url.searchParams.get('sleep'));
-      });
-      server.listen(0, () => {
-        port = server.address().port;
-        resolve(server);
-      });
-    });
+  let nock;
+  beforeEach(() => {
+    nock = new Nock().env();
   });
 
-  afterEach(async () => {
-    svr.close();
-    return new Promise((resolve) => {
-      svr.on('close', resolve);
-    });
+  afterEach(() => {
+    nock.done();
   });
 
   it('index function reports timeouts with status 504', async () => {
-    const url = `http://localhost:${port}/?sleep=11000`;
-    const result = await report({ example: url });
+    nock('https://example.com')
+      .get('/test')
+      .delay(11000)
+      .reply(200);
+
+    const result = await report({ example: 'https://example.com/test' });
     assert.ok(result.body.response_time <= 10000 * 1.01, `response time should be greater than 10s, but was ${result.body.response_time}ms`);
     delete result.body.response_time;
     assert.deepEqual(result.body, {
       error: {
         body: 'Error: ETIMEDOUT',
         statuscode: undefined,
-        url,
+        url: 'https://example.com/test',
       },
       process: {
         activation: TEST_ACTIVATION_ID,
@@ -365,13 +344,16 @@ describe('Timeout Tests', () => {
       version: pkgJson.version,
     });
     assert.equal(result.statusCode, 504);
-    svr.close();
   }).timeout(20000);
 
   it('index function fails after timeout', async () => {
-    const url = `http://localhost:${port}/?sleep=100`;
+    nock('https://example.com')
+      .get('/test')
+      .delay(100)
+      .reply(200);
+
     const result = await report({
-      snail: url,
+      snail: 'https://example.com/test',
     }, {}, 10);
 
     assert.ok(result.body.response_time >= 10);
@@ -381,7 +363,7 @@ describe('Timeout Tests', () => {
       error: {
         body: 'Error: ETIMEDOUT',
         statuscode: undefined,
-        url,
+        url: 'https://example.com/test',
       },
       process: {
         activation: TEST_ACTIVATION_ID,

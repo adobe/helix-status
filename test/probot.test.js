@@ -11,23 +11,20 @@
  */
 
 /* eslint-env mocha */
-
-'use strict';
-
 import assert from 'assert';
 import express from 'express';
-import { expect } from 'chai';
-import * as chai from 'chai';
-import chaiHttp from 'chai-http';
+import request from 'supertest';
+import nock from 'nock';
 import { probotStatus } from '../src/index.js';
-
-const { request } = chai.use(chaiHttp);
 
 process.env.HELIX_FETCH_FORCE_HTTP1 = 'true';
 
-chai.use(chaiHttp);
-
 describe('Probot Tests', async () => {
+  before(() => {
+    // supertest internally starts a server, so we need to enable network connections in case
+    // other nock tests ran before
+    nock.enableNetConnect();
+  });
   it('probotStatus returns a function', () => {
     assert.equal(typeof probotStatus(), 'function');
   });
@@ -43,10 +40,10 @@ describe('Probot Tests', async () => {
       getRouter: () => app,
     });
 
-    await request(app).get('/foo').then((res) => {
-      expect(res).to.have.status(200);
-      expect(res.text).to.equal('bar');
-    });
+    const ret = await request(app).get('/foo');
+
+    assert.strictEqual(ret.status, 200);
+    assert.strictEqual(ret.text, 'bar');
   });
 
   it('probotStatus serves JSON status', async () => {
@@ -60,14 +57,9 @@ describe('Probot Tests', async () => {
       getRouter: () => app,
     });
 
-    await request(app).get('/foo').then((res) => {
-      expect(res).to.have.status(200);
-      expect(res.text).to.equal('bar');
-    });
-
-    await request(app).get('/_status_check/healthcheck.json').then((res) => {
-      expect(res).to.have.status(200);
-      expect(res).to.have.header('content-type', 'application/json; charset=utf-8');
-    });
+    const ret = await request(app).get('/_status_check/healthcheck.json');
+    assert.strictEqual(ret.status, 200);
+    assert.strictEqual(ret.header['content-type'], 'application/json; charset=utf-8');
+    assert.strictEqual(JSON.parse(ret.text).status, 'OK');
   });
 });
