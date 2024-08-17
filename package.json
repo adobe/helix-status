@@ -42,11 +42,11 @@
     "express": "4.19.2",
     "husky": "9.1.4",
     "junit-report-builder": "5.0.0",
-    "lint-staged": "15.2.8",
+    "lint-staged": "15.2.9",
     "mocha": "10.7.3",
     "mocha-multi-reporters": "1.5.1",
     "nock": "13.5.4",
-    "semantic-release": "24.0.0",
+    "semantic-release": "24.1.0",
     "supertest": "7.0.0"
   },
   "lint-staged": {
