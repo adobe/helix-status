@@ -122,6 +122,9 @@ describe('Index Tests', () => {
   });
 
   it('wrap function supports request options check', async () => {
+    nock('https://www.example.com')
+      .post('/')
+      .reply(200);
     const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       optscheck: {
         uri: 'https://www.example.com',
@@ -164,6 +167,10 @@ describe('Index Tests', () => {
   });
 
   it('wrap function supports request options check with functions', async () => {
+    nock('https://www.example.com')
+      .post('/')
+      .reply(200);
+
     const wrapped = helixStatus(({ name } = {}) => name || 'foo', {
       optscheck: {
         uri: 'https://www.example.com',
@@ -184,6 +191,10 @@ describe('Index Tests', () => {
   });
 
   it('index function returns n/a for missing package.json', async () => {
+    nock('https://www.example.com')
+      .get('/')
+      .reply(200);
+
     const { report: localReport } = await esmock('../src/index.js');
     const pwd = process.cwd();
     try {
