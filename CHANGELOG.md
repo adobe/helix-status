@@ -1,3 +1,10 @@
+## [10.1.5](https://github.com/adobe/helix-status/compare/v10.1.4...v10.1.5) (2024-12-07)
+
+
+### Bug Fixes
+
+* unpin @adobe/fetch ([dcd5ba5](https://github.com/adobe/helix-status/commit/dcd5ba58e6b67fc774b74740ab314d8cb7d98865))
+
 ## [10.1.4](https://github.com/adobe/helix-status/compare/v10.1.3...v10.1.4) (2024-12-05)
 
 
