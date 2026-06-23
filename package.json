@@ -39,15 +39,15 @@
     "@semantic-release/git": "10.0.1",
     "c8": "11.0.0",
     "eslint": "9.4.0",
-    "esmock": "2.7.5",
+    "esmock": "2.7.6",
     "express": "5.2.1",
     "husky": "9.1.7",
     "junit-report-builder": "5.1.2",
-    "lint-staged": "17.0.5",
+    "lint-staged": "17.0.7",
     "mocha": "11.7.6",
     "mocha-multi-reporters": "1.5.1",
     "nock": "14.0.15",
-    "semantic-release": "25.0.3",
+    "semantic-release": "25.0.5",
     "supertest": "7.2.2"
   },
   "lint-staged": {
