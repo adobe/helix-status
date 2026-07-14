@@ -46,7 +46,7 @@
     "lint-staged": "17.0.8",
     "mocha": "11.7.6",
     "mocha-multi-reporters": "1.5.1",
-    "nock": "14.0.15",
+    "nock": "14.0.16",
     "semantic-release": "25.0.5",
     "supertest": "7.2.2"
   },
