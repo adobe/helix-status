@@ -311,8 +311,8 @@ describe('Index Tests', () => {
     let ua;
     nock('https://example.com')
       .get('/test')
-      .reply(function req() {
-        ua = this.req.headers['user-agent'];
+      .reply((req) => {
+        ua = req.headers.get('user-agent');
         return [200];
       });
 
